@@ -10,6 +10,8 @@ TEAM_NAMES = {'Canada': 'Olympic (Women) - Canada',
               'ROC': 'Olympic (Women) - Olympic Athletes from Russia',
               'Switzerland': 'Olympic (Women) - Switzerland'}
 
+MAX_FRAME_JUMP = 5
+
 # power_play_info_file = 'pp_info.csv'
 # power_play_info = pd.read_csv(power_play_info_file)
 # power_play_info.head()
@@ -49,6 +51,28 @@ def get_names_date(game):
     
     return team_1, team_2, date
     
+def get_speed(track):
+    assert (track['track_id'] == track['track_id'].iloc[0]).all()
+    try:
+        frame_diff = np.diff(track['frame_id'])
+        nonvalid_speed = np.concatenate([[True],frame_diff>MAX_FRAME_JUMP])
+        next_valid_speed = np.concatenate([frame_diff<=MAX_FRAME_JUMP,[False]])
+        repl = nonvalid_speed & next_valid_speed
+        idx = np.where(repl)[0]+1
+        
+        
+        x_spd = np.concatenate([[np.nan],np.diff(track['x_ft'])/frame_diff])*30
+        y_spd = np.concatenate([[np.nan],np.diff(track['y_ft'])/frame_diff])*30
+
+        x_spd[repl] = x_spd[idx]
+        y_spd[repl] = y_spd[idx]
+
+    except Exception as e:
+        print(np.diff(track['frame_id']))
+        raise
+
+    return(x_spd, y_spd)
+
 
 def get_pp_tracking(power_play_info_file = 'pp_info.csv',
     play_by_play_data_file = 'pxp_womens_oly_2022_v2.csv', 
@@ -77,20 +101,20 @@ def get_pp_tracking(power_play_info_file = 'pp_info.csv',
             tracking_data = pd.read_csv(tracking_data_name)
             tracking_data['x_ft'] = tracking_data['x_ft'] - 7
             tracking_data['x_ft'] = tracking_data['y_ft'] + 4
-            
-            # nonvalid_speed = np.concatenate([[True],(np.diff(tracking_data['frame_id']))!=1])
-            # shift_nonvalid_speed = np.concatenate([[False,True],((np.diff(tracking_data['frame_id']))!=1)[:-1]])
-            
-            # )
-            # x_spd = np.concatenate([[0],np.diff(tracking_data['x_ft'])])*30
-            # y_spd = np.concatenate([[0],np.diff(tracking_data['y_ft'])])*30
-            # x_spd[nonvalid_speed] = x_spd[shift_nonvalid_speed]
-            # y_spd[nonvalid_speed] = y_spd[shift_nonvalid_speed]
-            # tracking_data['vel_x'] = x_spd
-            # tracking_data['vel_y'] = y_spd
-
-            # print(tracking_data.head())            
-            # assert False
+                        
+            tracking_data['vel_x'] = np.nan
+            tracking_data['vel_y'] = np.nan
+            tr_ids = tracking_data.track_id.unique()
+            for tr_id in tr_ids:
+                idxs = tracking_data.track_id==tr_id
+                track = tracking_data.loc[idxs]
+                if len(track) <= 5:
+                    continue
+                x_spd,y_spd = get_speed(track)
+                tracking_data.loc[idxs,'vel_x'] = x_spd
+                tracking_data.loc[idxs,'vel_y'] = y_spd
+                # break
+            # print(tracks.head())
 
             # print(tracking_info_name) 
             tracking_info = pd.read_csv(tracking_info_name)
