@@ -68,16 +68,33 @@ def get_pp_tracking(power_play_info_file = 'pp_info.csv',
         game = pp['game_name']
         game_files = os.listdir(os.path.join(tracking_dir,game))
         # print(game_files)
-        tracking_data_name = os.path.join(tracking_dir,game,'{} P{} PP{}.csv'.format(game,pp['start_period'],pp['penalty_number']))
-        tracking_info_name = os.path.join(tracking_dir,game,'videoShotsInfo_{} P{} PP{}.csv'.format(game,pp['start_period'],pp['penalty_number']))
+        tracking_data_name = os.path.join(tracking_dir,game,f'{game} P{pp["start_period"]} PP{pp["penalty_number"]}.csv')
+        tracking_info_name = os.path.join(tracking_dir,game,f'videoShotsInfo_{game} P{pp["start_period"]} PP{pp["penalty_number"]}.csv')
+        roster_info_name = os.path.join(tracking_dir, game, f'{game} roster.csv')
+        roster_info = pd.read_csv(roster_info_name, index_col = 0)
         if os.path.split(tracking_data_name)[1] in game_files:
             # print(tracking_data_name)
             tracking_data = pd.read_csv(tracking_data_name)
             tracking_data['x_ft'] = tracking_data['x_ft'] - 7
             tracking_data['x_ft'] = tracking_data['y_ft'] + 4
             
+            # nonvalid_speed = np.concatenate([[True],(np.diff(tracking_data['frame_id']))!=1])
+            # shift_nonvalid_speed = np.concatenate([[False,True],((np.diff(tracking_data['frame_id']))!=1)[:-1]])
+            
+            # )
+            # x_spd = np.concatenate([[0],np.diff(tracking_data['x_ft'])])*30
+            # y_spd = np.concatenate([[0],np.diff(tracking_data['y_ft'])])*30
+            # x_spd[nonvalid_speed] = x_spd[shift_nonvalid_speed]
+            # y_spd[nonvalid_speed] = y_spd[shift_nonvalid_speed]
+            # tracking_data['vel_x'] = x_spd
+            # tracking_data['vel_y'] = y_spd
+
+            # print(tracking_data.head())            
+            # assert False
+
             # print(tracking_info_name) 
             tracking_info = pd.read_csv(tracking_info_name)
+            
             # print(tracking_info_name)
             # assert len(tracking_info)==1, 'In this file: {} \nWe have to deal with multiple shots'.format(tracking_info_name)
             # tracking_info = tracking_info.iloc[0,:]
@@ -99,7 +116,17 @@ def get_pp_tracking(power_play_info_file = 'pp_info.csv',
                                               (relevant_events['clock_seconds'] >= pp['end_game_clock_seconds']))  ]
         
         
-        relevant_events.index = np.arange(0, len(relevant_events.index), dtype = 'int')    
+        relevant_events.index = np.arange(0, len(relevant_events.index), dtype = 'int')
+        
+        pl1_jn = roster_info.loc[relevant_events['player_name'],'jn']
+        pl1_jn.index = relevant_events.index
+
+        pl2_exists = list(relevant_events['player_name_2'].notna())
+        pl2_jn = roster_info.loc[relevant_events['player_name_2'][pl2_exists],'jn']
+        
+        pl2_jn.index = relevant_events.index[pl2_exists]
+        relevant_events['Player_1_num'] = pl1_jn
+        relevant_events['Player_2_num'] = pl2_jn
         # pp_length = int(np.ceil(tracking_info['time_end_shot(sec)']))
         tracks = []
         ### Continue from here - need to check if there is a next event
