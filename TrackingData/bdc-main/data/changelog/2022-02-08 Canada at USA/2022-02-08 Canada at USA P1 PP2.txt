@@ -1,0 +1,113 @@
+Set jersey number of track 112 in video shot 1 to 25.
+Set jersey number of track 120 in video shot 1 to 12.
+Set jersey number of track 193 in video shot 1 to 3.
+Set jersey number of track 243 in video shot 1 to 3.
+Set jersey number of track 249 in video shot 1 to 28.
+Set jersey number of track 252 in video shot 1 to 3.
+Set jersey number of track 256 in video shot 1 to 11.
+Set jersey number of track 289 in video shot 1 to 3.
+Set jersey number of track 277 in video shot 1 to 12.
+Set jersey number of track 303 in video shot 1 to 12.
+Set jersey number of track 1844 in video shot 1 to 3.
+Set jersey number of track 314 in video shot 1 to 3.
+Set jersey number of track 326 in video shot 1 to 3.
+Set jersey number of track 332 in video shot 1 to 29.
+Set jersey number of track 45 in video shot 2 to 20.
+Set jersey number of track 47 in video shot 2 to 15.
+Set jersey number of track 86 in video shot 2 to 15.
+Set jersey number of track 77 in video shot 2 to 20.
+Set jersey number of track 109 in video shot 1 to 26.
+Set jersey number of track 110 in video shot 1 to 3.
+Set jersey number of track 249 in video shot 1 to 25.
+Set jersey number of track 141 in video shot 1 to 3.
+Merged track 141 from video shot 1 with track 110.
+Set jersey number of track 223 in video shot 1 to 26.
+Set jersey number of track 305 in video shot 1 to 21.
+Set jersey number of track 162 in video shot 1 to 12.
+Set jersey number of track 196 in video shot 1 to 12.
+Set jersey number of track 218 in video shot 1 to 12.
+Set jersey number of track 282 in video shot 1 to 3.
+Set jersey number of track 310 in video shot 1 to 12.
+Set jersey number of track 361 in video shot 1 to 28.
+Set jersey number of track 48 in video shot 2 to 3.
+Set jersey number of track 53 in video shot 2 to 28.
+Set jersey number of track 85 in video shot 2 to 5.
+Set jersey number of track 98 in video shot 2 to 15.
+Set jersey number of track 151 in video shot 2 to 15.
+Added track 398 to frame 3309 of video shot 3 (team USA, jersey number 100, x 142.5, y 52.0).
+Added track 398 to frame 3357 of video shot 3 (team USA, jersey number 100, x 111.5, y 65.75).
+Added track 398 to frame 3388 of video shot 3 (team USA, jersey number 100, x 121.75, y 82.25).
+Added track 398 to frame 3481 of video shot 3 (team USA, jersey number 100, x 186.75, y 66.5).
+Added track 398 to frame 3527 of video shot 3 (team USA, jersey number 100, x 196.5, y 44.25).
+Added track 398 to frame 3551 of video shot 3 (team USA, jersey number 100, x 195.5, y 39.0).
+Added track 398 to frame 3589 of video shot 3 (team USA, jersey number 100, x 197.75, y 49.5).
+Imputed coordinates for video shot 3.
+Added track 399 to frame 3309 of video shot 3 (team USA, jersey number 100, x 118.5, y 81.75).
+Added track 399 to frame 3363 of video shot 3 (team USA, jersey number 100, x 87.0, y 80.5).
+Added track 399 to frame 3385 of video shot 3 (team USA, jersey number 100, x 86.5, y 83.5).
+Imputed coordinates for video shot 3.
+Added track 400 to frame 3309 of video shot 3 (team USA, jersey number 100, x 131.75, y 5.25).
+Added track 400 to frame 3344 of video shot 3 (team USA, jersey number 100, x 105.25, y 10.5).
+Added track 400 to frame 3370 of video shot 3 (team USA, jersey number 100, x 100.5, y 30.25).
+Added track 400 to frame 3404 of video shot 3 (team USA, jersey number 100, x 123.25, y 35.5).
+Added track 400 to frame 3456 of video shot 3 (team USA, jersey number 100, x 153.75, y 17.5).
+Added track 400 to frame 3493 of video shot 3 (team USA, jersey number 100, x 179.5, y 12.0).
+Added track 400 to frame 3520 of video shot 3 (team USA, jersey number 100, x 186.75, y 18.25).
+Added track 400 to frame 3552 of video shot 3 (team USA, jersey number 100, x 195.0, y 17.5).
+Added track 400 to frame 3572 of video shot 3 (team USA, jersey number 100, x 194.25, y 15.5).
+Imputed coordinates for video shot 3.
+Added track 401 to frame 3309 of video shot 3 (team USA, jersey number 100, x 111.0, y 38.75).
+Added track 401 to frame 3323 of video shot 3 (team USA, jersey number 100, x 109.75, y 46.5).
+Added track 401 to frame 3370 of video shot 3 (team USA, jersey number 100, x 81.5, y 65.25).
+Added track 401 to frame 3380 of video shot 3 (team USA, jersey number 100, x 81.5, y 69.5).
+Imputed coordinates for video shot 3.
+Added track 402 to frame 3309 of video shot 3 (team USA, jersey number 100, x 107.5, y 48.75).
+Added track 402 to frame 3353 of video shot 3 (team USA, jersey number 100, x 83.0, y 31.25).
+Added track 402 to frame 3369 of video shot 3 (team USA, jersey number 100, x 71.75, y 37.25).
+Imputed coordinates for video shot 3.
+Added track 403 to frame 3309 of video shot 3 (team Canada, jersey number 100, x 122.0, y 34.75).
+Added track 403 to frame 3330 of video shot 3 (team Canada, jersey number 100, x 115.75, y 44.5).
+Added track 403 to frame 3353 of video shot 3 (team Canada, jersey number 100, x 101.5, y 48.75).
+Added track 403 to frame 3368 of video shot 3 (team Canada, jersey number 100, x 97.75, y 61.75).
+Added track 403 to frame 3393 of video shot 3 (team Canada, jersey number 100, x 112.0, y 68.75).
+Added track 403 to frame 3470 of video shot 3 (team Canada, jersey number 100, x 170.75, y 52.0).
+Added track 403 to frame 3518 of video shot 3 (team Canada, jersey number 100, x 179.75, y 17.5).
+Added track 403 to frame 3534 of video shot 3 (team Canada, jersey number 100, x 187.5, y 10.5).
+Added track 403 to frame 3575 of video shot 3 (team Canada, jersey number 100, x 191.25, y 29.5).
+Added track 403 to frame 3589 of video shot 3 (team Canada, jersey number 100, x 188.0, y 36.25).
+Imputed coordinates for video shot 3.
+Added track 404 to frame 3309 of video shot 3 (team Canada, jersey number 100, x 135.75, y 46.0).
+Added track 404 to frame 3355 of video shot 3 (team Canada, jersey number 100, x 105.5, y 55.75).
+Added track 404 to frame 3371 of video shot 3 (team Canada, jersey number 100, x 102.0, y 66.5).
+Added track 404 to frame 3407 of video shot 3 (team Canada, jersey number 100, x 120.0, y 75.75).
+Added track 404 to frame 3413 of video shot 3 (team Canada, jersey number 100, x 124.25, y 71.0).
+Imputed coordinates for video shot 3.
+Added track 405 to frame 3315 of video shot 3 (team Canada, jersey number 100, x 90.5, y 40.25).
+Added track 405 to frame 3364 of video shot 3 (team Canada, jersey number 100, x 64.75, y 44.75).
+Imputed coordinates for video shot 3.
+Added track 406 to frame 3321 of video shot 3 (team Canada, jersey number 100, x 84.0, y 57.5).
+Added track 406 to frame 3349 of video shot 3 (team Canada, jersey number 100, x 85.25, y 72.75).
+Added track 406 to frame 3380 of video shot 3 (team Canada, jersey number 100, x 79.5, y 79.75).
+Imputed coordinates for video shot 3.
+Added track 407 to frame 3428 of video shot 3 (team USA, jersey number 100, x 195.25, y 44.0).
+Added track 407 to frame 3488 of video shot 3 (team USA, jersey number 100, x 195.0, y 43.25).
+Added track 407 to frame 3525 of video shot 3 (team USA, jersey number 100, x 189.0, y 48.5).
+Added track 407 to frame 3560 of video shot 3 (team USA, jersey number 100, x 187.75, y 44.5).
+Added track 407 to frame 3589 of video shot 3 (team USA, jersey number 100, x 187.75, y 44.75).
+Imputed coordinates for video shot 3.
+Added track 408 to frame 3534 of video shot 3 (team USA, jersey number 100, x 161.75, y 47.0).
+Added track 408 to frame 3552 of video shot 3 (team USA, jersey number 100, x 177.25, y 55.5).
+Added track 408 to frame 3579 of video shot 3 (team USA, jersey number 100, x 181.5, y 66.75).
+Added track 408 to frame 3589 of video shot 3 (team USA, jersey number 100, x 179.75, y 72.5).
+Imputed coordinates for video shot 3.
+Set jersey number of track 398 in video shot 3 to 5.
+Set jersey number of track 399 in video shot 3 to 20.
+Set jersey number of track 405 in video shot 3 to 14.
+Set jersey number of track 406 in video shot 3 to 3.
+Set jersey number of track 403 in video shot 3 to 47.
+Set jersey number of track 407 in video shot 3 to 35.
+Set jersey number of track 400 in video shot 3 to 15.
+Set jersey number of track 408 in video shot 3 to 20.
+Set jersey number of track 402 in video shot 3 to 28.
+Set jersey number of track 401 in video shot 3 to 21.
+Set jersey number of track 404 in video shot 3 to 10.

@@ -1,0 +1,903 @@
+Shifted all coordinates (-8.0, -4.0).
+Removed all tracks appearing 6 or fewer frames.
+Switched team of track 410 from video shot 1.
+Set jersey number of track 408 in video shot 1 to 35.
+Set jersey number of track 415 in video shot 1 to 40.
+Merged track 417 from video shot 1 with track 415.
+Removed track 420 from video shot 1.
+Switched team of track 422 from video shot 1.
+Set jersey number of track 422 in video shot 1 to 35.
+Merged track 431 from video shot 1 with track 411.
+Switched team of track 444 from video shot 1.
+Set jersey number of track 444 in video shot 1 to 26.
+Merged track 444 from video shot 1 with track 406.
+Switched team of track 2 from video shot 2.
+Set jersey number of track 2 in video shot 2 to 35.
+Switched team of track 19 from video shot 2.
+Set jersey number of track 19 in video shot 2 to 35.
+Merged track 21 from video shot 2 with track 9.
+Merged track 25 from video shot 2 with track 8.
+Merged track 30 from video shot 2 with track 11.
+Switched team of track 44 from video shot 2.
+Set jersey number of track 51 in video shot 2 to 35.
+Merged track 55 from video shot 2 with track 44.
+Removed track 84 from video shot 2.
+Set jersey number of track 98 in video shot 2 to 35.
+Merged track 101 from video shot 2 with track 72.
+Set jersey number of track 106 in video shot 2 to 35.
+Switched team of track 106 from video shot 2.
+Set jersey number of track 99 in video shot 2 to 7.
+Set jersey number of track 107 in video shot 2 to 7.
+Switched team of track 107 from video shot 2.
+Merged track 107 from video shot 2 with track 99.
+Merged track 109 from video shot 2 with track 72.
+Removed track 110 from video shot 2.
+Merged track 113 from video shot 2 with track 90.
+Switched team of track 121 from video shot 2.
+Set jersey number of track 121 in video shot 2 to 28.
+Merged track 121 from video shot 2 with track 92.
+Merged track 117 from video shot 2 with track 90.
+Merged track 90 from video shot 2 with track 116 starting at frame 1822.
+Set jersey number of track 116 in video shot 2 to 11.
+Merged track 90 from video shot 2 with track 126 starting at frame 116.
+Set jersey number of track 136 in video shot 2 to 28.
+Merged track 136 from video shot 2 with track 92.
+Switched team of track 140 from video shot 2.
+Switched team of track 142 from video shot 2.
+Set jersey number of track 142 in video shot 2 to 35.
+Set jersey number of track 92 in video shot 2 to 27.
+Switched team of track 144 from video shot 2.
+Merged track 144 from video shot 2 with track 92.
+Switched team of track 151 from video shot 2.
+Set jersey number of track 151 in video shot 2 to 35.
+Merged track 154 from video shot 2 with track 129.
+Merged track 157 from video shot 2 with track 129.
+Set jersey number of track 148 in video shot 2 to 25.
+Merged track 156 from video shot 2 with track 148.
+Set jersey number of track 132 in video shot 2 to 7.
+Set jersey number of track 161 in video shot 2 to 7.
+Merged track 161 from video shot 2 with track 132.
+Switched team of track 164 from video shot 2.
+Set jersey number of track 165 in video shot 2 to 35.
+Switched team of track 171 from video shot 2.
+Set jersey number of track 171 in video shot 2 to 35.
+Set jersey number of track 170 in video shot 2 to 3.
+Merged track 180 from video shot 2 with track 170.
+Set jersey number of track 172 in video shot 2 to 28.
+Merged track 172 from video shot 2 with track 129.
+Merged track 185 from video shot 2 with track 173.
+Set jersey number of track 186 in video shot 2 to 11.
+Merged track 186 from video shot 2 with track 126.
+Switched team of track 200 from video shot 2.
+Merged track 200 from video shot 2 with track 173.
+Set jersey number of track 206 in video shot 2 to 35.
+Switched team of track 208 from video shot 2.
+Switched team of track 266 from video shot 2.
+Switched team of track 270 from video shot 2.
+Switched team of track 271 from video shot 2.
+Removed track 272 from video shot 2.
+Removed track 278 from video shot 2.
+Switched team of track 281 from video shot 2.
+Merged track 281 from video shot 2 with track 266.
+Removed track 282 from video shot 2.
+Merged track 284 from video shot 2 with track 262.
+Switched team of track 348 from video shot 2.
+Set jersey number of track 340 in video shot 2 to 12.
+Merged track 352 from video shot 2 with track 340.
+Merged track 351 from video shot 2 with track 318.
+Set jersey number of track 330 in video shot 2 to 100.
+Merged track 330 from video shot 2 with track 341 starting at frame 2808.
+Merged track 344 from video shot 2 with track 330.
+Set jersey number of track 315 in video shot 2 to 12.
+Set jersey number of track 315 in video shot 2 to 100.
+Merged track 315 from video shot 2 with track 348 starting at frame 2813.
+Removed track 362 from video shot 2.
+Switched team of track 364 from video shot 2.
+Switched team of track 374 from video shot 2.
+Switched team of track 384 from video shot 2.
+Set jersey number of track 393 in video shot 2 to 35.
+Set jersey number of track 396 in video shot 2 to 29.
+Switched team of track 396 from video shot 2.
+Merged track 396 from video shot 2 with track 364 starting at frame 2813.
+Shifted frame 685 coordinates (1.0, 0).
+Shifted frame 686 coordinates (1.5, 0).
+Shifted frame 687 coordinates (2.0, 0).
+Shifted frame 688 coordinates (2.5, 0).
+Shifted frame 689 coordinates (2.5, 0).
+Shifted frame 690 coordinates (3.0, 0).
+Shifted frame 691 coordinates (3.0, 0).
+Shifted frame 692 coordinates (3.0, 0).
+Shifted frame 693 coordinates (3.0, 0).
+Shifted frame 694 coordinates (3.0, 0).
+Shifted frame 695 coordinates (3.5, 0).
+Shifted frame 696 coordinates (3.5, 0).
+Shifted frame 697 coordinates (3.5, 0).
+Shifted frame 698 coordinates (3.5, 0).
+Shifted frame 699 coordinates (3.5, 0).
+Shifted frame 700 coordinates (3.5, 0).
+Shifted frame 701 coordinates (3.5, 0).
+Shifted frame 702 coordinates (3.5, 0).
+Shifted frame 703 coordinates (4.0, 0).
+Shifted frame 704 coordinates (4.0, 0).
+Shifted frame 705 coordinates (4.5, 0).
+Shifted frame 706 coordinates (5.0, 0).
+Shifted frame 707 coordinates (5.0, 0).
+Shifted frame 708 coordinates (5.5, 0).
+Shifted frame 709 coordinates (6.0, 0).
+Shifted frame 710 coordinates (6.5, 0).
+Shifted frame 711 coordinates (6.5, 0).
+Shifted frame 712 coordinates (6.5, 0).
+Shifted frame 713 coordinates (6.5, 0).
+Shifted frame 714 coordinates (7.0, 0).
+Shifted frame 715 coordinates (7.5, 0).
+Shifted frame 716 coordinates (7.5, 0).
+Shifted frame 717 coordinates (7.5, 0).
+Shifted frame 718 coordinates (8.0, 0).
+Shifted frame 719 coordinates (8.5, 0).
+Shifted frame 720 coordinates (9.0, 0).
+Shifted frame 721 coordinates (9.0, 0).
+Shifted frame 722 coordinates (9.5, 0).
+Shifted frame 723 coordinates (9.5, 0).
+Shifted frame 724 coordinates (9.5, 0).
+Shifted frame 725 coordinates (9.5, 0).
+Shifted frame 726 coordinates (9.5, 0).
+Shifted frame 727 coordinates (9.5, 0).
+Shifted frame 728 coordinates (9.5, 0).
+Shifted frame 729 coordinates (9.5, 0).
+Shifted frame 730 coordinates (9.5, 0).
+Shifted frame 731 coordinates (9.0, 0).
+Shifted frame 732 coordinates (8.5, 0).
+Shifted frame 733 coordinates (8.5, 0).
+Shifted frame 734 coordinates (8.5, 0).
+Shifted frame 735 coordinates (8.5, 0).
+Shifted frame 736 coordinates (8.0, 0).
+Shifted frame 737 coordinates (8.0, 0).
+Shifted frame 738 coordinates (8.0, 0).
+Shifted frame 739 coordinates (8.0, 0).
+Shifted frame 740 coordinates (8.0, 0).
+Shifted frame 741 coordinates (8.0, 0).
+Shifted frame 742 coordinates (8.0, 0).
+Shifted frame 743 coordinates (8.0, 0).
+Shifted frame 744 coordinates (7.5, 0).
+Shifted frame 745 coordinates (7.5, 0).
+Shifted frame 746 coordinates (7.5, 0).
+Shifted frame 747 coordinates (7.5, 0).
+Shifted frame 748 coordinates (7.5, 0).
+Shifted frame 749 coordinates (7.5, 0).
+Shifted frame 750 coordinates (7.5, 0).
+Shifted frame 751 coordinates (7.5, 0).
+Shifted frame 752 coordinates (7.5, 0).
+Shifted frame 753 coordinates (7.5, 0).
+Shifted frame 754 coordinates (7.5, 0).
+Shifted frame 755 coordinates (7.5, 0).
+Shifted frame 756 coordinates (7.5, 0).
+Shifted frame 757 coordinates (7.5, 0).
+Shifted frame 758 coordinates (8.0, 0).
+Shifted frame 759 coordinates (8.5, 0).
+Shifted frame 760 coordinates (9.0, 0).
+Shifted frame 761 coordinates (9.0, 0).
+Shifted frame 762 coordinates (9.0, 0).
+Shifted frame 763 coordinates (9.5, 0).
+Shifted frame 764 coordinates (9.5, 0).
+Shifted frame 765 coordinates (9.5, 0).
+Shifted frame 766 coordinates (9.5, 0).
+Shifted frame 767 coordinates (9.5, 0).
+Shifted frame 768 coordinates (9.5, 0).
+Shifted frame 769 coordinates (9.5, 0).
+Shifted frame 770 coordinates (9.5, 0).
+Shifted frame 771 coordinates (9.5, 0).
+Shifted frame 772 coordinates (9.5, 0).
+Shifted frame 773 coordinates (9.0, 0).
+Shifted frame 774 coordinates (9.0, 0).
+Shifted frame 775 coordinates (9.0, 0).
+Shifted frame 776 coordinates (9.0, 0).
+Shifted frame 777 coordinates (9.0, 0).
+Shifted frame 778 coordinates (9.0, 0).
+Shifted frame 779 coordinates (8.5, 0).
+Shifted frame 780 coordinates (8.5, 0).
+Shifted frame 781 coordinates (8.5, 0).
+Shifted frame 782 coordinates (8.5, 0).
+Shifted frame 783 coordinates (8.5, 0).
+Shifted frame 784 coordinates (8.5, 0).
+Shifted frame 785 coordinates (8.5, 0).
+Shifted frame 786 coordinates (8.5, 0).
+Shifted frame 787 coordinates (8.5, 0).
+Shifted frame 788 coordinates (8.5, 0).
+Shifted frame 789 coordinates (8.5, 0).
+Shifted frame 790 coordinates (8.5, 0).
+Shifted frame 791 coordinates (8.5, 0).
+Shifted frame 792 coordinates (8.5, 0).
+Shifted frame 793 coordinates (8.5, 0).
+Shifted frame 794 coordinates (8.5, 0).
+Shifted frame 795 coordinates (8.5, 0).
+Shifted frame 796 coordinates (8.0, 0).
+Shifted frame 797 coordinates (7.0, 0).
+Shifted frame 798 coordinates (6.0, 0).
+Shifted frame 799 coordinates (5.0, 0).
+Shifted frame 800 coordinates (4.0, 0).
+Shifted frame 801 coordinates (4.0, 0).
+Shifted frame 802 coordinates (4.0, 0).
+Shifted frame 803 coordinates (4.0, 0).
+Shifted frame 803 coordinates (1.0, 0).
+Shifted frame 804 coordinates (4.0, 0).
+Shifted frame 805 coordinates (4.0, 0).
+Shifted frame 806 coordinates (4.0, 0).
+Shifted frame 807 coordinates (4.0, 0).
+Shifted frame 808 coordinates (4.0, 0).
+Shifted frame 809 coordinates (4.0, 0).
+Shifted frame 810 coordinates (5.0, 0).
+Shifted frame 811 coordinates (6.0, 0).
+Shifted frame 812 coordinates (6.0, 0).
+Shifted frame 813 coordinates (6.0, 0).
+Shifted frame 814 coordinates (6.0, 0).
+Shifted frame 815 coordinates (6.0, 0).
+Shifted frame 816 coordinates (6.0, 0).
+Shifted frame 817 coordinates (5.0, 0).
+Shifted frame 818 coordinates (5.0, 0).
+Shifted frame 819 coordinates (5.0, 0).
+Shifted frame 820 coordinates (5.0, 0).
+Shifted frame 821 coordinates (4.0, 0).
+Shifted frame 822 coordinates (4.0, 0).
+Shifted frame 823 coordinates (4.0, 0).
+Shifted frame 824 coordinates (4.0, 0).
+Shifted frame 825 coordinates (4.0, 0).
+Shifted frame 826 coordinates (3.0, 0).
+Shifted frame 827 coordinates (3.0, 0).
+Shifted frame 828 coordinates (3.0, 0).
+Shifted frame 829 coordinates (3.0, 0).
+Shifted frame 830 coordinates (3.0, 0).
+Shifted frame 831 coordinates (2.5, 0).
+Shifted frame 832 coordinates (2.5, 0).
+Shifted frame 833 coordinates (2.5, 0).
+Shifted frame 834 coordinates (2.5, 0).
+Shifted frame 835 coordinates (2.5, 0).
+Shifted frame 836 coordinates (2.0, 0).
+Shifted frame 837 coordinates (2.0, 0).
+Shifted frame 838 coordinates (1.5, 0).
+Shifted frame 839 coordinates (1.5, 0).
+Shifted frame 840 coordinates (1.5, 0).
+Shifted frame 841 coordinates (1.5, 0).
+Shifted frame 842 coordinates (1.0, 0).
+Shifted frame 877 coordinates (1.0, 0).
+Shifted frame 878 coordinates (1.0, 0).
+Shifted frame 879 coordinates (1.0, 0).
+Shifted frame 880 coordinates (1.0, 0).
+Shifted frame 881 coordinates (1.5, 0).
+Shifted frame 882 coordinates (1.5, 0).
+Shifted frame 883 coordinates (2.0, 0).
+Shifted frame 884 coordinates (2.5, 0).
+Shifted frame 885 coordinates (3.0, 0).
+Shifted frame 886 coordinates (3.5, 0).
+Shifted frame 887 coordinates (3.5, 0).
+Shifted frame 888 coordinates (4.0, 0).
+Shifted frame 889 coordinates (4.5, 0).
+Shifted frame 890 coordinates (5.0, 0).
+Shifted frame 891 coordinates (5.5, 0).
+Shifted frame 892 coordinates (6.0, 0).
+Shifted frame 893 coordinates (6.0, 0).
+Shifted frame 894 coordinates (6.5, 0).
+Shifted frame 895 coordinates (7.0, 0).
+Shifted frame 896 coordinates (7.0, 0).
+Shifted frame 897 coordinates (7.0, 0).
+Shifted frame 898 coordinates (7.5, 0).
+Shifted frame 899 coordinates (8.0, 0).
+Shifted frame 900 coordinates (8.0, 0).
+Shifted frame 901 coordinates (8.5, 0).
+Shifted frame 902 coordinates (8.5, 0).
+Shifted frame 903 coordinates (8.5, 0).
+Shifted frame 904 coordinates (8.5, 0).
+Shifted frame 905 coordinates (8.5, 0).
+Shifted frame 906 coordinates (8.5, 0).
+Shifted frame 907 coordinates (8.5, 0).
+Shifted frame 908 coordinates (8.5, 0).
+Shifted frame 909 coordinates (8.5, 0).
+Shifted frame 910 coordinates (8.5, 0).
+Shifted frame 911 coordinates (8.5, 0).
+Shifted frame 912 coordinates (8.5, 0).
+Shifted frame 913 coordinates (8.0, 0).
+Shifted frame 914 coordinates (8.0, 0).
+Shifted frame 915 coordinates (8.0, 0).
+Shifted frame 916 coordinates (8.0, 0).
+Shifted frame 917 coordinates (8.0, 0).
+Shifted frame 918 coordinates (8.0, 0).
+Shifted frame 919 coordinates (8.0, 0).
+Shifted frame 920 coordinates (8.0, 0).
+Shifted frame 921 coordinates (8.0, 0).
+Shifted frame 922 coordinates (8.0, 0).
+Shifted frame 923 coordinates (7.5, 0).
+Shifted frame 924 coordinates (7.5, 0).
+Shifted frame 925 coordinates (7.5, 0).
+Shifted frame 926 coordinates (7.0, 0).
+Shifted frame 927 coordinates (7.0, 0).
+Shifted frame 928 coordinates (6.5, 0).
+Shifted frame 929 coordinates (6.0, 0).
+Shifted frame 930 coordinates (6.0, 0).
+Shifted frame 931 coordinates (5.5, 0).
+Shifted frame 932 coordinates (5.5, 0).
+Shifted frame 933 coordinates (5.5, 0).
+Shifted frame 934 coordinates (5.5, 0).
+Shifted frame 935 coordinates (5.0, 0).
+Shifted frame 936 coordinates (5.0, 0).
+Shifted frame 937 coordinates (5.0, 0).
+Shifted frame 938 coordinates (5.0, 0).
+Shifted frame 939 coordinates (5.0, 0).
+Shifted frame 940 coordinates (4.5, 0).
+Shifted frame 941 coordinates (4.5, 0).
+Shifted frame 942 coordinates (4.5, 0).
+Shifted frame 943 coordinates (4.5, 0).
+Shifted frame 944 coordinates (4.5, 0).
+Shifted frame 945 coordinates (4.5, 0).
+Shifted frame 946 coordinates (4.5, 0).
+Shifted frame 947 coordinates (4.5, 0).
+Shifted frame 948 coordinates (4.0, 0).
+Shifted frame 949 coordinates (4.0, 0).
+Shifted frame 950 coordinates (4.0, 0).
+Shifted frame 951 coordinates (4.0, 0).
+Shifted frame 952 coordinates (3.5, 0).
+Shifted frame 953 coordinates (3.0, 0).
+Shifted frame 954 coordinates (3.0, 0).
+Shifted frame 955 coordinates (2.5, 0).
+Shifted frame 956 coordinates (2.5, 0).
+Shifted frame 957 coordinates (2.5, 0).
+Shifted frame 958 coordinates (2.0, 0).
+Shifted frame 959 coordinates (1.5, 0).
+Shifted frame 960 coordinates (1.5, 0).
+Shifted frame 961 coordinates (1.0, 0).
+Shifted frame 962 coordinates (1.0, 0).
+Shifted frame 1547 coordinates (1.0, 0).
+Shifted frame 1548 coordinates (1.0, 0).
+Shifted frame 1549 coordinates (1.0, 0).
+Shifted frame 1550 coordinates (1.5, 0).
+Shifted frame 1551 coordinates (1.5, 0).
+Shifted frame 1552 coordinates (2.0, 0).
+Shifted frame 1553 coordinates (2.0, 0).
+Shifted frame 1554 coordinates (2.0, 0).
+Shifted frame 1555 coordinates (2.0, 0).
+Shifted frame 1556 coordinates (2.5, 0).
+Shifted frame 1557 coordinates (2.5, 0).
+Shifted frame 1558 coordinates (2.5, 0).
+Shifted frame 1559 coordinates (2.5, 0).
+Shifted frame 1560 coordinates (3.0, 0).
+Shifted frame 1561 coordinates (3.0, 0).
+Shifted frame 1562 coordinates (3.0, 0).
+Shifted frame 1563 coordinates (3.0, 0).
+Shifted frame 1564 coordinates (3.0, 0).
+Shifted frame 1565 coordinates (3.0, 0).
+Shifted frame 1566 coordinates (3.0, 0).
+Shifted frame 1567 coordinates (3.5, 0).
+Shifted frame 1568 coordinates (3.5, 0).
+Shifted frame 1569 coordinates (3.5, 0).
+Shifted frame 1570 coordinates (3.5, 0).
+Shifted frame 1571 coordinates (3.5, 0).
+Shifted frame 1572 coordinates (3.5, 0).
+Shifted frame 1573 coordinates (4.0, 0).
+Shifted frame 1574 coordinates (4.0, 0).
+Shifted frame 1575 coordinates (4.0, 0).
+Shifted frame 1576 coordinates (4.5, 0).
+Shifted frame 1577 coordinates (4.5, 0).
+Shifted frame 1578 coordinates (4.5, 0).
+Shifted frame 1579 coordinates (5.0, 0).
+Shifted frame 1580 coordinates (5.0, 0).
+Shifted frame 1581 coordinates (5.0, 0).
+Shifted frame 1582 coordinates (5.5, 0).
+Shifted frame 1583 coordinates (5.5, 0).
+Shifted frame 1584 coordinates (6.0, 0).
+Shifted frame 1585 coordinates (6.5, 0).
+Shifted frame 1586 coordinates (7.0, 0).
+Shifted frame 1587 coordinates (7.5, 0).
+Shifted frame 1588 coordinates (8.0, 0).
+Shifted frame 1589 coordinates (8.0, 0).
+Shifted frame 1590 coordinates (8.0, 0).
+Shifted frame 1591 coordinates (7.0, 0).
+Shifted frame 1592 coordinates (6.0, 0).
+Shifted frame 1593 coordinates (6.0, 0).
+Shifted frame 1594 coordinates (6.0, 0).
+Shifted frame 1595 coordinates (5.0, 0).
+Shifted frame 1596 coordinates (5.0, 0).
+Shifted frame 1597 coordinates (5.0, 0).
+Shifted frame 1598 coordinates (4.0, 0).
+Shifted frame 1599 coordinates (4.0, 0).
+Shifted frame 1600 coordinates (4.0, 0).
+Shifted frame 1601 coordinates (4.0, 0).
+Shifted frame 1602 coordinates (4.0, 0).
+Shifted frame 1603 coordinates (4.0, 0).
+Shifted frame 1604 coordinates (4.0, 0).
+Shifted frame 1605 coordinates (4.0, 0).
+Shifted frame 1606 coordinates (4.0, 0).
+Shifted frame 1607 coordinates (4.0, 0).
+Shifted frame 1608 coordinates (4.0, 0).
+Shifted frame 1609 coordinates (4.0, 0).
+Shifted frame 1610 coordinates (4.0, 0).
+Shifted frame 1611 coordinates (4.0, 0).
+Shifted frame 1612 coordinates (4.0, 0).
+Shifted frame 1613 coordinates (4.0, 0).
+Shifted frame 1614 coordinates (4.0, 0).
+Shifted frame 1615 coordinates (4.0, 0).
+Shifted frame 1616 coordinates (4.0, 0).
+Shifted frame 1617 coordinates (3.0, 0).
+Shifted frame 1618 coordinates (2.0, 0).
+Shifted frame 1619 coordinates (1.0, 0).
+Shifted frame 2935 coordinates (1.0, 0).
+Shifted frame 2936 coordinates (2.0, 0).
+Shifted frame 2937 coordinates (3.0, 0).
+Shifted frame 2938 coordinates (4.0, 0).
+Shifted frame 2939 coordinates (5.0, 0).
+Shifted frame 2940 coordinates (6.0, 0).
+Shifted frame 2941 coordinates (7.0, 0).
+Shifted frame 2942 coordinates (8.0, 0).
+Shifted frame 2943 coordinates (8.0, 0).
+Shifted frame 2944 coordinates (8.0, 0).
+Shifted frame 2945 coordinates (8.0, 0).
+Shifted frame 2946 coordinates (8.0, 0).
+Shifted frame 2947 coordinates (8.0, 0).
+Shifted frame 2948 coordinates (8.0, 0).
+Shifted frame 2949 coordinates (9.0, 0).
+Shifted frame 2950 coordinates (10.0, 3.0).
+Shifted frame 2949 coordinates (0, 3.0).
+Shifted frame 2948 coordinates (0, 3.0).
+Shifted frame 2947 coordinates (0, 3.0).
+Shifted frame 2946 coordinates (0, 3.0).
+Shifted frame 2945 coordinates (0, 3.0).
+Shifted frame 2944 coordinates (0, 3.0).
+Shifted frame 2943 coordinates (0, 3.0).
+Shifted frame 2942 coordinates (0, 3.0).
+Shifted frame 2941 coordinates (0, 3.0).
+Shifted frame 2940 coordinates (0, 3.0).
+Shifted frame 2939 coordinates (0, 3.0).
+Shifted frame 2938 coordinates (0, 3.0).
+Shifted frame 2937 coordinates (0, 2.0).
+Shifted frame 2936 coordinates (0, 1.0).
+Shifted frame 2951 coordinates (9.0, 3.0).
+Shifted frame 2952 coordinates (9.0, 3.0).
+Shifted frame 2953 coordinates (8.0, 3.0).
+Shifted frame 2954 coordinates (8.0, 2.0).
+Shifted frame 2955 coordinates (8.0, 2.0).
+Shifted frame 2956 coordinates (8.0, 2.0).
+Shifted frame 2957 coordinates (8.0, 2.0).
+Shifted frame 2958 coordinates (8.0, 2.0).
+Shifted frame 2959 coordinates (8.0, 2.0).
+Shifted frame 2960 coordinates (8.0, 2.0).
+Shifted frame 2961 coordinates (8.0, 2.0).
+Shifted frame 2962 coordinates (8.0, 2.0).
+Shifted frame 2963 coordinates (9.0, 1.0).
+Shifted frame 2964 coordinates (9.0, 0).
+Shifted frame 2965 coordinates (9.0, 0).
+Shifted frame 2966 coordinates (9.0, 0).
+Shifted frame 2967 coordinates (9.0, 0).
+Shifted frame 2968 coordinates (9.0, 0).
+Shifted frame 2969 coordinates (9.0, 0).
+Shifted frame 2970 coordinates (9.0, 0).
+Shifted frame 2971 coordinates (9.0, 0).
+Shifted frame 2972 coordinates (9.0, 0).
+Shifted frame 2973 coordinates (9.0, 0).
+Shifted frame 2974 coordinates (9.0, 0).
+Shifted frame 2975 coordinates (9.0, 0).
+Shifted frame 2976 coordinates (9.0, 0).
+Shifted frame 2977 coordinates (9.0, 0).
+Shifted frame 2978 coordinates (9.0, 0).
+Shifted frame 2979 coordinates (9.0, 0).
+Shifted frame 2980 coordinates (9.0, 0).
+Shifted frame 2981 coordinates (9.0, 0).
+Shifted frame 2982 coordinates (9.0, 0).
+Shifted frame 2983 coordinates (9.0, 0).
+Shifted frame 2984 coordinates (9.0, 0).
+Shifted frame 2985 coordinates (9.0, 0).
+Shifted frame 2986 coordinates (10.0, 0).
+Shifted frame 2987 coordinates (11.0, 0).
+Shifted frame 2988 coordinates (12.0, 0).
+Shifted frame 2989 coordinates (13.0, 0).
+Shifted frame 2990 coordinates (14.0, 0).
+Shifted frame 2991 coordinates (15.0, 0).
+Shifted frame 2992 coordinates (16.0, 0).
+Shifted frame 2993 coordinates (17.0, 0).
+Shifted frame 2994 coordinates (17.0, 1.0).
+Shifted frame 2995 coordinates (18.0, 2.0).
+Shifted frame 2996 coordinates (19.0, 3.0).
+Shifted frame 2997 coordinates (20.0, 4.0).
+Shifted frame 2998 coordinates (20.0, 5.0).
+Shifted frame 2999 coordinates (20.0, 5.0).
+Shifted frame 3000 coordinates (20.0, 5.0).
+Shifted frame 3001 coordinates (20.0, 5.0).
+Shifted frame 3002 coordinates (20.0, 4.5).
+Shifted frame 3003 coordinates (20.0, 4.5).
+Shifted frame 3004 coordinates (19.0, 4.5).
+Shifted frame 3005 coordinates (18.0, 4.5).
+Shifted frame 3006 coordinates (17.5, 4.5).
+Shifted frame 3007 coordinates (17.0, 4.0).
+Shifted frame 3008 coordinates (17.0, 4.0).
+Shifted frame 3009 coordinates (17.0, 4.0).
+Shifted frame 3010 coordinates (16.0, 4.0).
+Shifted frame 3011 coordinates (16.0, 4.0).
+Shifted frame 3012 coordinates (16.0, 4.0).
+Shifted frame 3013 coordinates (16.0, 4.0).
+Shifted frame 3014 coordinates (16.0, 4.0).
+Shifted frame 3015 coordinates (16.0, 4.0).
+Shifted frame 3016 coordinates (16.0, 4.0).
+Shifted frame 3017 coordinates (16.0, 4.0).
+Shifted frame 3018 coordinates (16.0, 4.0).
+Shifted frame 3019 coordinates (17.0, 4.0).
+Shifted frame 3020 coordinates (18.0, 4.0).
+Shifted frame 3021 coordinates (18.5, 4.0).
+Shifted frame 3022 coordinates (18.5, 4.0).
+Shifted frame 3023 coordinates (19.0, 4.0).
+Shifted frame 3024 coordinates (20.0, 4.0).
+Shifted frame 3025 coordinates (22.0, 5.0).
+Shifted frame 3026 coordinates (23.0, 5.0).
+Shifted frame 3027 coordinates (24.0, 5.0).
+Shifted frame 3028 coordinates (25.0, 5.0).
+Shifted frame 3029 coordinates (26.0, 5.0).
+Shifted frame 3030 coordinates (27.0, 6.0).
+Shifted frame 3031 coordinates (28.0, 6.0).
+Shifted frame 3032 coordinates (28.0, 6.0).
+Shifted frame 3033 coordinates (29.0, 6.0).
+Shifted frame 3034 coordinates (30.0, 6.0).
+Shifted frame 3035 coordinates (30.0, 6.0).
+Shifted frame 3036 coordinates (30.0, 6.0).
+Shifted frame 3037 coordinates (30.0, 6.0).
+Shifted frame 3038 coordinates (30.0, 6.0).
+Shifted frame 3039 coordinates (30.0, 6.0).
+Shifted frame 3040 coordinates (30.0, 6.0).
+Shifted frame 3041 coordinates (30.0, 6.0).
+Shifted frame 3042 coordinates (30.0, 6.0).
+Shifted frame 3043 coordinates (30.0, 6.0).
+Shifted frame 3044 coordinates (30.0, 6.0).
+Shifted frame 3045 coordinates (30.0, 6.0).
+Shifted frame 3046 coordinates (30.0, 6.0).
+Shifted frame 3047 coordinates (30.0, 6.0).
+Shifted frame 3048 coordinates (30.0, 7.0).
+Shifted frame 3049 coordinates (30.0, 7.0).
+Shifted frame 3050 coordinates (30.0, 8.0).
+Shifted frame 3051 coordinates (30.0, 9.0).
+Shifted frame 3052 coordinates (30.0, 9.0).
+Shifted frame 3053 coordinates (30.0, 9.0).
+Shifted frame 3054 coordinates (30.0, 9.0).
+Shifted frame 3055 coordinates (30.0, 9.0).
+Shifted frame 3056 coordinates (30.0, 9.0).
+Shifted frame 3057 coordinates (30.0, 9.0).
+Shifted frame 3058 coordinates (30.0, 9.0).
+Shifted frame 3056 coordinates (-2.0, 0).
+Shifted frame 3057 coordinates (-3.0, 0).
+Shifted frame 3058 coordinates (-4.0, 0).
+Shifted frame 3059 coordinates (20.0, 8.0).
+Shifted frame 3060 coordinates (18.0, 8.0).
+Shifted frame 3061 coordinates (18.0, 9.0).
+Shifted frame 3062 coordinates (15.0, 9.0).
+Shifted frame 3063 coordinates (14.0, 9.0).
+Shifted frame 3064 coordinates (11.0, 9.0).
+Shifted frame 3065 coordinates (9.0, 9.0).
+Shifted frame 3066 coordinates (8.0, 9.0).
+Shifted frame 3067 coordinates (7.0, 9.0).
+Shifted frame 3068 coordinates (7.0, 9.0).
+Shifted frame 3069 coordinates (5.0, 9.0).
+Shifted frame 3070 coordinates (5.0, 9.0).
+Shifted frame 3071 coordinates (4.0, 9.0).
+Shifted frame 3072 coordinates (3.0, 9.0).
+Shifted frame 3073 coordinates (0, 9.0).
+Shifted frame 3074 coordinates (0, 9.0).
+Shifted frame 3075 coordinates (0, 9.0).
+Shifted frame 3076 coordinates (0, 9.0).
+Shifted frame 3077 coordinates (0, 9.0).
+Shifted frame 3078 coordinates (0, 9.0).
+Shifted frame 3079 coordinates (0, 9.0).
+Shifted frame 3080 coordinates (0, 9.0).
+Shifted frame 3081 coordinates (0, 9.0).
+Shifted frame 3082 coordinates (0, 9.0).
+Shifted frame 3083 coordinates (0, 9.0).
+Shifted frame 3084 coordinates (0, 9.0).
+Shifted frame 3085 coordinates (0, 9.0).
+Shifted frame 3086 coordinates (0, 9.0).
+Shifted frame 3087 coordinates (0, 9.0).
+Shifted frame 3088 coordinates (0, 9.0).
+Shifted frame 3089 coordinates (0, 9.0).
+Shifted frame 3090 coordinates (0, 9.0).
+Shifted frame 3091 coordinates (0, 9.0).
+Shifted frame 3092 coordinates (0, 9.0).
+Shifted frame 3093 coordinates (0, 9.0).
+Shifted frame 3094 coordinates (0, 9.0).
+Shifted frame 3095 coordinates (0, 9.0).
+Shifted frame 3096 coordinates (0, 9.0).
+Shifted frame 3097 coordinates (0, 9.0).
+Shifted frame 3098 coordinates (0, 9.0).
+Shifted frame 3099 coordinates (0, 9.0).
+Shifted frame 3100 coordinates (0, 9.0).
+Shifted frame 3101 coordinates (0, 9.0).
+Shifted frame 3102 coordinates (0, 9.0).
+Shifted frame 3103 coordinates (0, 9.0).
+Shifted frame 3104 coordinates (0, 9.0).
+Shifted frame 3105 coordinates (0, 9.0).
+Shifted frame 3106 coordinates (0, 9.0).
+Shifted frame 3107 coordinates (0, 9.0).
+Shifted frame 3108 coordinates (0, 9.0).
+Shifted frame 3109 coordinates (0, 9.0).
+Shifted frame 3110 coordinates (0, 9.0).
+Shifted frame 3111 coordinates (0, 9.0).
+Shifted frame 3112 coordinates (0, 9.0).
+Shifted frame 3113 coordinates (0, 9.0).
+Shifted frame 3114 coordinates (0, 9.0).
+Shifted frame 3115 coordinates (0, 9.0).
+Shifted frame 3116 coordinates (0, 9.0).
+Shifted frame 3117 coordinates (0, 9.0).
+Shifted frame 3118 coordinates (0, 9.0).
+Shifted frame 3119 coordinates (0, 9.0).
+Shifted frame 3120 coordinates (0, 9.0).
+Shifted frame 3121 coordinates (0, 9.0).
+Shifted frame 3122 coordinates (0, 9.0).
+Shifted frame 3123 coordinates (0, 9.0).
+Shifted frame 3124 coordinates (0, 9.0).
+Shifted frame 3125 coordinates (0, 9.0).
+Shifted frame 3126 coordinates (0, 9.0).
+Shifted frame 3127 coordinates (0, 9.0).
+Shifted frame 3128 coordinates (0, 9.0).
+Shifted frame 3129 coordinates (0, 9.0).
+Shifted frame 3130 coordinates (0, 9.0).
+Shifted frame 3131 coordinates (0, 9.0).
+Shifted frame 3132 coordinates (0, 9.0).
+Shifted frame 3133 coordinates (0, 9.0).
+Shifted frame 3134 coordinates (0, 9.0).
+Shifted frame 3135 coordinates (0, 9.0).
+Shifted frame 3136 coordinates (0, 9.0).
+Shifted frame 3137 coordinates (0, 9.0).
+Shifted frame 3138 coordinates (0, 9.0).
+Shifted frame 3132 coordinates (0, -1.0).
+Shifted frame 3133 coordinates (0, -2.0).
+Shifted frame 3134 coordinates (0, -3.0).
+Shifted frame 3135 coordinates (0, -4.0).
+Shifted frame 3136 coordinates (0, -5.0).
+Shifted frame 3137 coordinates (0, -6.0).
+Shifted frame 3138 coordinates (0, -7.0).
+Shifted frame 3244 coordinates (-1.0, 0).
+Shifted frame 3245 coordinates (-1.5, 0).
+Shifted frame 3246 coordinates (-1.5, 0).
+Shifted frame 3247 coordinates (-1.5, 0).
+Shifted frame 3248 coordinates (-2.0, 0).
+Shifted frame 3249 coordinates (-2.5, 0).
+Shifted frame 3250 coordinates (-3.0, 0).
+Shifted frame 3251 coordinates (-4.0, 0).
+Shifted frame 3252 coordinates (-5.0, 0).
+Shifted frame 3253 coordinates (-6.0, 0).
+Shifted frame 3254 coordinates (-7.0, 0).
+Shifted frame 3255 coordinates (-8.0, 0).
+Shifted frame 3256 coordinates (-9.0, 0).
+Shifted frame 3257 coordinates (-10.0, 0).
+Shifted frame 3258 coordinates (-10.0, 0).
+Shifted frame 3259 coordinates (-10.0, 0).
+Shifted frame 3260 coordinates (-10.0, 0).
+Shifted frame 3261 coordinates (-10.0, 0).
+Shifted frame 3262 coordinates (-10.0, 0).
+Shifted frame 3263 coordinates (-10.0, 1.0).
+Shifted frame 3264 coordinates (-10.0, 1.0).
+Shifted frame 3265 coordinates (-10.0, 1.0).
+Shifted frame 3266 coordinates (-10.0, 1.0).
+Shifted frame 3267 coordinates (-10.0, 1.0).
+Shifted frame 3268 coordinates (-10.0, 1.0).
+Shifted frame 3269 coordinates (-10.0, 1.0).
+Shifted frame 3270 coordinates (-9.0, 2.0).
+Shifted frame 3271 coordinates (-9.0, 2.0).
+Shifted frame 3272 coordinates (-9.0, 2.0).
+Shifted frame 3273 coordinates (-8.0, 2.0).
+Shifted frame 3274 coordinates (-7.0, 2.0).
+Shifted frame 3275 coordinates (-7.0, 2.0).
+Shifted frame 3276 coordinates (-6.0, 2.0).
+Shifted frame 3277 coordinates (-6.0, 2.0).
+Shifted frame 3278 coordinates (-6.0, 2.0).
+Shifted frame 3279 coordinates (-6.0, 2.0).
+Shifted frame 3280 coordinates (-6.0, 2.0).
+Shifted frame 3281 coordinates (-6.0, 2.0).
+Merged track 126 from video shot 2 with track 116 starting at frame 1825.
+Merged track 12 from video shot 2 with track 6.
+Set jersey number of track 50 in video shot 2 to 3.
+Switched team of track 50 from video shot 2.
+Merged track 50 from video shot 2 with track 44.
+Merged track 62 from video shot 2 with track 44.
+Added track 39 to frame 1255 of video shot 2.
+Added track 39 to frame 1322 of video shot 2.
+Set jersey number of track 63 in video shot 2 to 19.
+Merged track 63 from video shot 2 with track 39.
+Set jersey number of track 164 in video shot 2 to 3.
+Merged track 170 from video shot 2 with track 164.
+Merged track 171 from video shot 2 with track 165.
+Removed track 181 from video shot 2.
+Added track 438 to frame 367 of video shot 1.
+Added track 438 to frame 391 of video shot 1.
+Added track 438 to frame 414 of video shot 1.
+Added track 438 to frame 455 of video shot 1.
+Added track 438 to frame 473 of video shot 1.
+Added track 439 to frame 2440 of video shot 2.
+Added track 439 to frame 2463 of video shot 2.
+Added track 439 to frame 2538 of video shot 2.
+Deleted video shot 3.
+Manually deleted frame 3282 to 3416 of video shot 2.
+Imputed coordinates for all tracks.
+Set jersey number of track 407 in video shot 1 to 20.
+Set jersey number of track 411 in video shot 1 to 21.
+Set jersey number of track 418 in video shot 1 to 3.
+Set jersey number of track 437 in video shot 1 to 20.
+Set jersey number of track 5 in video shot 2 to 21.
+Set jersey number of track 6 in video shot 2 to 26.
+Set jersey number of track 32 in video shot 2 to 3.
+Set jersey number of track 126 in video shot 2 to 28.
+Set jersey number of track 126 in video shot 2 to 21.
+Set jersey number of track 61 in video shot 2 to 28.
+Set jersey number of track 100 in video shot 2 to 26.
+Set jersey number of track 72 in video shot 2 to 26.
+Set jersey number of track 28 in video shot 2 to 28.
+Set jersey number of track 124 in video shot 2 to 5.
+Set jersey number of track 137 in video shot 2 to 26.
+Set jersey number of track 143 in video shot 2 to 5.
+Set jersey number of track 148 in video shot 2 to 25.
+Set jersey number of track 163 in video shot 2 to 12.
+Set jersey number of track 187 in video shot 2 to 25.
+Set jersey number of track 279 in video shot 2 to 28.
+Set jersey number of track 348 in video shot 2 to 25.
+Set jersey number of track 384 in video shot 2 to 21.
+Set jersey number of track 383 in video shot 2 to 5.
+Set jersey number of track 8 in video shot 2 to 14.
+Set jersey number of track 797 in video shot 2 to 3.
+Set jersey number of track 9 in video shot 2 to 3.
+Set jersey number of track 44 in video shot 2 to 3.
+Set jersey number of track 92 in video shot 2 to 27.
+Set jersey number of track 61 in video shot 2 to 27.
+Set jersey number of track 92 in video shot 2 to 28.
+Set jersey number of track 75 in video shot 2 to 7.
+Set jersey number of track 140 in video shot 2 to 3.
+Set jersey number of track 135 in video shot 2 to 12.
+Set jersey number of track 173 in video shot 2 to 7.
+Set jersey number of track 330 in video shot 2 to 5.
+Merged track 356 from video shot 2 with track 330.
+Imputed coordinates for all tracks.
+Set jersey number of track 439 in video shot 2 to 5.
+Set jersey number of track 211 in video shot 2 to 7.
+Set jersey number of track 318 in video shot 2 to 7.
+Set jersey number of track 262 in video shot 2 to 29.
+Set jersey number of track 270 in video shot 2 to 21.
+Set jersey number of track 266 in video shot 2 to 28.
+Set jersey number of track 341 in video shot 2 to 11.
+Set jersey number of track 359 in video shot 2 to 19.
+Set jersey number of track 208 in video shot 2 to 12.
+Set jersey number of track 213 in video shot 2 to 5.
+Added track 440 to frame 2689 of video shot 2 (team USA, jersey number 11, x 42.0, y 38.0).
+Imputed coordinates for video shot 2.
+Added track 440 to frame 2711 of video shot 2 (team USA, jersey number 11, x 31.0, y 42.0).
+Imputed coordinates for video shot 2.
+Added track 211 to frame 2705 of video shot 2 (team Canada, jersey number 7, x 37.0, y 12.0).
+Imputed coordinates for video shot 2.
+Added track 208 to frame 2707 of video shot 2 (team USA, jersey number 12, x 28.0, y 29.0).
+Imputed coordinates for video shot 2.
+Added track 206 to frame 2705 of video shot 2 (team USA, jersey number 35, x 12.0, y 40.0).
+Imputed coordinates for video shot 2.
+Added track 187 to frame 2694 of video shot 2 (team USA, jersey number 25, x 13.0, y 16.0).
+Imputed coordinates for video shot 2.
+Added track 262 to frame 2706 of video shot 2 (team Canada, jersey number 29, x 78.0, y 44.0).
+Imputed coordinates for video shot 2.
+Added track 266 to frame 2712 of video shot 2 (team Canada, jersey number 28, x 90.0, y 72.0).
+Imputed coordinates for video shot 2.
+Added track 279 to frame 2728 of video shot 2 (team USA, jersey number 28, x 118.0, y 12.0).
+Imputed coordinates for video shot 2.
+Added track 330 to frame 2765 of video shot 2 (team USA, jersey number 5, x 66.0, y 46.0).
+Imputed coordinates for video shot 2.
+Added track 340 to frame 2771 of video shot 2 (team USA, jersey number 12, x 60.0, y 38.0).
+Imputed coordinates for video shot 2.
+Added track 348 to frame 2787 of video shot 2 (team USA, jersey number 25, x 52.0, y 27.0).
+Imputed coordinates for video shot 2.
+Added track 341 to frame 2772 of video shot 2 (team USA, jersey number 11, x 54.0, y 65.0).
+Imputed coordinates for video shot 2.
+Merged track 364 from video shot 2 with track 262.
+Imputed coordinates for video shot 2.
+Added track 441 to frame 3231 of video shot 2 (team USA, jersey number 12, x 57.0, y 28.0).
+Added track 441 to frame 3281 of video shot 2 (team USA, jersey number 12, x 21.0, y 50.0).
+Imputed coordinates for video shot 2.
+Added track 442 to frame 244 of video shot 1 (team USA, jersey number 19, x 162.0, y 12.0).
+Added track 442 to frame 269 of video shot 1 (team USA, jersey number 19, x 169.0, y 22.0).
+Added track 442 to frame 313 of video shot 1 (team USA, jersey number 19, x 145.0, y 29.0).
+Added track 442 to frame 327 of video shot 1 (team USA, jersey number 19, x 140.0, y 27.0).
+Merged track 442 from video shot 1 with track 438.
+Imputed coordinates for video shot 1.
+Merged track 438 from video shot 1 with track 409.
+Imputed coordinates for video shot 1.
+Added track 32 to frame 981 of video shot 2 (team USA, jersey number 3, x 126.0, y 6.0).
+Imputed coordinates for video shot 2.
+Set jersey number of track 47 in video shot 2 to 21.
+Added track 75 to frame 1410 of video shot 2 (team Canada, jersey number 7, x 79.0, y 15.0).
+Imputed coordinates for video shot 2.
+Added track 75 to frame 1450 of video shot 2 (team Canada, jersey number 7, x 74.0, y 6.0).
+Imputed coordinates for video shot 2.
+Added track 442 to frame 1608 of video shot 2 (team USA, jersey number 100, x 140.0, y 80.0).
+Added track 442 to frame 1644 of video shot 2 (team USA, jersey number 100, x 140.0, y 80.0).
+Added track 442 to frame 1654 of video shot 2 (team USA, jersey number 100, x 142.0, y 80.0).
+Imputed coordinates for video shot 2.
+Added track 443 to frame 4292 of video shot 3 (team Canada, jersey number 100, x 44.75, y 11.75).
+Added track 443 to frame 4313 of video shot 3 (team Canada, jersey number 100, x 42.75, y 20.25).
+Added track 443 to frame 4367 of video shot 3 (team Canada, jersey number 100, x 59.5, y 28.0).
+Added track 443 to frame 4428 of video shot 3 (team Canada, jersey number 100, x 68.25, y 10.0).
+Imputed coordinates for video shot 3.
+Set jersey number of track 443 in video shot 3 to 14.
+Added track 444 to frame 4292 of video shot 3 (team Canada, jersey number 100, x 34.25, y 19.5).
+Added track 444 to frame 4341 of video shot 3 (team Canada, jersey number 100, x 48.25, y 14.25).
+Added track 444 to frame 4374 of video shot 3 (team Canada, jersey number 100, x 53.75, y 20.5).
+Added track 444 to frame 4400 of video shot 3 (team Canada, jersey number 100, x 54.0, y 22.0).
+Added track 444 to frame 4425 of video shot 3 (team Canada, jersey number 100, x 48.25, y 25.5).
+Added track 444 to frame 4483 of video shot 3 (team Canada, jersey number 100, x 18.75, y 12.75).
+Added track 444 to frame 4501 of video shot 3 (team Canada, jersey number 100, x 11.0, y 13.5).
+Added track 444 to frame 4518 of video shot 3 (team Canada, jersey number 100, x 8.75, y 20.5).
+Added track 444 to frame 4545 of video shot 3 (team Canada, jersey number 100, x 19.75, y 33.25).
+Added track 444 to frame 4579 of video shot 3 (team Canada, jersey number 100, x 39.0, y 40.25).
+Imputed coordinates for video shot 3.
+Set jersey number of track 444 in video shot 3 to 10.
+Added track 445 to frame 4292 of video shot 3 (team Canada, jersey number 100, x 32.25, y 27.75).
+Added track 445 to frame 4320 of video shot 3 (team Canada, jersey number 100, x 26.5, y 27.25).
+Added track 445 to frame 4336 of video shot 3 (team Canada, jersey number 100, x 25.75, y 33.0).
+Added track 445 to frame 4357 of video shot 3 (team Canada, jersey number 100, x 26.25, y 40.75).
+Added track 445 to frame 4369 of video shot 3 (team Canada, jersey number 100, x 33.25, y 42.5).
+Added track 445 to frame 4387 of video shot 3 (team Canada, jersey number 100, x 41.75, y 41.25).
+Added track 445 to frame 4413 of video shot 3 (team Canada, jersey number 100, x 58.25, y 33.75).
+Added track 445 to frame 4428 of video shot 3 (team Canada, jersey number 100, x 58.0, y 19.5).
+Added track 445 to frame 4470 of video shot 3 (team Canada, jersey number 100, x 37.25, y 5.5).
+Added track 445 to frame 4494 of video shot 3 (team Canada, jersey number 100, x 23.75, y 6.25).
+Added track 445 to frame 4516 of video shot 3 (team Canada, jersey number 100, x 19.5, y 20.0).
+Added track 445 to frame 4579 of video shot 3 (team Canada, jersey number 100, x 45.75, y 49.0).
+Imputed coordinates for video shot 3.
+Set jersey number of track 445 in video shot 3 to 47.
+Added track 446 to frame 4292 of video shot 3 (team USA, jersey number 100, x 34.75, y 23.0).
+Added track 446 to frame 4313 of video shot 3 (team USA, jersey number 100, x 40.0, y 23.75).
+Added track 446 to frame 4361 of video shot 3 (team USA, jersey number 100, x 49.5, y 30.5).
+Added track 446 to frame 4395 of video shot 3 (team USA, jersey number 100, x 58.5, y 19.0).
+Added track 446 to frame 4435 of video shot 3 (team USA, jersey number 100, x 47.0, y 22.75).
+Added track 446 to frame 4477 of video shot 3 (team USA, jersey number 100, x 30.5, y 21.25).
+Added track 446 to frame 4497 of video shot 3 (team USA, jersey number 100, x 22.75, y 17.75).
+Added track 446 to frame 4517 of video shot 3 (team USA, jersey number 100, x 17.5, y 29.25).
+Added track 446 to frame 4543 of video shot 3 (team USA, jersey number 100, x 25.5, y 40.5).
+Added track 446 to frame 4579 of video shot 3 (team USA, jersey number 100, x 44.0, y 51.5).
+Imputed coordinates for video shot 3.
+Set jersey number of track 446 in video shot 3 to 18.
+Added track 447 to frame 4292 of video shot 3 (team USA, jersey number 100, x 31.5, y 29.25).
+Added track 447 to frame 4314 of video shot 3 (team USA, jersey number 100, x 33.0, y 31.75).
+Added track 447 to frame 4351 of video shot 3 (team USA, jersey number 100, x 29.25, y 35.0).
+Added track 447 to frame 4381 of video shot 3 (team USA, jersey number 100, x 28.75, y 38.5).
+Added track 447 to frame 4423 of video shot 3 (team USA, jersey number 100, x 33.25, y 37.5).
+Added track 447 to frame 4470 of video shot 3 (team USA, jersey number 100, x 14.75, y 34.25).
+Added track 447 to frame 4498 of video shot 3 (team USA, jersey number 100, x 4.75, y 37.5).
+Added track 447 to frame 4537 of video shot 3 (team USA, jersey number 100, x 2.5, y 63.25).
+Added track 447 to frame 4562 of video shot 3 (team USA, jersey number 100, x 13.25, y 71.25).
+Added track 447 to frame 4579 of video shot 3 (team USA, jersey number 100, x 25.0, y 71.0).
+Imputed coordinates for video shot 3.
+Set jersey number of track 447 in video shot 3 to 3.
+Added track 448 to frame 4292 of video shot 3 (team USA, jersey number 100, x 31.0, y 13.75).
+Added track 448 to frame 4311 of video shot 3 (team USA, jersey number 100, x 32.75, y 19.75).
+Added track 448 to frame 4348 of video shot 3 (team USA, jersey number 100, x 19.0, y 28.75).
+Added track 448 to frame 4374 of video shot 3 (team USA, jersey number 100, x 22.75, y 34.5).
+Added track 448 to frame 4416 of video shot 3 (team USA, jersey number 100, x 43.0, y 24.5).
+Added track 448 to frame 4433 of video shot 3 (team USA, jersey number 100, x 42.5, y 13.5).
+Added track 448 to frame 4464 of video shot 3 (team USA, jersey number 100, x 26.5, y 5.25).
+Added track 448 to frame 4496 of video shot 3 (team USA, jersey number 100, x 11.75, y 11.0).
+Added track 448 to frame 4523 of video shot 3 (team USA, jersey number 100, x 2.5, y 21.75).
+Added track 448 to frame 4544 of video shot 3 (team USA, jersey number 100, x 2.25, y 32.75).
+Imputed coordinates for video shot 3.
+Set jersey number of track 448 in video shot 3 to 19.
+Added track 449 to frame 4292 of video shot 3 (team USA, jersey number 100, x 33.5, y 45.75).
+Added track 449 to frame 4318 of video shot 3 (team USA, jersey number 100, x 35.5, y 48.25).
+Added track 449 to frame 4346 of video shot 3 (team USA, jersey number 100, x 29.75, y 52.5).
+Added track 449 to frame 4388 of video shot 3 (team USA, jersey number 100, x 46.25, y 53.75).
+Added track 449 to frame 4408 of video shot 3 (team USA, jersey number 100, x 49.75, y 48.75).
+Added track 449 to frame 4433 of video shot 3 (team USA, jersey number 100, x 43.25, y 44.75).
+Added track 449 to frame 4444 of video shot 3 (team USA, jersey number 100, x 39.0, y 46.0).
+Imputed coordinates for video shot 3.
+Added track 450 to frame 4292 of video shot 3 (team USA, jersey number 100, x 15.0, y 39.5).
+Added track 450 to frame 4348 of video shot 3 (team USA, jersey number 100, x 15.5, y 39.75).
+Added track 450 to frame 4376 of video shot 3 (team USA, jersey number 100, x 15.25, y 39.75).
+Added track 450 to frame 4416 of video shot 3 (team USA, jersey number 100, x 17.0, y 39.0).
+Added track 450 to frame 4469 of video shot 3 (team USA, jersey number 100, x 12.25, y 40.5).
+Added track 450 to frame 4502 of video shot 3 (team USA, jersey number 100, x 11.75, y 40.5).
+Added track 450 to frame 4541 of video shot 3 (team USA, jersey number 100, x 12.0, y 43.75).
+Added track 450 to frame 4562 of video shot 3 (team USA, jersey number 100, x 12.0, y 44.5).
+Imputed coordinates for video shot 3.
+Set jersey number of track 450 in video shot 3 to 35.
+Added track 451 to frame 4292 of video shot 3 (team USA, jersey number 100, x 29.0, y 31.75).
+Added track 451 to frame 4341 of video shot 3 (team USA, jersey number 100, x 40.75, y 32.25).
+Added track 451 to frame 4388 of video shot 3 (team USA, jersey number 100, x 59.25, y 28.0).
+Added track 451 to frame 4434 of video shot 3 (team USA, jersey number 100, x 63.75, y 16.0).
+Imputed coordinates for video shot 3.
+Set jersey number of track 451 in video shot 3 to 27.
+Added track 452 to frame 4563 of video shot 3 (team USA, jersey number 100, x 48.5, y 31.75).
+Added track 452 to frame 4579 of video shot 3 (team USA, jersey number 100, x 58.25, y 38.25).
+Imputed coordinates for video shot 3.
+Set jersey number of track 452 in video shot 3 to 27.

@@ -1,0 +1,662 @@
+Shifted all coordinates (-8.0, -4.0).
+Switched team of track 37 from video shot 1.
+Undo.
+Switched team of track 73 from video shot 1.
+Switched team of track 89 from video shot 1.
+Merged track 89 from video shot 1 with track 85.
+Merged track 95 from video shot 1 with track 74.
+Merged track 99 from video shot 1 with track 79.
+Switched team of track 103 from video shot 1.
+Merged track 103 from video shot 1 with track 85.
+Switched team of track 105 from video shot 1.
+Merged track 105 from video shot 1 with track 76.
+Merged track 106 from video shot 1 with track 79.
+Switched team of track 104 from video shot 1.
+Merged track 104 from video shot 1 with track 74.
+Merged track 110 from video shot 1 with track 79.
+Merged track 116 from video shot 1 with track 79.
+Switched team of track 119 from video shot 1.
+Merged track 119 from video shot 1 with track 85.
+Removed track 124 from video shot 1.
+Switched team of track 122 from video shot 1.
+Merged track 122 from video shot 1 with track 85.
+Switched team of track 123 from video shot 1.
+Merged track 123 from video shot 1 with track 76.
+Switched team of track 125 from video shot 1.
+Merged track 125 from video shot 1 with track 85.
+Switched team of track 131 from video shot 1.
+Merged track 131 from video shot 1 with track 85.
+Removed track 137 from video shot 1.
+Merged track 76 from video shot 1 with track 85 starting at frame 104.
+Switched team of track 135 from video shot 1.
+Merged track 135 from video shot 1 with track 76.
+Merged track 145 from video shot 1 with track 85.
+Removed track 147 from video shot 1.
+Merged track 148 from video shot 1 with track 85.
+Merged track 151 from video shot 1 with track 85.
+Removed track 159 from video shot 1.
+Merged track 164 from video shot 1 with track 157.
+Removed track 165 from video shot 1.
+Merged track 167 from video shot 1 with track 85.
+Removed track 166 from video shot 1.
+Merged track 169 from video shot 1 with track 161.
+Merged track 168 from video shot 1 with track 162.
+Merged track 174 from video shot 1 with track 157.
+Merged track 172 from video shot 1 with track 161.
+Merged track 189 from video shot 1 with track 175.
+Removed track 188 from video shot 1.
+Switched team of track 190 from video shot 1.
+Switched team of track 192 from video shot 1.
+Merged track 192 from video shot 1 with track 190.
+Switched team of track 191 from video shot 1.
+Merged track 191 from video shot 1 with track 175.
+Switched team of track 198 from video shot 1.
+Merged track 198 from video shot 1 with track 175.
+Merged track 201 from video shot 1 with track 197.
+Merged track 204 from video shot 1 with track 197.
+Removed track 206 from video shot 1.
+Merged track 207 from video shot 1 with track 203.
+Merged track 210 from video shot 1 with track 195.
+Merged track 211 from video shot 1 with track 175.
+Merged track 215 from video shot 1 with track 197.
+Merged track 214 from video shot 1 with track 195.
+Merged track 213 from video shot 1 with track 175.
+Merged track 217 from video shot 1 with track 175.
+Merged track 218 from video shot 1 with track 175.
+Merged track 221 from video shot 1 with track 175.
+Merged track 195 from video shot 1 with track 175 starting at frame 611.
+Merged track 175 from video shot 1 with track 195 starting at frame 612.
+Merged track 195 from video shot 1 with track 175 starting at frame 614.
+Merged track 175 from video shot 1 with track 195 starting at frame 615.
+Merged track 246 from video shot 1 with track 175.
+Merged track 251 from video shot 1 with track 175.
+Merged track 259 from video shot 1 with track 175.
+Switched team of track 268 from video shot 1.
+Merged track 268 from video shot 1 with track 265.
+Merged track 269 from video shot 1 with track 265.
+Switched team of track 272 from video shot 1.
+Merged track 275 from video shot 1 with track 267.
+Merged track 277 from video shot 1 with track 267.
+Switched team of track 293 from video shot 1.
+Switched team of track 295 from video shot 1.
+Merged track 295 from video shot 1 with track 293.
+Switched team of track 296 from video shot 1.
+Merged track 296 from video shot 1 with track 293.
+Removed track 302 from video shot 1.
+Merged track 309 from video shot 1 with track 306.
+Merged track 311 from video shot 1 with track 271.
+Switched team of track 320 from video shot 1.
+Switched team of track 322 from video shot 1.
+Merged track 324 from video shot 1 with track 322.
+Switched team of track 326 from video shot 1.
+Merged track 330 from video shot 1 with track 297.
+Merged track 332 from video shot 1 with track 323.
+Switched team of track 351 from video shot 1.
+Merged track 351 from video shot 1 with track 323.
+Merged track 350 from video shot 1 with track 322.
+Merged track 362 from video shot 1 with track 323.
+Merged track 367 from video shot 1 with track 323.
+Removed track 372 from video shot 1.
+Removed track 373 from video shot 1.
+Switched team of track 375 from video shot 1.
+Switched team of track 385 from video shot 1.
+Switched team of track 388 from video shot 1.
+Removed track 389 from video shot 1.
+Merged track 387 from video shot 1 with track 379.
+Merged track 392 from video shot 1 with track 323.
+Switched team of track 394 from video shot 1.
+Merged track 395 from video shot 1 with track 393.
+Removed track 402 from video shot 1.
+Removed track 405 from video shot 1.
+Removed track 408 from video shot 1.
+Merged track 410 from video shot 1 with track 386.
+Undo.
+Merged track 386 from video shot 1 with track 379 starting at frame 1501.
+Merged track 410 from video shot 1 with track 386.
+Merged track 413 from video shot 1 with track 386.
+Merged track 414 from video shot 1 with track 386.
+Merged track 415 from video shot 1 with track 386.
+Merged track 417 from video shot 1 with track 386.
+Switched team of track 419 from video shot 1.
+Switched team of track 423 from video shot 1.
+Merged track 427 from video shot 1 with track 426.
+Merged track 428 from video shot 1 with track 426.
+Merged track 432 from video shot 1 with track 426.
+Removed track 438 from video shot 1.
+Switched team of track 439 from video shot 1.
+Merged track 439 from video shot 1 with track 423.
+Switched team of track 440 from video shot 1.
+Merged track 441 from video shot 1 with track 440.
+Switched team of track 442 from video shot 1.
+Removed track 450 from video shot 1.
+Merged track 452 from video shot 1 with track 436.
+Merged track 463 from video shot 1 with track 459.
+Switched team of track 469 from video shot 1.
+Merged track 474 from video shot 1 with track 471.
+Merged track 477 from video shot 1 with track 379.
+Removed track 482 from video shot 1.
+Removed track 486 from video shot 1.
+Removed track 487 from video shot 1.
+Merged track 495 from video shot 1 with track 379.
+Merged track 496 from video shot 1 with track 379.
+Removed track 498 from video shot 1.
+Merged track 512 from video shot 1 with track 510.
+Switched team of track 515 from video shot 1.
+Merged track 515 from video shot 1 with track 505.
+Removed track 517 from video shot 1.
+Switched team of track 519 from video shot 1.
+Merged track 519 from video shot 1 with track 503.
+Switched team of track 526 from video shot 1.
+Merged track 526 from video shot 1 with track 518.
+Merged track 536 from video shot 1 with track 535.
+Switched team of track 537 from video shot 1.
+Switched team of track 539 from video shot 1.
+Removed track 542 from video shot 1.
+Removed track 543 from video shot 1.
+Merged track 518 from video shot 1 with track 551 starting at frame 2507.
+Switched team of track 551 from video shot 1.
+Merged track 505 from video shot 1 with track 552 starting at frame 2521.
+Switched team of track 552 from video shot 1.
+Merged track 551 from video shot 1 with track 505.
+Merged track 552 from video shot 1 with track 518.
+Switched team of track 545 from video shot 1.
+Merged track 546 from video shot 1 with track 531.
+Merged track 547 from video shot 1 with track 534.
+Merged track 550 from video shot 1 with track 534.
+Imputed coordinates for video shot 1.
+Removed track 176 from video shot 1.
+Shifted x-coordinates of all tracks in frames 1709to 1908 to maintain position of track 446.
+Switched team of track 467 from video shot 1.
+Merged track 467 from video shot 1 with track 459.
+Removed track 470 from video shot 1.
+Deleted video shot 2.
+Set jersey number of track 80 in video shot 1 to 33.
+Set jersey number of track 79 in video shot 1 to 12.
+Set jersey number of track 76 in video shot 1 to 16.
+Set jersey number of track 79 in video shot 1 to 12.
+Set jersey number of track 85 in video shot 1 to 6.
+Set jersey number of track 157 in video shot 1 to 16.
+Set jersey number of track 162 in video shot 1 to 33.
+Set jersey number of track 197 in video shot 1 to 24.
+Set jersey number of track 271 in video shot 1 to 40.
+Set jersey number of track 297 in video shot 1 to 5.
+Set jersey number of track 314 in video shot 1 to 77.
+Set jersey number of track 312 in video shot 1 to 15.
+Set jersey number of track 303 in video shot 1 to 33.
+Set jersey number of track 323 in video shot 1 to 15.
+Set jersey number of track 391 in video shot 1 to 16.
+Set jersey number of track 379 in video shot 1 to 18.
+Set jersey number of track 393 in video shot 1 to 33.
+Set jersey number of track 388 in video shot 1 to 6.
+Set jersey number of track 403 in video shot 1 to 5.
+Added track 546 to frame 1399 of video shot 1 (team Finland, jersey number 100, x 120.75, y 3.25).
+Added track 546 to frame 1452 of video shot 1 (team Finland, jersey number 100, x 128.0, y 22.0).
+Added track 546 to frame 1488 of video shot 1 (team Finland, jersey number 100, x 123.5, y 38.25).
+Added track 546 to frame 1511 of video shot 1 (team Finland, jersey number 100, x 122.75, y 46.25).
+Added track 546 to frame 1542 of video shot 1 (team Finland, jersey number 100, x 109.25, y 57.75).
+Added track 546 to frame 1569 of video shot 1 (team Finland, jersey number 100, x 94.0, y 49.25).
+Added track 546 to frame 1586 of video shot 1 (team Finland, jersey number 100, x 94.5, y 38.75).
+Added track 546 to frame 1611 of video shot 1 (team Finland, jersey number 100, x 102.0, y 21.75).
+Added track 546 to frame 1644 of video shot 1 (team Finland, jersey number 100, x 123.0, y 4.0).
+Added track 546 to frame 1716 of video shot 1 (team Finland, jersey number 100, x 186.75, y 8.75).
+Added track 546 to frame 1743 of video shot 1 (team Finland, jersey number 100, x 198.0, y 27.0).
+Added track 546 to frame 1799 of video shot 1 (team Finland, jersey number 100, x 198.0, y 54.75).
+Added track 546 to frame 1830 of video shot 1 (team Finland, jersey number 100, x 197.75, y 58.25).
+Added track 546 to frame 1900 of video shot 1 (team Finland, jersey number 100, x 173.75, y 77.0).
+Added track 546 to frame 1918 of video shot 1 (team Finland, jersey number 100, x 162.75, y 75.75).
+Imputed coordinates for video shot 1.
+Set jersey number of track 546 in video shot 1 to 10.
+Set jersey number of track 426 in video shot 1 to 5.
+Set jersey number of track 436 in video shot 1 to 2.
+Set jersey number of track 446 in video shot 1 to 33.
+Set jersey number of track 453 in video shot 1 to 26.
+Set jersey number of track 459 in video shot 1 to 24.
+Merged track 468 from video shot 1 with track 459.
+Imputed coordinates for video shot 1.
+Set jersey number of track 459 in video shot 1 to 24.
+Set jersey number of track 464 in video shot 1 to 88.
+Set jersey number of track 475 in video shot 1 to 15.
+Set jersey number of track 481 in video shot 1 to 6.
+Set jersey number of track 491 in video shot 1 to 10.
+Set jersey number of track 518 in video shot 1 to 28.
+Set jersey number of track 505 in video shot 1 to 15.
+Set jersey number of track 537 in video shot 1 to 88.
+Set jersey number of track 528 in video shot 1 to 33.
+Set jersey number of track 539 in video shot 1 to 7.
+Set jersey number of track 545 in video shot 1 to 9.
+Set jersey number of track 78 in video shot 1 to 5.
+Set jersey number of track 77 in video shot 1 to 33.
+Set jersey number of track 82 in video shot 1 to 2.
+Set jersey number of track 75 in video shot 1 to 40.
+Set jersey number of track 74 in video shot 1 to 21.
+Set jersey number of track 73 in video shot 1 to 77.
+Set jersey number of track 161 in video shot 1 to 12.
+Set jersey number of track 158 in video shot 1 to 21.
+Removed track 163 from video shot 1.
+Set jersey number of track 175 in video shot 1 to 15.
+Set jersey number of track 195 in video shot 1 to 40.
+Set jersey number of track 158 in video shot 1 to 24.
+Set jersey number of track 74 in video shot 1 to 24.
+Set jersey number of track 195 in video shot 1 to 40.
+Merged track 195 from video shot 1 with track 190.
+Imputed coordinates for video shot 1.
+Set jersey number of track 190 in video shot 1 to 40.
+Set jersey number of track 203 in video shot 1 to 77.
+Switched team of track 247 from video shot 1.
+Merged track 265 from video shot 1 with track 247.
+Switched team of track 229 from video shot 1.
+Merged track 247 from video shot 1 with track 229.
+Imputed coordinates for video shot 1.
+Added track 267 to frame 609 of video shot 1 (team Finland, jersey number 100, x 82.0, y 9.0).
+Imputed coordinates for video shot 1.
+Set jersey number of track 267 in video shot 1 to 6.
+Set jersey number of track 229 in video shot 1 to 15.
+Set jersey number of track 293 in video shot 1 to 77.
+Set jersey number of track 305 in video shot 1 to 33.
+Set jersey number of track 306 in video shot 1 to 12.
+Added track 314 to frame 921 of video shot 1 (team Finland, jersey number 100, x 158.5, y 78.0).
+Imputed coordinates for video shot 1.
+Set jersey number of track 314 in video shot 1 to 77.
+Set jersey number of track 320 in video shot 1 to 16.
+Set jersey number of track 322 in video shot 1 to 6.
+Set jersey number of track 326 in video shot 1 to 16.
+Set jersey number of track 327 in video shot 1 to 33.
+Set jersey number of track 376 in video shot 1 to 33.
+Merged track 379 from video shot 1 with track 378.
+Imputed coordinates for video shot 1.
+Set jersey number of track 374 in video shot 1 to 6.
+Set jersey number of track 375 in video shot 1 to 16.
+Set jersey number of track 401 in video shot 1 to 2.
+Set jersey number of track 386 in video shot 1 to 26.
+Set jersey number of track 419 in video shot 1 to 15.
+Set jersey number of track 421 in video shot 1 to 26.
+Set jersey number of track 471 in video shot 1 to 10.
+Set jersey number of track 530 in video shot 1 to 18.
+Set jersey number of track 531 in video shot 1 to 25.
+Set jersey number of track 535 in video shot 1 to 10.
+Set jersey number of track 510 in video shot 1 to 9.
+Merged track 534 from video shot 1 with track 533.
+Imputed coordinates for video shot 1.
+Set jersey number of track 533 in video shot 1 to 24.
+Set jersey number of track 503 in video shot 1 to 24.
+Set jersey number of track 500 in video shot 1 to 25.
+Merged track 531 from video shot 1 with track 500.
+Imputed coordinates for video shot 1.
+Set jersey number of track 229 in video shot 1 to 16.
+Merged track 229 from video shot 1 with track 175 starting at frame 636.
+Set jersey number of track 175 in video shot 1 to 15.
+Set jersey number of track 378 in video shot 1 to 18.
+Merged track 442 from video shot 1 with track 393.
+Set jersey number of track 393 in video shot 1 to 33.
+Imputed coordinates for video shot 1.
+Set jersey number of track 469 in video shot 1 to 33.
+Merged track 506 from video shot 1 with track 510.
+Imputed coordinates for video shot 1.
+Set jersey number of track 510 in video shot 1 to 9.
+Imputed coordinates for video shot 1.
+Added track 547 to frame 3513 of video shot 2 (team USA, jersey number 100, x 184.0, y 38.75).
+Added track 547 to frame 3566 of video shot 2 (team USA, jersey number 100, x 184.0, y 40.25).
+Added track 547 to frame 3588 of video shot 2 (team USA, jersey number 100, x 183.25, y 41.5).
+Added track 547 to frame 3597 of video shot 2 (team USA, jersey number 100, x 183.5, y 44.5).
+Added track 547 to frame 3617 of video shot 2 (team USA, jersey number 100, x 181.75, y 45.25).
+Added track 547 to frame 3642 of video shot 2 (team USA, jersey number 100, x 181.75, y 42.5).
+Added track 547 to frame 3703 of video shot 2 (team USA, jersey number 100, x 182.75, y 44.0).
+Added track 547 to frame 3724 of video shot 2 (team USA, jersey number 100, x 183.5, y 45.75).
+Added track 547 to frame 3757 of video shot 2 (team USA, jersey number 100, x 182.5, y 45.75).
+Added track 547 to frame 3783 of video shot 2 (team USA, jersey number 100, x 187.5, y 44.0).
+Added track 547 to frame 3805 of video shot 2 (team USA, jersey number 100, x 188.25, y 40.5).
+Added track 547 to frame 3840 of video shot 2 (team USA, jersey number 100, x 187.25, y 41.0).
+Added track 547 to frame 3868 of video shot 2 (team USA, jersey number 100, x 186.0, y 40.75).
+Added track 547 to frame 3903 of video shot 2 (team USA, jersey number 100, x 182.25, y 42.75).
+Added track 547 to frame 3929 of video shot 2 (team USA, jersey number 100, x 183.25, y 45.25).
+Added track 547 to frame 3982 of video shot 2 (team USA, jersey number 100, x 183.0, y 44.75).
+Added track 547 to frame 4034 of video shot 2 (team USA, jersey number 100, x 185.25, y 40.75).
+Added track 547 to frame 4079 of video shot 2 (team USA, jersey number 100, x 184.0, y 40.25).
+Added track 547 to frame 4097 of video shot 2 (team USA, jersey number 100, x 184.0, y 40.25).
+Imputed coordinates for video shot 2.
+Added track 548 to frame 3513 of video shot 2 (team USA, jersey number 100, x 172.0, y 21.25).
+Added track 548 to frame 3548 of video shot 2 (team USA, jersey number 100, x 170.5, y 22.5).
+Added track 548 to frame 3578 of video shot 2 (team USA, jersey number 100, x 169.75, y 24.0).
+Added track 548 to frame 3631 of video shot 2 (team USA, jersey number 100, x 168.75, y 39.75).
+Added track 548 to frame 3644 of video shot 2 (team USA, jersey number 100, x 162.0, y 41.25).
+Added track 548 to frame 3659 of video shot 2 (team USA, jersey number 100, x 159.75, y 39.25).
+Added track 548 to frame 3689 of video shot 2 (team USA, jersey number 100, x 163.5, y 28.25).
+Added track 548 to frame 3727 of video shot 2 (team USA, jersey number 100, x 164.0, y 35.75).
+Added track 548 to frame 3741 of video shot 2 (team USA, jersey number 100, x 171.5, y 41.5).
+Added track 548 to frame 3781 of video shot 2 (team USA, jersey number 100, x 181.5, y 38.25).
+Added track 548 to frame 3811 of video shot 2 (team USA, jersey number 100, x 178.0, y 34.75).
+Added track 548 to frame 3831 of video shot 2 (team USA, jersey number 100, x 175.25, y 30.75).
+Added track 548 to frame 3872 of video shot 2 (team USA, jersey number 100, x 159.0, y 19.5).
+Added track 548 to frame 3896 of video shot 2 (team USA, jersey number 100, x 159.5, y 28.25).
+Added track 548 to frame 3931 of video shot 2 (team USA, jersey number 100, x 164.25, y 38.0).
+Added track 548 to frame 3953 of video shot 2 (team USA, jersey number 100, x 172.75, y 40.0).
+Added track 548 to frame 3984 of video shot 2 (team USA, jersey number 100, x 177.25, y 40.0).
+Added track 548 to frame 4007 of video shot 2 (team USA, jersey number 100, x 183.75, y 36.5).
+Added track 548 to frame 4016 of video shot 2 (team USA, jersey number 100, x 184.25, y 34.0).
+Added track 548 to frame 4031 of video shot 2 (team USA, jersey number 100, x 179.5, y 30.0).
+Added track 548 to frame 4078 of video shot 2 (team USA, jersey number 100, x 157.75, y 18.5).
+Added track 548 to frame 4101 of video shot 2 (team USA, jersey number 100, x 144.0, y 18.0).
+Added track 548 to frame 4117 of video shot 2 (team USA, jersey number 100, x 139.75, y 21.5).
+Added track 548 to frame 4146 of video shot 2 (team USA, jersey number 100, x 144.5, y 36.5).
+Added track 548 to frame 4182 of video shot 2 (team USA, jersey number 100, x 162.5, y 42.25).
+Added track 548 to frame 4202 of video shot 2 (team USA, jersey number 100, x 165.5, y 43.75).
+Added track 548 to frame 4234 of video shot 2 (team USA, jersey number 100, x 163.75, y 44.75).
+Added track 548 to frame 4285 of video shot 2 (team USA, jersey number 100, x 177.25, y 39.25).
+Added track 548 to frame 4308 of video shot 2 (team USA, jersey number 100, x 183.0, y 38.75).
+Added track 548 to frame 4332 of video shot 2 (team USA, jersey number 100, x 187.0, y 39.0).
+Added track 548 to frame 4345 of video shot 2 (team USA, jersey number 100, x 187.0, y 39.0).
+Added track 548 to frame 4375 of video shot 2 (team USA, jersey number 100, x 194.25, y 35.75).
+Added track 548 to frame 4398 of video shot 2 (team USA, jersey number 100, x 197.0, y 42.5).
+Added track 548 to frame 4415 of video shot 2 (team USA, jersey number 100, x 196.5, y 47.0).
+Added track 548 to frame 4427 of video shot 2 (team USA, jersey number 100, x 194.75, y 55.0).
+Imputed coordinates for video shot 2.
+Added track 549 to frame 3513 of video shot 2 (team USA, jersey number 100, x 172.5, y 35.75).
+Added track 549 to frame 3529 of video shot 2 (team USA, jersey number 100, x 172.75, y 35.25).
+Added track 549 to frame 3561 of video shot 2 (team USA, jersey number 100, x 164.25, y 29.25).
+Added track 549 to frame 3576 of video shot 2 (team USA, jersey number 100, x 161.75, y 27.5).
+Added track 549 to frame 3588 of video shot 2 (team USA, jersey number 100, x 159.0, y 30.25).
+Added track 549 to frame 3602 of video shot 2 (team USA, jersey number 100, x 156.25, y 37.25).
+Added track 549 to frame 3624 of video shot 2 (team USA, jersey number 100, x 162.0, y 46.0).
+Added track 549 to frame 3639 of video shot 2 (team USA, jersey number 100, x 166.75, y 49.25).
+Added track 549 to frame 3663 of video shot 2 (team USA, jersey number 100, x 172.0, y 48.75).
+Added track 549 to frame 3684 of video shot 2 (team USA, jersey number 100, x 173.0, y 47.25).
+Added track 549 to frame 3726 of video shot 2 (team USA, jersey number 100, x 165.5, y 55.25).
+Added track 549 to frame 3740 of video shot 2 (team USA, jersey number 100, x 165.0, y 56.75).
+Added track 549 to frame 3760 of video shot 2 (team USA, jersey number 100, x 172.25, y 61.25).
+Added track 549 to frame 3779 of video shot 2 (team USA, jersey number 100, x 177.25, y 58.25).
+Added track 549 to frame 3804 of video shot 2 (team USA, jersey number 100, x 180.0, y 49.75).
+Added track 549 to frame 3825 of video shot 2 (team USA, jersey number 100, x 175.5, y 43.75).
+Added track 549 to frame 3841 of video shot 2 (team USA, jersey number 100, x 175.25, y 39.5).
+Added track 549 to frame 3872 of video shot 2 (team USA, jersey number 100, x 176.0, y 45.0).
+Added track 549 to frame 3924 of video shot 2 (team USA, jersey number 100, x 164.0, y 56.25).
+Added track 549 to frame 3942 of video shot 2 (team USA, jersey number 100, x 164.5, y 59.5).
+Added track 549 to frame 3965 of video shot 2 (team USA, jersey number 100, x 168.25, y 62.5).
+Added track 549 to frame 3978 of video shot 2 (team USA, jersey number 100, x 171.25, y 64.5).
+Added track 549 to frame 3999 of video shot 2 (team USA, jersey number 100, x 177.0, y 60.0).
+Added track 549 to frame 4023 of video shot 2 (team USA, jersey number 100, x 177.0, y 52.25).
+Added track 549 to frame 4043 of video shot 2 (team USA, jersey number 100, x 172.75, y 47.5).
+Added track 549 to frame 4063 of video shot 2 (team USA, jersey number 100, x 168.25, y 46.5).
+Added track 549 to frame 4080 of video shot 2 (team USA, jersey number 100, x 170.0, y 46.25).
+Added track 549 to frame 4111 of video shot 2 (team USA, jersey number 100, x 170.0, y 45.75).
+Added track 549 to frame 4136 of video shot 2 (team USA, jersey number 100, x 164.5, y 51.75).
+Added track 549 to frame 4153 of video shot 2 (team USA, jersey number 100, x 166.0, y 53.25).
+Added track 549 to frame 4176 of video shot 2 (team USA, jersey number 100, x 172.25, y 52.5).
+Added track 549 to frame 4201 of video shot 2 (team USA, jersey number 100, x 173.5, y 52.0).
+Added track 549 to frame 4234 of video shot 2 (team USA, jersey number 100, x 164.75, y 56.0).
+Added track 549 to frame 4248 of video shot 2 (team USA, jersey number 100, x 164.25, y 56.75).
+Added track 549 to frame 4267 of video shot 2 (team USA, jersey number 100, x 170.25, y 61.25).
+Added track 549 to frame 4281 of video shot 2 (team USA, jersey number 100, x 175.0, y 62.25).
+Added track 549 to frame 4307 of video shot 2 (team USA, jersey number 100, x 182.25, y 54.5).
+Added track 549 to frame 4332 of video shot 2 (team USA, jersey number 100, x 189.75, y 51.25).
+Added track 549 to frame 4368 of video shot 2 (team USA, jersey number 100, x 190.5, y 49.5).
+Added track 549 to frame 4406 of video shot 2 (team USA, jersey number 100, x 189.75, y 51.25).
+Added track 549 to frame 4427 of video shot 2 (team USA, jersey number 100, x 189.25, y 51.75).
+Imputed coordinates for video shot 2.
+Added track 550 to frame 3513 of video shot 2 (team USA, jersey number 100, x 172.25, y 41.0).
+Added track 550 to frame 3528 of video shot 2 (team USA, jersey number 100, x 172.5, y 41.5).
+Added track 550 to frame 3573 of video shot 2 (team USA, jersey number 100, x 159.0, y 31.25).
+Added track 550 to frame 3583 of video shot 2 (team USA, jersey number 100, x 155.75, y 31.0).
+Added track 550 to frame 3603 of video shot 2 (team USA, jersey number 100, x 146.0, y 41.25).
+Added track 550 to frame 3620 of video shot 2 (team USA, jersey number 100, x 146.75, y 47.25).
+Added track 550 to frame 3634 of video shot 2 (team USA, jersey number 100, x 145.75, y 49.75).
+Added track 550 to frame 3658 of video shot 2 (team USA, jersey number 100, x 150.5, y 47.75).
+Added track 550 to frame 3687 of video shot 2 (team USA, jersey number 100, x 158.0, y 42.5).
+Added track 550 to frame 3716 of video shot 2 (team USA, jersey number 100, x 164.0, y 47.0).
+Added track 550 to frame 3756 of video shot 2 (team USA, jersey number 100, x 163.75, y 46.75).
+Added track 550 to frame 3783 of video shot 2 (team USA, jersey number 100, x 167.5, y 44.25).
+Added track 550 to frame 3814 of video shot 2 (team USA, jersey number 100, x 164.75, y 38.75).
+Added track 550 to frame 3847 of video shot 2 (team USA, jersey number 100, x 158.25, y 34.5).
+Added track 550 to frame 3869 of video shot 2 (team USA, jersey number 100, x 157.0, y 38.25).
+Added track 550 to frame 3904 of video shot 2 (team USA, jersey number 100, x 150.75, y 44.5).
+Added track 550 to frame 3953 of video shot 2 (team USA, jersey number 100, x 155.25, y 46.0).
+Added track 550 to frame 3975 of video shot 2 (team USA, jersey number 100, x 160.0, y 46.75).
+Added track 550 to frame 4001 of video shot 2 (team USA, jersey number 100, x 164.75, y 45.5).
+Added track 550 to frame 4013 of video shot 2 (team USA, jersey number 100, x 165.5, y 43.75).
+Added track 550 to frame 4036 of video shot 2 (team USA, jersey number 100, x 158.25, y 39.25).
+Added track 550 to frame 4063 of video shot 2 (team USA, jersey number 100, x 151.25, y 40.25).
+Added track 550 to frame 4108 of video shot 2 (team USA, jersey number 100, x 153.25, y 39.25).
+Added track 550 to frame 4147 of video shot 2 (team USA, jersey number 100, x 155.0, y 53.25).
+Added track 550 to frame 4173 of video shot 2 (team USA, jersey number 100, x 160.0, y 59.0).
+Added track 550 to frame 4195 of video shot 2 (team USA, jersey number 100, x 159.25, y 58.75).
+Added track 550 to frame 4227 of video shot 2 (team USA, jersey number 100, x 155.75, y 52.75).
+Added track 550 to frame 4245 of video shot 2 (team USA, jersey number 100, x 155.75, y 47.25).
+Added track 550 to frame 4273 of video shot 2 (team USA, jersey number 100, x 163.25, y 44.25).
+Added track 550 to frame 4289 of video shot 2 (team USA, jersey number 100, x 165.0, y 43.75).
+Added track 550 to frame 4310 of video shot 2 (team USA, jersey number 100, x 171.25, y 44.0).
+Added track 550 to frame 4333 of video shot 2 (team USA, jersey number 100, x 174.75, y 47.25).
+Added track 550 to frame 4358 of video shot 2 (team USA, jersey number 100, x 175.25, y 48.0).
+Added track 550 to frame 4389 of video shot 2 (team USA, jersey number 100, x 176.5, y 46.75).
+Added track 550 to frame 4427 of video shot 2 (team USA, jersey number 100, x 169.25, y 48.5).
+Imputed coordinates for video shot 2.
+Added track 551 to frame 3513 of video shot 2 (team USA, jersey number 100, x 181.0, y 11.0).
+Added track 551 to frame 3524 of video shot 2 (team USA, jersey number 100, x 180.0, y 9.75).
+Added track 551 to frame 3552 of video shot 2 (team USA, jersey number 100, x 177.25, y 15.25).
+Added track 551 to frame 3571 of video shot 2 (team USA, jersey number 100, x 175.5, y 20.5).
+Added track 551 to frame 3600 of video shot 2 (team USA, jersey number 100, x 177.5, y 33.25).
+Added track 551 to frame 3626 of video shot 2 (team USA, jersey number 100, x 174.5, y 42.25).
+Added track 551 to frame 3646 of video shot 2 (team USA, jersey number 100, x 175.0, y 43.25).
+Added track 551 to frame 3660 of video shot 2 (team USA, jersey number 100, x 177.0, y 39.0).
+Added track 551 to frame 3680 of video shot 2 (team USA, jersey number 100, x 177.0, y 38.75).
+Added track 551 to frame 3692 of video shot 2 (team USA, jersey number 100, x 177.25, y 37.75).
+Added track 551 to frame 3714 of video shot 2 (team USA, jersey number 100, x 177.5, y 42.25).
+Added track 551 to frame 3733 of video shot 2 (team USA, jersey number 100, x 177.5, y 45.5).
+Added track 551 to frame 3745 of video shot 2 (team USA, jersey number 100, x 179.5, y 44.5).
+Added track 551 to frame 3791 of video shot 2 (team USA, jersey number 100, x 193.75, y 35.25).
+Added track 551 to frame 3817 of video shot 2 (team USA, jersey number 100, x 191.75, y 22.0).
+Added track 551 to frame 3835 of video shot 2 (team USA, jersey number 100, x 187.75, y 16.75).
+Added track 551 to frame 3853 of video shot 2 (team USA, jersey number 100, x 181.75, y 16.25).
+Added track 551 to frame 3876 of video shot 2 (team USA, jersey number 100, x 177.5, y 23.25).
+Added track 551 to frame 3930 of video shot 2 (team USA, jersey number 100, x 176.0, y 43.75).
+Added track 551 to frame 3957 of video shot 2 (team USA, jersey number 100, x 175.5, y 46.0).
+Added track 551 to frame 3987 of video shot 2 (team USA, jersey number 100, x 180.25, y 51.0).
+Added track 551 to frame 4008 of video shot 2 (team USA, jersey number 100, x 183.25, y 50.5).
+Added track 551 to frame 4028 of video shot 2 (team USA, jersey number 100, x 183.25, y 47.75).
+Added track 551 to frame 4071 of video shot 2 (team USA, jersey number 100, x 176.75, y 41.25).
+Added track 551 to frame 4112 of video shot 2 (team USA, jersey number 100, x 170.25, y 33.0).
+Added track 551 to frame 4133 of video shot 2 (team USA, jersey number 100, x 163.25, y 35.0).
+Added track 551 to frame 4176 of video shot 2 (team USA, jersey number 100, x 175.5, y 43.25).
+Added track 551 to frame 4224 of video shot 2 (team USA, jersey number 100, x 177.25, y 39.0).
+Added track 551 to frame 4256 of video shot 2 (team USA, jersey number 100, x 179.25, y 43.5).
+Added track 551 to frame 4276 of video shot 2 (team USA, jersey number 100, x 181.25, y 44.5).
+Added track 551 to frame 4297 of video shot 2 (team USA, jersey number 100, x 182.0, y 44.0).
+Added track 551 to frame 4344 of video shot 2 (team USA, jersey number 100, x 184.0, y 42.75).
+Added track 551 to frame 4373 of video shot 2 (team USA, jersey number 100, x 187.25, y 40.25).
+Added track 551 to frame 4401 of video shot 2 (team USA, jersey number 100, x 187.0, y 39.0).
+Added track 551 to frame 4427 of video shot 2 (team USA, jersey number 100, x 185.75, y 38.25).
+Imputed coordinates for video shot 2.
+Added track 552 to frame 3513 of video shot 2 (team Finland, jersey number 100, x 166.0, y 20.75).
+Added track 552 to frame 3569 of video shot 2 (team Finland, jersey number 100, x 167.0, y 20.25).
+Added track 552 to frame 3590 of video shot 2 (team Finland, jersey number 100, x 169.5, y 18.75).
+Added track 552 to frame 3648 of video shot 2 (team Finland, jersey number 100, x 177.5, y 39.75).
+Added track 552 to frame 3672 of video shot 2 (team Finland, jersey number 100, x 179.25, y 41.25).
+Added track 552 to frame 3696 of video shot 2 (team Finland, jersey number 100, x 180.25, y 42.0).
+Added track 552 to frame 3725 of video shot 2 (team Finland, jersey number 100, x 180.75, y 45.0).
+Added track 552 to frame 3751 of video shot 2 (team Finland, jersey number 100, x 182.5, y 39.5).
+Added track 552 to frame 3773 of video shot 2 (team Finland, jersey number 100, x 184.25, y 38.5).
+Added track 552 to frame 3811 of video shot 2 (team Finland, jersey number 100, x 193.5, y 36.25).
+Added track 552 to frame 3836 of video shot 2 (team Finland, jersey number 100, x 192.0, y 34.5).
+Added track 552 to frame 3852 of video shot 2 (team Finland, jersey number 100, x 188.0, y 34.0).
+Added track 552 to frame 3882 of video shot 2 (team Finland, jersey number 100, x 182.25, y 38.5).
+Added track 552 to frame 3909 of video shot 2 (team Finland, jersey number 100, x 180.25, y 40.0).
+Added track 552 to frame 3943 of video shot 2 (team Finland, jersey number 100, x 181.75, y 42.25).
+Added track 552 to frame 3979 of video shot 2 (team Finland, jersey number 100, x 178.75, y 42.75).
+Added track 552 to frame 4004 of video shot 2 (team Finland, jersey number 100, x 179.5, y 41.75).
+Added track 552 to frame 4033 of video shot 2 (team Finland, jersey number 100, x 181.75, y 40.75).
+Added track 552 to frame 4101 of video shot 2 (team Finland, jersey number 100, x 181.5, y 40.5).
+Imputed coordinates for video shot 2.
+Added track 553 to frame 3513 of video shot 2 (team Finland, jersey number 100, x 161.5, y 35.0).
+Added track 553 to frame 3526 of video shot 2 (team Finland, jersey number 100, x 161.5, y 34.5).
+Added track 553 to frame 3552 of video shot 2 (team Finland, jersey number 100, x 163.75, y 30.0).
+Added track 553 to frame 3575 of video shot 2 (team Finland, jersey number 100, x 166.5, y 25.0).
+Added track 553 to frame 3632 of video shot 2 (team Finland, jersey number 100, x 168.0, y 43.5).
+Added track 553 to frame 3680 of video shot 2 (team Finland, jersey number 100, x 177.5, y 44.75).
+Added track 553 to frame 3735 of video shot 2 (team Finland, jersey number 100, x 178.5, y 47.25).
+Added track 553 to frame 3772 of video shot 2 (team Finland, jersey number 100, x 180.25, y 47.75).
+Added track 553 to frame 3804 of video shot 2 (team Finland, jersey number 100, x 190.25, y 50.75).
+Added track 553 to frame 3830 of video shot 2 (team Finland, jersey number 100, x 194.75, y 41.5).
+Added track 553 to frame 3855 of video shot 2 (team Finland, jersey number 100, x 190.5, y 36.75).
+Added track 553 to frame 3896 of video shot 2 (team Finland, jersey number 100, x 178.25, y 42.75).
+Added track 553 to frame 3923 of video shot 2 (team Finland, jersey number 100, x 177.75, y 47.5).
+Added track 553 to frame 4016 of video shot 2 (team Finland, jersey number 100, x 181.25, y 46.75).
+Added track 553 to frame 4090 of video shot 2 (team Finland, jersey number 100, x 172.0, y 41.5).
+Added track 553 to frame 4126 of video shot 2 (team Finland, jersey number 100, x 176.5, y 42.75).
+Added track 553 to frame 4158 of video shot 2 (team Finland, jersey number 100, x 177.75, y 46.25).
+Added track 553 to frame 4271 of video shot 2 (team Finland, jersey number 100, x 181.5, y 46.5).
+Added track 553 to frame 4326 of video shot 2 (team Finland, jersey number 100, x 184.75, y 51.5).
+Added track 553 to frame 4353 of video shot 2 (team Finland, jersey number 100, x 188.5, y 50.25).
+Added track 553 to frame 4389 of video shot 2 (team Finland, jersey number 100, x 188.25, y 48.75).
+Added track 553 to frame 4427 of video shot 2 (team Finland, jersey number 100, x 190.0, y 62.75).
+Imputed coordinates for video shot 2.
+Added track 554 to frame 3513 of video shot 2 (team Finland, jersey number 100, x 154.0, y 39.75).
+Added track 554 to frame 3528 of video shot 2 (team Finland, jersey number 100, x 155.0, y 39.25).
+Added track 554 to frame 3561 of video shot 2 (team Finland, jersey number 100, x 150.25, y 42.75).
+Added track 554 to frame 3599 of video shot 2 (team Finland, jersey number 100, x 153.25, y 55.75).
+Added track 554 to frame 3633 of video shot 2 (team Finland, jersey number 100, x 157.25, y 67.25).
+Added track 554 to frame 3665 of video shot 2 (team Finland, jersey number 100, x 142.25, y 72.5).
+Imputed coordinates for video shot 2.
+Added track 555 to frame 3513 of video shot 2 (team Finland, jersey number 100, x 162.75, y 9.75).
+Added track 555 to frame 3526 of video shot 2 (team Finland, jersey number 100, x 164.25, y 10.0).
+Added track 555 to frame 3575 of video shot 2 (team Finland, jersey number 100, x 167.25, y 17.25).
+Added track 555 to frame 3625 of video shot 2 (team Finland, jersey number 100, x 161.25, y 19.75).
+Added track 555 to frame 3690 of video shot 2 (team Finland, jersey number 100, x 175.5, y 15.75).
+Imputed coordinates for video shot 2.
+Added track 556 to frame 3513 of video shot 2 (team Finland, jersey number 100, x 146.75, y 12.0).
+Added track 556 to frame 3540 of video shot 2 (team Finland, jersey number 100, x 148.0, y 12.0).
+Added track 556 to frame 3569 of video shot 2 (team Finland, jersey number 100, x 152.5, y 18.5).
+Added track 556 to frame 3618 of video shot 2 (team Finland, jersey number 100, x 136.25, y 34.0).
+Added track 556 to frame 3664 of video shot 2 (team Finland, jersey number 100, x 142.0, y 21.75).
+Added track 556 to frame 3699 of video shot 2 (team Finland, jersey number 100, x 157.75, y 21.0).
+Added track 556 to frame 3736 of video shot 2 (team Finland, jersey number 100, x 164.75, y 30.5).
+Added track 556 to frame 3764 of video shot 2 (team Finland, jersey number 100, x 172.75, y 31.25).
+Added track 556 to frame 3785 of video shot 2 (team Finland, jersey number 100, x 175.75, y 25.75).
+Added track 556 to frame 3833 of video shot 2 (team Finland, jersey number 100, x 165.5, y 13.0).
+Added track 556 to frame 3873 of video shot 2 (team Finland, jersey number 100, x 155.75, y 12.25).
+Added track 556 to frame 3901 of video shot 2 (team Finland, jersey number 100, x 148.0, y 15.0).
+Added track 556 to frame 3949 of video shot 2 (team Finland, jersey number 100, x 155.25, y 28.5).
+Added track 556 to frame 3980 of video shot 2 (team Finland, jersey number 100, x 160.25, y 25.75).
+Added track 556 to frame 4007 of video shot 2 (team Finland, jersey number 100, x 168.25, y 23.25).
+Added track 556 to frame 4018 of video shot 2 (team Finland, jersey number 100, x 167.75, y 17.5).
+Added track 556 to frame 4043 of video shot 2 (team Finland, jersey number 100, x 158.0, y 11.0).
+Added track 556 to frame 4075 of video shot 2 (team Finland, jersey number 100, x 139.0, y 2.75).
+Added track 556 to frame 4111 of video shot 2 (team Finland, jersey number 100, x 129.0, y 21.25).
+Added track 556 to frame 4139 of video shot 2 (team Finland, jersey number 100, x 123.5, y 35.75).
+Added track 556 to frame 4161 of video shot 2 (team Finland, jersey number 100, x 136.25, y 41.75).
+Added track 556 to frame 4189 of video shot 2 (team Finland, jersey number 100, x 143.0, y 32.5).
+Added track 556 to frame 4225 of video shot 2 (team Finland, jersey number 100, x 142.0, y 19.5).
+Added track 556 to frame 4251 of video shot 2 (team Finland, jersey number 100, x 154.25, y 15.5).
+Added track 556 to frame 4307 of video shot 2 (team Finland, jersey number 100, x 176.75, y 32.0).
+Added track 556 to frame 4328 of video shot 2 (team Finland, jersey number 100, x 179.25, y 38.5).
+Added track 556 to frame 4366 of video shot 2 (team Finland, jersey number 100, x 185.5, y 31.0).
+Added track 556 to frame 4402 of video shot 2 (team Finland, jersey number 100, x 194.25, y 28.0).
+Added track 556 to frame 4427 of video shot 2 (team Finland, jersey number 100, x 189.5, y 27.25).
+Imputed coordinates for video shot 2.
+Added track 557 to frame 3598 of video shot 2 (team Finland, jersey number 100, x 127.75, y 51.0).
+Added track 557 to frame 3616 of video shot 2 (team Finland, jersey number 100, x 132.0, y 50.0).
+Added track 557 to frame 3646 of video shot 2 (team Finland, jersey number 100, x 128.75, y 50.5).
+Imputed coordinates for video shot 2.
+Added track 558 to frame 3696 of video shot 2 (team Finland, jersey number 100, x 140.5, y 62.5).
+Added track 558 to frame 3732 of video shot 2 (team Finland, jersey number 100, x 157.75, y 57.75).
+Added track 558 to frame 3756 of video shot 2 (team Finland, jersey number 100, x 167.5, y 65.25).
+Added track 558 to frame 3778 of video shot 2 (team Finland, jersey number 100, x 167.5, y 72.75).
+Imputed coordinates for video shot 2.
+Added track 559 to frame 3702 of video shot 2 (team Finland, jersey number 100, x 131.75, y 50.75).
+Added track 559 to frame 3719 of video shot 2 (team Finland, jersey number 100, x 130.75, y 48.25).
+Imputed coordinates for video shot 2.
+Added track 560 to frame 3732 of video shot 2 (team Finland, jersey number 100, x 180.5, y 30.0).
+Added track 560 to frame 3754 of video shot 2 (team Finland, jersey number 100, x 184.0, y 32.25).
+Added track 560 to frame 3782 of video shot 2 (team Finland, jersey number 100, x 194.0, y 31.25).
+Added track 560 to frame 3812 of video shot 2 (team Finland, jersey number 100, x 196.25, y 21.25).
+Added track 560 to frame 3844 of video shot 2 (team Finland, jersey number 100, x 192.25, y 11.5).
+Imputed coordinates for video shot 2.
+Added track 561 to frame 3879 of video shot 2 (team Finland, jersey number 100, x 136.5, y 68.75).
+Added track 561 to frame 3900 of video shot 2 (team Finland, jersey number 100, x 140.5, y 64.25).
+Added track 561 to frame 3975 of video shot 2 (team Finland, jersey number 100, x 163.25, y 70.25).
+Added track 561 to frame 4012 of video shot 2 (team Finland, jersey number 100, x 160.5, y 76.75).
+Imputed coordinates for video shot 2.
+Added track 562 to frame 3882 of video shot 2 (team Finland, jersey number 100, x 126.0, y 43.5).
+Added track 562 to frame 3930 of video shot 2 (team Finland, jersey number 100, x 129.75, y 44.0).
+Added track 562 to frame 3974 of video shot 2 (team Finland, jersey number 100, x 130.5, y 45.0).
+Imputed coordinates for video shot 2.
+Added track 563 to frame 3913 of video shot 2 (team Finland, jersey number 100, x 178.0, y 22.25).
+Added track 563 to frame 3933 of video shot 2 (team Finland, jersey number 100, x 174.5, y 29.0).
+Added track 563 to frame 3965 of video shot 2 (team Finland, jersey number 100, x 180.0, y 29.5).
+Added track 563 to frame 3995 of video shot 2 (team Finland, jersey number 100, x 184.0, y 29.75).
+Added track 563 to frame 4013 of video shot 2 (team Finland, jersey number 100, x 185.5, y 23.25).
+Added track 563 to frame 4060 of video shot 2 (team Finland, jersey number 100, x 181.25, y 14.75).
+Imputed coordinates for video shot 2.
+Added track 564 to frame 4053 of video shot 2 (team Finland, jersey number 100, x 144.25, y 77.25).
+Added track 564 to frame 4088 of video shot 2 (team Finland, jersey number 100, x 134.25, y 75.25).
+Added track 564 to frame 4107 of video shot 2 (team Finland, jersey number 100, x 134.5, y 68.75).
+Added track 564 to frame 4138 of video shot 2 (team Finland, jersey number 100, x 139.0, y 68.5).
+Added track 564 to frame 4173 of video shot 2 (team Finland, jersey number 100, x 146.25, y 76.25).
+Added track 564 to frame 4188 of video shot 2 (team Finland, jersey number 100, x 139.75, y 80.5).
+Added track 564 to frame 4214 of video shot 2 (team Finland, jersey number 100, x 136.25, y 73.25).
+Added track 564 to frame 4267 of video shot 2 (team Finland, jersey number 100, x 163.75, y 64.75).
+Added track 564 to frame 4306 of video shot 2 (team Finland, jersey number 100, x 174.25, y 77.25).
+Added track 564 to frame 4333 of video shot 2 (team Finland, jersey number 100, x 168.5, y 80.5).
+Imputed coordinates for video shot 2.
+Added track 565 to frame 4071 of video shot 2 (team Finland, jersey number 100, x 125.25, y 43.0).
+Added track 565 to frame 4125 of video shot 2 (team Finland, jersey number 100, x 128.5, y 57.75).
+Added track 565 to frame 4160 of video shot 2 (team Finland, jersey number 100, x 139.0, y 65.25).
+Added track 565 to frame 4181 of video shot 2 (team Finland, jersey number 100, x 140.75, y 58.5).
+Added track 565 to frame 4210 of video shot 2 (team Finland, jersey number 100, x 134.25, y 53.75).
+Added track 565 to frame 4236 of video shot 2 (team Finland, jersey number 100, x 129.75, y 46.25).
+Imputed coordinates for video shot 2.
+Added track 566 to frame 4157 of video shot 2 (team Finland, jersey number 100, x 181.5, y 45.25).
+Added track 556 to frame 4228 of video shot 2 (team Finland, jersey number 100, x 182.5, y 45.75).
+Added track 556 to frame 4281 of video shot 2 (team Finland, jersey number 100, x 181.75, y 43.0).
+Merged track 556 from video shot 2 with track 566 starting at frame 4228.
+Undo.
+Undo.
+Undo.
+Added track 566 to frame 4228 of video shot 2 (team Finland, jersey number 100, x 182.5, y 45.75).
+Added track 566 to frame 4281 of video shot 2 (team Finland, jersey number 100, x 181.75, y 43.0).
+Added track 566 to frame 4339 of video shot 2 (team Finland, jersey number 100, x 181.25, y 38.5).
+Added track 566 to frame 4359 of video shot 2 (team Finland, jersey number 100, x 183.25, y 38.5).
+Added track 566 to frame 4390 of video shot 2 (team Finland, jersey number 100, x 194.0, y 36.0).
+Added track 566 to frame 4427 of video shot 2 (team Finland, jersey number 100, x 197.0, y 52.25).
+Imputed coordinates for video shot 2.
+Added track 567 to frame 4161 of video shot 2 (team USA, jersey number 100, x 183.0, y 44.0).
+Added track 567 to frame 4196 of video shot 2 (team USA, jersey number 100, x 183.75, y 44.75).
+Added track 567 to frame 4224 of video shot 2 (team USA, jersey number 100, x 184.25, y 45.25).
+Added track 567 to frame 4250 of video shot 2 (team USA, jersey number 100, x 184.25, y 44.75).
+Added track 567 to frame 4278 of video shot 2 (team USA, jersey number 100, x 184.25, y 45.25).
+Added track 567 to frame 4319 of video shot 2 (team USA, jersey number 100, x 184.5, y 45.25).
+Added track 567 to frame 4351 of video shot 2 (team USA, jersey number 100, x 188.0, y 47.75).
+Added track 567 to frame 4380 of video shot 2 (team USA, jersey number 100, x 185.25, y 45.75).
+Added track 567 to frame 4427 of video shot 2 (team USA, jersey number 100, x 188.0, y 43.25).
+Imputed coordinates for video shot 2.
+Added track 568 to frame 4167 of video shot 2 (team Finland, jersey number 100, x 169.0, y 19.25).
+Added track 568 to frame 4254 of video shot 2 (team Finland, jersey number 100, x 171.0, y 46.0).
+Added track 568 to frame 4296 of video shot 2 (team Finland, jersey number 100, x 173.25, y 46.5).
+Added track 568 to frame 4316 of video shot 2 (team Finland, jersey number 100, x 172.5, y 50.75).
+Added track 568 to frame 4389 of video shot 2 (team Finland, jersey number 100, x 173.75, y 52.0).
+Added track 568 to frame 4427 of video shot 2 (team Finland, jersey number 100, x 179.0, y 62.5).
+Imputed coordinates for video shot 2.
+Set jersey number of track 555 in video shot 2 to 88.
+Set jersey number of track 547 in video shot 2 to 33.
+Set jersey number of track 548 in video shot 2 to 28.
+Set jersey number of track 552 in video shot 2 to 20.
+Set jersey number of track 556 in video shot 2 to 7.
+Set jersey number of track 551 in video shot 2 to 9.
+Set jersey number of track 557 in video shot 2 to 9.
+Set jersey number of track 558 in video shot 2 to 10.
+Set jersey number of track 554 in video shot 2 to 10.
+Set jersey number of track 559 in video shot 2 to 9.
+Set jersey number of track 548 in video shot 2 to 20.
+Set jersey number of track 550 in video shot 2 to 21.
+Set jersey number of track 552 in video shot 2 to 28.
+Set jersey number of track 549 in video shot 2 to 15.
+Set jersey number of track 557 in video shot 2 to 24.
+Undo.
+Set jersey number of track 553 in video shot 2 to 24.
+Set jersey number of track 560 in video shot 2 to 88.
+Set jersey number of track 562 in video shot 2 to 9.
+Set jersey number of track 561 in video shot 2 to 10.
+Set jersey number of track 563 in video shot 2 to 88.
+Set jersey number of track 564 in video shot 2 to 10.
+Set jersey number of track 565 in video shot 2 to 9.
+Set jersey number of track 566 in video shot 2 to 28.
+Set jersey number of track 567 in video shot 2 to 33.
+Set jersey number of track 568 in video shot 2 to 88.
+Manually removed frames 2694 to 2753.

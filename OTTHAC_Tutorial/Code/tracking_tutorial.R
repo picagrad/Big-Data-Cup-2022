@@ -8,8 +8,10 @@ library(gganimate) # For turning ggplot's into animations
 
 # Load the data directly from github
 # To get this URL go to our GitHub repository then click "TrackingData/<game name>/<powerplay name.csv>", click "Raw", then copy the url once the raw data loads
-tracking_data = read.csv("https://raw.githubusercontent.com/bigdatacup/Big-Data-Cup-2021/main/TrackingData/2022-02-14%20Finland%20at%20USA/2022-02-14%20Finland%20at%20USA%20P3%20PP6.csv")
-
+#tracking_data = read.csv("https://raw.githubusercontent.com/bigdatacup/Big-Data-Cup-2021/main/TrackingData/2022-02-14%20Finland%20at%20USA/2022-02-14%20Finland%20at%20USA%20P3%20PP6.csv")
+setwd("H:/Hockey/Big-Data-Cup-2022-Private-main/TrackingData")
+current_track <- read_csv("bdc-main/data/2022-02-08 Canada at USA/2022-02-08 Canada at USA P1 PP1.csv")
+tracking_data <- current_track %>% filter(frame_id>374 & frame_id<615)
 
 
 ## DATA WRANGLING WITH NEST AND MAP ##
@@ -35,8 +37,8 @@ tracking_data_player_count = tracking_data_nested %>%
 options(gganimate.dev_args = list(width = 10, height = 6, units = 'in', res = 320))
 
 # Source in the plot_rink function
-source("Code/plot_rink.R")
-
+#source("Code/plot_rink.R")
+source("H:/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial/Code/plot_rink.R")
 # Create a gif of this play
 p = plot_rink(ggplot(tracking_data)) +
   geom_point(aes(x = x_ft, y = y_ft, fill = team_name), shape = 21, size = 6) +
@@ -56,8 +58,8 @@ min_frame = min(tracking_data$frame_id)
 # Render the animation
 p2 = animate(p, renderer = ffmpeg_renderer(), fps = 30, duration = (max_frame - min_frame)/30 + 1)
 
-
+setwd("H:/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial")
 # Save as an mp4
-anim_save("Figures/demo.mp4", p2)
+anim_save("Figures/demo2.mp4", p2)
 
 

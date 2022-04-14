@@ -1,0 +1,384 @@
+Shifted all coordinates (-8.0, -4.0).
+Merged track 17 from video shot 1 with track 2.
+Merged track 30 from video shot 1 with track 12.
+Merged track 31 from video shot 1 with track 12.
+Merged track 37 from video shot 1 with track 7.
+Merged track 56 from video shot 1 with track 52.
+Merged track 77 from video shot 1 with track 74.
+Merged track 89 from video shot 1 with track 88.
+Merged track 94 from video shot 1 with track 88.
+Merged track 99 from video shot 1 with track 88.
+Merged track 100 from video shot 1 with track 88.
+Merged track 102 from video shot 1 with track 101.
+Switched team of track 118 from video shot 1.
+Merged track 118 from video shot 1 with track 117.
+Merged track 119 from video shot 1 with track 117.
+Merged track 117 from video shot 1 with track 116.
+Imputed coordinates for track 116 of video shot 1.
+Merged track 116 from video shot 1 with track 566.
+Undo.
+Merged track 116 from video shot 1 with track 566 starting at frame 1114.
+Merged track 128 from video shot 1 with track 127.
+Merged track 129 from video shot 1 with track 127.
+Merged track 130 from video shot 1 with track 127.
+Merged track 133 from video shot 1 with track 127.
+Switched team of track 135 from video shot 1.
+Merged track 136 from video shot 1 with track 127.
+Merged track 139 from video shot 1 with track 127.
+Merged track 566 from video shot 1 with track 116 starting at frame 1192.
+Merged track 135 from video shot 1 with track 567 starting at frame 1191.
+Removed track 567 from video shot 1.
+Merged track 148 from video shot 1 with track 127.
+Merged track 161 from video shot 1 with track 121.
+Merged track 165 from video shot 1 with track 127.
+Merged track 166 from video shot 1 with track 116.
+Merged track 164 from video shot 1 with track 140.
+Merged track 170 from video shot 1 with track 127.
+Merged track 180 from video shot 1 with track 127.
+Switched team of track 183 from video shot 1.
+Switched team of track 184 from video shot 1.
+Removed track 185 from video shot 1.
+Switched team of track 186 from video shot 1.
+Merged track 187 from video shot 1 with track 140.
+Merged track 186 from video shot 1 with track 135.
+Removed track 199 from video shot 1.
+Switched team of track 201 from video shot 1.
+Merged track 140 from video shot 1 with track 201 starting at frame 1195.
+Merged track 135 from video shot 1 with track 567 starting at frame 1216.
+Switched team of track 567 from video shot 1.
+Merged track 567 from video shot 1 with track 201.
+Removed track 219 from video shot 1.
+Removed track 231 from video shot 1.
+Merged track 237 from video shot 1 with track 235.
+Imputed coordinates for video shot 1.
+Removed track 20 from video shot 1.
+Merged track 114 from video shot 1 with track 76 starting at frame 1075.
+Merged track 127 from video shot 1 with track 567 starting at frame 1205.
+Removed track 567 from video shot 1.
+Merged track 233 from video shot 1 with track 201.
+Imputed coordinates for track 201 of video shot 1.
+Merged track 76 from video shot 1 with track 567 starting at frame 953.
+Merged track 567 from video shot 1 with track 76 starting at frame 973.
+Removed track 567 from video shot 1.
+Imputed coordinates for track 76 of video shot 1.
+Merged track 114 from video shot 1 with track 107.
+Imputed coordinates for track 107 of video shot 1.
+Switched team of track 258 from video shot 2.
+Merged track 263 from video shot 2 with track 257.
+Merged track 266 from video shot 2 with track 254.
+Merged track 268 from video shot 2 with track 267.
+Shifted x-coordinates of all tracks in frames 1808to 1831 to maintain position of track 267.
+Switched team of track 279 from video shot 2.
+Merged track 297 from video shot 2 with track 291.
+Merged track 303 from video shot 2 with track 291.
+Switched team of track 305 from video shot 2.
+Merged track 305 from video shot 2 with track 279.
+Merged track 306 from video shot 2 with track 274.
+Shifted x-coordinates of all tracks in frames 1854to 1882 to maintain position of track 291.
+Merged track 307 from video shot 2 with track 247.
+Merged track 313 from video shot 2 with track 274.
+Merged track 317 from video shot 2 with track 274.
+Merged track 320 from video shot 2 with track 274.
+Merged track 257 from video shot 2 with track 274 starting at frame 1886.
+Merged track 331 from video shot 2 with track 330.
+Merged track 332 from video shot 2 with track 300.
+Merged track 333 from video shot 2 with track 329.
+Merged track 334 from video shot 2 with track 330.
+Merged track 338 from video shot 2 with track 327.
+Merged track 336 from video shot 2 with track 300.
+Merged track 330 from video shot 2 with track 342 starting at frame 1974.
+Merged track 339 from video shot 2 with track 330.
+Merged track 344 from video shot 2 with track 330.
+Switched team of track 345 from video shot 2.
+Merged track 345 from video shot 2 with track 328.
+Merged track 347 from video shot 2 with track 342.
+Merged track 349 from video shot 2 with track 341.
+Merged track 343 from video shot 2 with track 340.
+Merged track 351 from video shot 2 with track 340.
+Merged track 355 from video shot 2 with track 341.
+Merged track 360 from video shot 2 with track 341.
+Switched team of track 362 from video shot 2.
+Merged track 362 from video shot 2 with track 342.
+Merged track 369 from video shot 2 with track 340.
+Merged track 368 from video shot 2 with track 342.
+Merged track 373 from video shot 2 with track 340.
+Removed track 378 from video shot 2.
+Shifted x-coordinates of all tracks in frames 2092to 2124 to maintain position of track 375.
+Shifted x-coordinates of all tracks in frames 2125to 2154 to maintain position of track 342.
+Shifted x-coordinates of all tracks in frames 2155to 2246 to maintain position of track 385.
+Shifted x-coordinates of all tracks in frames 2247to 2272 to maintain position of track 329.
+Removed track 383 from video shot 2.
+Shifted x-coordinates of all tracks in frames 2324to 2355 to maintain position of track 391.
+Removed track 394 from video shot 2.
+Merged track 400 from video shot 2 with track 359.
+Merged track 401 from video shot 2 with track 330.
+Switched team of track 399 from video shot 2.
+Merged track 406 from video shot 2 with track 399.
+Merged track 411 from video shot 2 with track 330.
+Merged track 409 from video shot 2 with track 382.
+Merged track 408 from video shot 2 with track 329.
+Switched team of track 407 from video shot 2.
+Merged track 407 from video shot 2 with track 342.
+Merged track 414 from video shot 2 with track 399.
+Merged track 422 from video shot 2 with track 359.
+Merged track 440 from video shot 2 with track 330.
+Merged track 439 from video shot 2 with track 329.
+Switched team of track 438 from video shot 2.
+Merged track 438 from video shot 2 with track 391.
+Merged track 446 from video shot 2 with track 330.
+Merged track 450 from video shot 2 with track 391.
+Switched team of track 455 from video shot 2.
+Merged track 455 from video shot 2 with track 330.
+Merged track 461 from video shot 2 with track 399.
+Merged track 462 from video shot 2 with track 442.
+Merged track 466 from video shot 2 with track 441.
+Merged track 465 from video shot 2 with track 329.
+Merged track 329 from video shot 2 with track 442 starting at frame 2418.
+Merged track 470 from video shot 2 with track 441.
+Merged track 472 from video shot 2 with track 442.
+Merged track 471 from video shot 2 with track 329.
+Merged track 474 from video shot 2 with track 399.
+Merged track 477 from video shot 2 with track 329.
+Merged track 475 from video shot 2 with track 441.
+Switched team of track 483 from video shot 2.
+Merged track 483 from video shot 2 with track 342.
+Merged track 507 from video shot 2 with track 442.
+Merged track 504 from video shot 2 with track 442.
+Merged track 518 from video shot 2 with track 516.
+Merged track 521 from video shot 2 with track 516.
+Merged track 522 from video shot 2 with track 516.
+Merged track 523 from video shot 2 with track 516.
+Merged track 526 from video shot 2 with track 516.
+Switched team of track 531 from video shot 2.
+Merged track 536 from video shot 2 with track 533.
+Merged track 537 from video shot 2 with track 532.
+Merged track 538 from video shot 2 with track 519.
+Merged track 539 from video shot 2 with track 515.
+Switched team of track 542 from video shot 2.
+Merged track 542 from video shot 2 with track 516.
+Merged track 544 from video shot 2 with track 516.
+Switched team of track 546 from video shot 2.
+Merged track 546 from video shot 2 with track 532.
+Merged track 515 from video shot 2 with track 567 starting at frame 2914.
+Merged track 567 from video shot 2 with track 515 starting at frame 2916.
+Merged track 567 from video shot 2 with track 548.
+Merged track 519 from video shot 2 with track 567 starting at frame 2919.
+Merged track 567 from video shot 2 with track 519 starting at frame 2920.
+Merged track 567 from video shot 2 with track 548.
+Merged track 553 from video shot 2 with track 532.
+Merged track 562 from video shot 2 with track 519.
+Merged track 561 from video shot 2 with track 559.
+Shifted x-coordinates of all tracks in frames 3093to 3121 to maintain position of track 565.
+Imputed coordinates for video shot 2.
+Merged track 274 from video shot 2 with track 291 starting at frame 1894.
+Merged track 274 from video shot 2 with track 567 starting at frame 1887.
+Removed track 567 from video shot 2.
+Merged track 326 from video shot 2 with track 247.
+Imputed coordinates for track 247 of video shot 2.
+Merged track 342 from video shot 2 with track 567 starting at frame 1980.
+Merged track 359 from video shot 2 with track 342.
+Imputed coordinates for track 342 of video shot 2.
+Merged track 548 from video shot 2 with track 442.
+Imputed coordinates for track 442 of video shot 2.
+Removed track 330 from video shot 3.
+Switched team of track 339 from video shot 3.
+Deleted video shot 3.
+Manually shifted x-coordinates for frames 926 to 970 to smooth transition of track 101.
+Manually shifted x-coordinates for frames 1083 to 1129 to smooth transition of track 116.
+Added track 568 to frame 3251 of video shot 3 (team Switzerland, jersey number 100, x 187.75, y 41.75).
+Added track 568 to frame 3283 of video shot 3 (team Switzerland, jersey number 100, x 188.25, y 41.75).
+Imputed coordinates for track 568 of video shot 3.
+Added track 569 to frame 3251 of video shot 3 (team Switzerland, jersey number 100, x 183.5, y 33.75).
+Added track 569 to frame 3277 of video shot 3 (team Switzerland, jersey number 100, x 170.25, y 39.25).
+Added track 569 to frame 3318 of video shot 3 (team Switzerland, jersey number 100, x 156.75, y 50.75).
+Imputed coordinates for track 569 of video shot 3.
+Added track 570 to frame 3251 of video shot 3 (team Switzerland, jersey number 100, x 172.5, y 4.75).
+Added track 570 to frame 3309 of video shot 3 (team Switzerland, jersey number 100, x 125.25, y 5.0).
+Added track 570 to frame 3356 of video shot 3 (team Switzerland, jersey number 100, x 93.0, y 17.0).
+Added track 570 to frame 3393 of video shot 3 (team Switzerland, jersey number 100, x 62.5, y 25.5).
+Added track 570 to frame 3422 of video shot 3 (team Switzerland, jersey number 100, x 43.5, y 20.5).
+Added track 570 to frame 3469 of video shot 3 (team Switzerland, jersey number 100, x 15.75, y 11.5).
+Added track 570 to frame 3494 of video shot 3 (team Switzerland, jersey number 100, x 7.75, y 16.5).
+Added track 570 to frame 3528 of video shot 3 (team Switzerland, jersey number 100, x 5.75, y 14.0).
+Added track 570 to frame 3551 of video shot 3 (team Switzerland, jersey number 100, x 7.25, y 13.75).
+Added track 570 to frame 3576 of video shot 3 (team Switzerland, jersey number 100, x 14.5, y 11.5).
+Added track 570 to frame 3589 of video shot 3 (team Switzerland, jersey number 100, x 19.0, y 9.0).
+Imputed coordinates for track 570 of video shot 3.
+Added track 571 to frame 3251 of video shot 3 (team Switzerland, jersey number 100, x 159.25, y 3.75).
+Added track 571 to frame 3275 of video shot 3 (team Switzerland, jersey number 100, x 136.75, y 10.0).
+Added track 571 to frame 3330 of video shot 3 (team Switzerland, jersey number 100, x 99.5, y 40.25).
+Added track 571 to frame 3366 of video shot 3 (team Switzerland, jersey number 100, x 81.25, y 64.25).
+Added track 571 to frame 3382 of video shot 3 (team Switzerland, jersey number 100, x 68.25, y 71.25).
+Added track 571 to frame 3401 of video shot 3 (team Switzerland, jersey number 100, x 50.5, y 67.25).
+Added track 571 to frame 3425 of video shot 3 (team Switzerland, jersey number 100, x 43.0, y 52.25).
+Added track 571 to frame 3449 of video shot 3 (team Switzerland, jersey number 100, x 43.25, y 43.0).
+Added track 571 to frame 3489 of video shot 3 (team Switzerland, jersey number 100, x 35.0, y 20.5).
+Added track 571 to frame 3522 of video shot 3 (team Switzerland, jersey number 100, x 20.25, y 17.0).
+Added track 571 to frame 3557 of video shot 3 (team Switzerland, jersey number 100, x 23.75, y 7.75).
+Added track 571 to frame 3589 of video shot 3 (team Switzerland, jersey number 100, x 31.75, y 3.75).
+Imputed coordinates for track 571 of video shot 3.
+Added track 572 to frame 3251 of video shot 3 (team Switzerland, jersey number 100, x 162.25, y 33.5).
+Added track 572 to frame 3265 of video shot 3 (team Switzerland, jersey number 100, x 160.25, y 43.5).
+Added track 572 to frame 3346 of video shot 3 (team Switzerland, jersey number 100, x 101.5, y 48.5).
+Added track 572 to frame 3374 of video shot 3 (team Switzerland, jersey number 100, x 78.75, y 48.5).
+Added track 572 to frame 3410 of video shot 3 (team Switzerland, jersey number 100, x 42.5, y 46.0).
+Added track 572 to frame 3435 of video shot 3 (team Switzerland, jersey number 100, x 23.25, y 46.5).
+Added track 572 to frame 3463 of video shot 3 (team Switzerland, jersey number 100, x 11.5, y 32.25).
+Added track 572 to frame 3487 of video shot 3 (team Switzerland, jersey number 100, x 2.5, y 18.0).
+Added track 572 to frame 3513 of video shot 3 (team Switzerland, jersey number 100, x 10.25, y 7.0).
+Added track 572 to frame 3547 of video shot 3 (team Switzerland, jersey number 100, x 14.25, y 5.25).
+Added track 572 to frame 3589 of video shot 3 (team Switzerland, jersey number 100, x 19.0, y 2.75).
+Imputed coordinates for track 572 of video shot 3.
+Added track 573 to frame 3251 of video shot 3 (team Switzerland, jersey number 100, x 172.5, y 79.0).
+Added track 573 to frame 3324 of video shot 3 (team Switzerland, jersey number 100, x 126.0, y 75.75).
+Added track 573 to frame 3363 of video shot 3 (team Switzerland, jersey number 100, x 103.75, y 63.75).
+Added track 573 to frame 3382 of video shot 3 (team Switzerland, jersey number 100, x 88.75, y 60.75).
+Added track 573 to frame 3391 of video shot 3 (team Switzerland, jersey number 100, x 86.5, y 64.5).
+Imputed coordinates for track 573 of video shot 3.
+Added track 574 to frame 3251 of video shot 3 (team Canada, jersey number 100, x 151.25, y 42.0).
+Added track 574 to frame 3265 of video shot 3 (team Canada, jersey number 100, x 152.0, y 39.0).
+Added track 574 to frame 3294 of video shot 3 (team Canada, jersey number 100, x 139.25, y 31.5).
+Added track 574 to frame 3324 of video shot 3 (team Canada, jersey number 100, x 125.5, y 39.25).
+Added track 574 to frame 3418 of video shot 3 (team Canada, jersey number 100, x 52.5, y 42.25).
+Added track 574 to frame 3450 of video shot 3 (team Canada, jersey number 100, x 29.25, y 35.25).
+Added track 574 to frame 3487 of video shot 3 (team Canada, jersey number 100, x 11.0, y 23.75).
+Added track 574 to frame 3505 of video shot 3 (team Canada, jersey number 100, x 11.0, y 16.0).
+Added track 574 to frame 3549 of video shot 3 (team Canada, jersey number 100, x 16.0, y 5.5).
+Added track 574 to frame 3589 of video shot 3 (team Canada, jersey number 100, x 25.0, y 3.25).
+Imputed coordinates for track 574 of video shot 3.
+Added track 575 to frame 3290 of video shot 3 (team Canada, jersey number 100, x 127.25, y 52.25).
+Added track 575 to frame 3313 of video shot 3 (team Canada, jersey number 100, x 115.25, y 61.5).
+Added track 575 to frame 3333 of video shot 3 (team Canada, jersey number 100, x 115.25, y 71.75).
+Added track 575 to frame 3347 of video shot 3 (team Canada, jersey number 100, x 107.5, y 80.25).
+Added track 575 to frame 3386 of video shot 3 (team Canada, jersey number 100, x 82.5, y 79.75).
+Added track 575 to frame 3404 of video shot 3 (team Canada, jersey number 100, x 69.5, y 74.0).
+Imputed coordinates for track 575 of video shot 3.
+Added track 576 to frame 3324 of video shot 3 (team Canada, jersey number 100, x 90.0, y 58.5).
+Added track 576 to frame 3359 of video shot 3 (team Canada, jersey number 100, x 72.5, y 56.75).
+Added track 576 to frame 3381 of video shot 3 (team Canada, jersey number 100, x 58.75, y 68.0).
+Added track 576 to frame 3404 of video shot 3 (team Canada, jersey number 100, x 46.25, y 64.75).
+Added track 576 to frame 3430 of video shot 3 (team Canada, jersey number 100, x 39.0, y 54.25).
+Added track 576 to frame 3480 of video shot 3 (team Canada, jersey number 100, x 16.75, y 47.5).
+Added track 576 to frame 3589 of video shot 3 (team Canada, jersey number 100, x 19.0, y 32.5).
+Imputed coordinates for track 576 of video shot 3.
+Added track 577 to frame 3336 of video shot 3 (team Canada, jersey number 100, x 82.0, y 36.0).
+Added track 577 to frame 3396 of video shot 3 (team Canada, jersey number 100, x 41.75, y 47.0).
+Added track 577 to frame 3418 of video shot 3 (team Canada, jersey number 100, x 31.25, y 43.5).
+Added track 577 to frame 3452 of video shot 3 (team Canada, jersey number 100, x 22.25, y 27.75).
+Added track 577 to frame 3477 of video shot 3 (team Canada, jersey number 100, x 9.75, y 24.75).
+Added track 577 to frame 3493 of video shot 3 (team Canada, jersey number 100, x 3.5, y 19.75).
+Added track 577 to frame 3512 of video shot 3 (team Canada, jersey number 100, x 3.5, y 15.75).
+Added track 577 to frame 3523 of video shot 3 (team Canada, jersey number 100, x 4.5, y 16.5).
+Added track 577 to frame 3556 of video shot 3 (team Canada, jersey number 100, x 10.25, y 17.0).
+Added track 577 to frame 3589 of video shot 3 (team Canada, jersey number 100, x 19.25, y 15.75).
+Imputed coordinates for track 577 of video shot 3.
+Added track 578 to frame 3405 of video shot 3 (team Canada, jersey number 100, x 16.0, y 45.25).
+Added track 578 to frame 3451 of video shot 3 (team Canada, jersey number 100, x 12.0, y 41.0).
+Added track 578 to frame 3589 of video shot 3 (team Canada, jersey number 100, x 12.0, y 40.5).
+Imputed coordinates for track 578 of video shot 3.
+Added track 579 to frame 3474 of video shot 3 (team Canada, jersey number 100, x 31.0, y 40.5).
+Added track 579 to frame 3488 of video shot 3 (team Canada, jersey number 100, x 28.75, y 40.75).
+Added track 579 to frame 3527 of video shot 3 (team Canada, jersey number 100, x 28.25, y 36.25).
+Added track 579 to frame 3589 of video shot 3 (team Canada, jersey number 100, x 33.25, y 30.75).
+Imputed coordinates for track 579 of video shot 3.
+Added track 580 to frame 3529 of video shot 3 (team Switzerland, jersey number 100, x 27.5, y 51.25).
+Added track 580 to frame 3589 of video shot 3 (team Switzerland, jersey number 100, x 13.75, y 34.0).
+Imputed coordinates for track 580 of video shot 3.
+Set jersey number of track 4 in video shot 1 to 35.
+Set jersey number of track 8 in video shot 1 to 8.
+Set jersey number of track 3 in video shot 1 to 25.
+Set jersey number of track 10 in video shot 1 to 20.
+Set jersey number of track 12 in video shot 1 to 7.
+Set jersey number of track 7 in video shot 1 to 7.
+Set jersey number of track 5 in video shot 1 to 88.
+Set jersey number of track 1 in video shot 1 to 21.
+Set jersey number of track 2 in video shot 1 to 8.
+Set jersey number of track 32 in video shot 1 to 17.
+Set jersey number of track 46 in video shot 1 to 29.
+Set jersey number of track 47 in video shot 1 to 25.
+Set jersey number of track 49 in video shot 1 to 27.
+Set jersey number of track 52 in video shot 1 to 7.
+Set jersey number of track 55 in video shot 1 to 27.
+Merged track 55 from video shot 1 with track 54.
+Imputed coordinates for track 54 of video shot 1.
+Set jersey number of track 54 in video shot 1 to 27.
+Set jersey number of track 76 in video shot 1 to 8.
+Set jersey number of track 78 in video shot 1 to 21.
+Set jersey number of track 83 in video shot 1 to 35.
+Set jersey number of track 61 in video shot 1 to 11.
+Set jersey number of track 71 in video shot 1 to 28.
+Set jersey number of track 8 in video shot 1 to 28.
+Set jersey number of track 104 in video shot 1 to 27.
+Undo.
+Set jersey number of track 104 in video shot 1 to 7.
+Set jersey number of track 107 in video shot 1 to 7.
+Set jersey number of track 111 in video shot 1 to 25.
+Set jersey number of track 74 in video shot 1 to 88.
+Set jersey number of track 88 in video shot 1 to 88.
+Set jersey number of track 116 in video shot 1 to 26.
+Set jersey number of track 121 in video shot 1 to 88.
+Set jersey number of track 127 in video shot 1 to 25.
+Set jersey number of track 235 in video shot 1 to 29.
+Set jersey number of track 183 in video shot 1 to 7.
+Set jersey number of track 249 in video shot 2 to 29.
+Set jersey number of track 248 in video shot 2 to 22.
+Set jersey number of track 251 in video shot 2 to 14.
+Set jersey number of track 258 in video shot 2 to 23.
+Set jersey number of track 267 in video shot 2 to 35.
+Set jersey number of track 259 in video shot 2 to 17.
+Set jersey number of track 255 in video shot 2 to 26.
+Set jersey number of track 247 in video shot 2 to 40.
+Set jersey number of track 257 in video shot 2 to 26.
+Set jersey number of track 279 in video shot 2 to 26.
+Set jersey number of track 300 in video shot 2 to 22.
+Set jersey number of track 254 in video shot 2 to 22.
+Undo.
+Set jersey number of track 361 in video shot 2 to 14.
+Set jersey number of track 329 in video shot 2 to 21.
+Set jersey number of track 375 in video shot 2 to 35.
+Set jersey number of track 567 in video shot 2 to 18.
+Set jersey number of track 567 in video shot 2 to 17.
+Set jersey number of track 330 in video shot 2 to 20.
+Set jersey number of track 342 in video shot 2 to 3.
+Set jersey number of track 381 in video shot 2 to 26.
+Set jersey number of track 328 in video shot 2 to 7.
+Set jersey number of track 382 in video shot 2 to 16.
+Set jersey number of track 385 in video shot 2 to 35.
+Set jersey number of track 391 in video shot 2 to 35.
+Set jersey number of track 399 in video shot 2 to 7.
+Set jersey number of track 505 in video shot 2 to 29.
+Set jersey number of track 476 in video shot 2 to 22.
+Set jersey number of track 442 in video shot 2 to 26.
+Set jersey number of track 509 in video shot 2 to 9.
+Set jersey number of track 512 in video shot 2 to 27.
+Set jersey number of track 513 in video shot 2 to 14.
+Set jersey number of track 515 in video shot 2 to 21.
+Set jersey number of track 519 in video shot 2 to 9.
+Set jersey number of track 532 in video shot 2 to 42.
+Set jersey number of track 533 in video shot 2 to 11.
+Set jersey number of track 516 in video shot 2 to 27.
+Set jersey number of track 565 in video shot 2 to 29.
+Set jersey number of track 559 in video shot 2 to 22.
+Set jersey number of track 519 in video shot 2 to 22.
+Undo.
+Removed track 519 from video shot 2.
+Undo.
+Removed track 511 from video shot 2.
+Set jersey number of track 441 in video shot 2 to 14.
+Set jersey number of track 184 in video shot 1 to 14.
+Set jersey number of track 568 in video shot 3 to 29.
+Set jersey number of track 572 in video shot 3 to 88.
+Set jersey number of track 574 in video shot 3 to 27.
+Set jersey number of track 571 in video shot 3 to 25.
+Set jersey number of track 569 in video shot 3 to 22.
+Set jersey number of track 573 in video shot 3 to 9.
+Set jersey number of track 575 in video shot 3 to 11.
+Set jersey number of track 570 in video shot 3 to 9.
+Set jersey number of track 576 in video shot 3 to 28.
+Set jersey number of track 578 in video shot 3 to 35.
+Set jersey number of track 579 in video shot 3 to 11.
+Set jersey number of track 580 in video shot 3 to 9.
+Set jersey number of track 563 in video shot 2 to 7.
+Set jersey number of track 573 in video shot 3 to 7.
+Set jersey number of track 580 in video shot 3 to 7.
+Set jersey number of track 101 in video shot 1 to 17.

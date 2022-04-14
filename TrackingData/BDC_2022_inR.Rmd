@@ -1,0 +1,182 @@
+---
+title: "BDC_2022"
+output: pdf_document
+---
+
+```{r}
+library("rjson")
+library("jsonlite")
+library("tidyverse")
+library("gganimate") # For turning ggplot's into animations
+#setwd("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData")
+setwd("H:/Hockey/Big-Data-Cup-2022-Private-main/TrackingData")
+json_file <- "BDC_2022_all_data.json"
+dat <- fromJSON(json_file)
+```
+
+```{r}
+#Statletes data
+r=0
+t=7
+line1 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')
+line2 <- eval(parse(text=line1))
+if(length(line2$frame_id)!=0){
+  json_tracks <- lapply(line2, function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  current_track <- as.data.frame(do.call("cbind", json_tracks))
+}
+current_track$frame_id = current_track$frame_id %>% as.integer()
+current_track$period = current_track$period %>% as.integer()
+current_track$track_id = current_track$track_id %>% as.integer()
+current_track$jersey_number = current_track$jersey_number %>% as.integer()
+current_track$x_ft = current_track$x_ft %>% as.double()
+current_track$y_ft = current_track$y_ft %>% as.double()
+current_track$vel_x = current_track$vel_x %>% as.double()
+current_track$vel_y = current_track$vel_y %>% as.double()
+
+line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
+line4 <- eval(parse(text=line3))
+if(length(line4$game_date)!=0){
+  json_events <- lapply(line4[1:24], function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  current_event <- as.data.frame(do.call("cbind", json_events))
+}
+```
+
+```{r}
+#Other guys data
+r=0
+t=7
+
+current_track2 <- read_csv("bdc-main/data/2022-02-08 Canada at USA/2022-02-08 Canada at USA P1 PP1.csv")
+current_track2$frame_id = current_track2$frame_id %>% as.integer()
+current_track2$period = current_track2$period %>% as.integer()
+current_track2$track_id = current_track2$track_id %>% as.integer()
+current_track2$jersey_number = current_track2$jersey_number %>% as.integer()
+current_track2$x_ft = current_track2$x_ft %>% as.double()
+current_track2$y_ft = current_track2$y_ft %>% as.double()
+
+current_track3 <- current_track2 %>% filter(frame_id<615 & frame_id>374)
+
+line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
+line4 <- eval(parse(text=line3))
+if(length(line4$game_date)!=0){
+  json_events <- lapply(line4[1:24], function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  current_event <- as.data.frame(do.call("cbind", json_events))
+}
+
+```
+
+```{r}
+frame = current_track3$frame_id[1]
+tracking_data = current_track3 %>% filter(frame_id==frame)
+event = current_event %>% filter(clock_seconds==frame)
+tracking_data
+```
+
+```{r}
+#tracking_data = rbind(tracking_data, c(375,1,200,'Light','Canada',event$Player_1_num,event$x_coord %>% as.double(), 85-event$y_coord %>% as.double(),NA,NA))
+#tracking_data = rbind(tracking_data, c(375,1,300,'Light','Canada',event$Player_2_num,event$x_coord_2 %>% as.double(), 85-event$y_coord_2 %>% as.double(),NA,NA))
+#tracking_data$x_ft = tracking_data$x_ft %>% as.double()
+#tracking_data$y_ft = tracking_data$y_ft %>% as.double()
+```
+
+```{r}
+#source("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/hockey_pipeline.R")
+source("H:/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/hockey_pipeline.R")
+passes = create_points2(138.8515,68.89724)#76.89724)
+passes %>% head()
+```
+
+```{r}
+#Given the current frame and eligible points find the minimum time a player will take to reach that point. separate for each time. 
+#get min offense and defense times. Use speed of players and angle. Similar to arrival time in pipeline_functions.R
+get_to_point <- function(x_puck,y_puck,tracks, points, offence){
+  t=162
+  
+  x_puck=138.8515;y_puck=68.89724
+  points=passes[t,]
+  tracks=tracking_data
+  offence = 'Canada'
+  teams = tracks$team_name %>% unique()
+  defence = teams[-which(teams==offence)]
+  
+  off_tracks = tracks %>% filter(team_name==offence)
+  def_tracks = tracks %>% filter(team_name==defence)
+  
+  off_min = c()
+  def_min = c()
+  for(row in 1:nrow(points)){
+      off_min = c(off_min, min(sqrt((points[row,'x_coor']-off_tracks$x_ft)^2+(points[row,'y_coor']-off_tracks$y_ft)^2)))
+      def_min = c(def_min, min(sqrt((points[row,'x_coor']-def_tracks$x_ft)^2+(points[row,'y_coor']-def_tracks$y_ft)^2)))
+  }
+  
+  target_x = points$x_coor; target_y=points$y_coor
+  defenders_x=x_puck; defenders_y=y_puck
+  speed=10; dir=points$angle*180/pi
+  blockers_x=off_tracks[,'x_ft']; blockers_y=off_tracks[,'y_ft']
+  reaction_time = 0; max_speed = 20; blocker_time_multiplier = 5
+  
+  # i. Determine defenders' positions after reaction_time total seconds at their same speed and direction
+  angle = case_when(
+    dir <= 90 ~ 90 - dir,
+    dir > 90 & dir < 180 ~ dir - 90,
+    dir > 180 & dir < 270 ~ 270 - dir,
+    TRUE ~ dir - 270
+  )
+  
+  reaction_x = defenders_x + ifelse(dir < 180, cos(angle * pi/180)*(speed * reaction_time), -cos(angle * pi / 180)*(speed * reaction_time))
+  reaction_y = defenders_y + ifelse(dir > 90 & dir < 270, sin(angle * pi/180)*(speed * reaction_time), -sin((angle * pi)/180)*(speed * reaction_time))
+
+  # Set (x1,y1) = location of defender after reaction time, (x2,y2) = target location, (x3,y3) = blocker location
+  i=1;j=1;k=1
+  x1 = reaction_x[i]; y1 = reaction_y[i]
+  x2 = target_x[k]; y2 = target_y[k]
+  x3 = blockers_x[j]; y3 = blockers_y[j]
+  
+  # Calculate the perpendicular projection of the blocker's position onto the line formed by the defender and the target
+  b = -((x1-x3)*(x2-x1)+(y1-y3)*(y2-y1))/((x2-x1)^2+(y2-y1)^2)
+  intercept_x = x1 + b*(x2 - x1)
+  intercept_y = (y1 + b*(y2 - y1))
+  
+  intercept = data.frame(x_int = unlist(intercept_x),y_int = unlist(intercept_y))
+  intercept= intercept[which((y1-intercept$y_int)<=(y1-y2) & 0<(y1-intercept$y_int)),]
+
+  plot_rink(ggplot(tracks)) +
+    geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+    geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+    geom_point(aes(x = x_puck, y = y_puck), size = 3, shape = 4) + 
+    geom_point(data = passes[t,], aes(x = x_coor, y = y_coor), size = 2, shape = 4) +
+    geom_point(data =intercept,aes(x = x_int, y = y_int),color='red', size = 1, shape = 8) +
+    scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+    scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+    geom_segment(data = passes[t,],aes(x = x_puck, y = y_puck, xend = x_coor, yend = y_coor),linetype=2)+
+    labs(fill = "Team") +
+    guides(colour = "none") 
+}
+```
+
+```{r}
+# Source in the plot_rink function
+source("H:/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial/Code/plot_rink.R")
+#source("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial/Code/plot_rink.R")
+
+# Create a gif of this play
+plot_rink(ggplot(tracking_data)) +
+  geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(data = passes, aes(x = x_coor, y = y_coor), size = 1, shape = 4) +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none") 
+
+```
+

@@ -1,0 +1,42 @@
+---
+title: "Join_data"
+output: pdf_document
+date: '2022-04-05'
+---
+```{r}
+library("rjson")
+library("jsonlite")
+library("tidyverse")
+library("snowfall")
+```
+
+```{r}
+setwd("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData")
+json_file <- "BDC_2022_all_data.json"
+dat <- fromJSON(json_file)
+json_dat <- lapply(dat, function(x) {
+  x[sapply(x, is.null)] <- NA
+  unlist(x)
+})
+events<-as.data.frame(do.call("cbind", json_dat))[,1:8]
+```
+
+```{r}
+relevant_events1 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events1.Rds")
+relevant_events2 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events2.Rds")
+relevant_events3 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events3.Rds")
+relevant_events4 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events4.Rds")
+relevant_events5 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events5.Rds")
+relevant_events6 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events6.Rds")
+relevant_events7 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events7.Rds")
+relevant_events8 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events8.Rds")
+relevant_events9 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events9.Rds")
+relevant_events10 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events10.Rds")
+relevant_events11 <- readRDS("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData/relevant_events11.Rds")
+```
+
+```{r}
+relevant_events11[[8249898,1]][1:22] %>% head()
+relevant_events1[[1,1]][[23]][[6,1]] %>% head()
+```
+

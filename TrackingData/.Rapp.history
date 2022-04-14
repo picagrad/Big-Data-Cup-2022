@@ -1,0 +1,42 @@
+library("rjson")#
+library("jsonlite")#
+library("tidyverse")#
+library("snowfall")#
+#
+setwd("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/TrackingData")#
+json_file <- "BDC_2022_all_data.json"#
+dat <- fromJSON(json_file)#
+json_dat <- lapply(dat, function(x) {#
+  x[sapply(x, is.null)] <- NA#
+  unlist(x)#
+})#
+events<-as.data.frame(do.call("cbind", json_dat))[,1:8]#
+#
+relevant_events = matrix(list(), nrow=nrow(events), ncol=1)#
+for(r in 7000001:(nrow(events)-1)){ #}(nrow(events)-1)){#
+   line <- paste('dat$relevant_events$\'',r,'\'',sep='')#
+   json_tracking <- lapply(eval(parse(text=line)), function(x) {#
+     x[sapply(x, is.null)] <- NA#
+     unlist(x)#
+   })#
+   if(length(json_tracking)!=0){#
+     tracking<-as.data.frame(do.call("cbind", json_tracking))[,1:22]#
+     tracks = matrix(list(), nrow=nrow(tracking), ncol=1)#
+     for(t in 0:(nrow(tracking)-1)){#
+       line2 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')#
+       line3 <- eval(parse(text=line2))#
+       if(length(line3$frame_id)!=0){#
+         json_tracks <- lapply(eval(parse(text=line2)), function(x) {#
+           x[sapply(x, is.null)] <- NA#
+           unlist(x)#
+         })#
+         current_track <- as.data.frame(do.call("cbind", json_tracks))#
+         tracks[[t+1,1]] = current_track#
+       }#
+     }#
+     tracking$tracks = tracks #
+     relevant_events[[r+1,1]] = tracking#
+   }#
+  print(r)#
+}#
+saveRDS(relevant_events, file = "relevant_events11.Rds")

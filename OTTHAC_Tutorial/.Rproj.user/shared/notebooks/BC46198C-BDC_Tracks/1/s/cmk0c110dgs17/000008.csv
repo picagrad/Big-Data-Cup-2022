@@ -1,0 +1,9 @@
+"0","plays <- 0:64"
+"0","aa <- paraLapply(plays, save_play, 4)"
+"2","snowfall 1.84-6.1 initialized (using snow 0.4-4): parallel execution on 4 CPUs.
+
+"
+"2","
+Stopping cluster
+
+"

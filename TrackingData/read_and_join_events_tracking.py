@@ -4,7 +4,6 @@ import pandas as pd
 import os
 import numpy as np
 
-
 TEAM_NAMES = {'Canada': 'Olympic (Women) - Canada', 
               'USA': 'Olympic (Women) - United States',
               'Finland': 'Olympic (Women) - Finland',
@@ -12,7 +11,6 @@ TEAM_NAMES = {'Canada': 'Olympic (Women) - Canada',
               'Switzerland': 'Olympic (Women) - Switzerland'}
 
 MAX_FRAME_JUMP = 5
-MIN_TRACK_LEN = 5
 
 # power_play_info_file = 'pp_info.csv'
 # power_play_info = pd.read_csv(power_play_info_file)
@@ -110,7 +108,7 @@ def get_pp_tracking(power_play_info_file = 'pp_info.csv',
             for tr_id in tr_ids:
                 idxs = tracking_data.track_id==tr_id
                 track = tracking_data.loc[idxs]
-                if len(track) < MIN_TRACK_LEN:
+                if len(track) <= 5:
                     continue
                 x_spd,y_spd = get_speed(track)
                 tracking_data.loc[idxs,'vel_x'] = x_spd

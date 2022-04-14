@@ -1,0 +1,6 @@
+Set jersey number of track 13 in video shot 1 to 29.
+Set jersey number of track 28 in video shot 1 to 29.
+Set jersey number of track 42 in video shot 1 to 29.
+Set jersey number of track 48 in video shot 1 to 10.
+Set jersey number of track 39 in video shot 1 to 26.
+Set jersey number of track 36 in video shot 1 to 10.
