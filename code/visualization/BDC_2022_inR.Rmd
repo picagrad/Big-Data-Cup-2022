@@ -1,0 +1,95 @@
+---
+title: "BDC_2022"
+output: pdf_document
+---
+
+```{r}
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate","ggpmisc")
+install.lib = load.libraries[!load.libraries %in% installed.packages()]
+for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
+sapply(load.libraries, require, character = TRUE)
+
+source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+json_file <- "data/BDC_2022_all_data.json"
+dat <- fromJSON(json_file)
+```
+
+```{r}
+#Statletes data
+r=0 # powerplay of interest
+t=7 # shot of interest
+
+# Set up the tracking data
+line1 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')
+line2 <- eval(parse(text=line1))
+if(length(line2$frame_id)!=0){
+  json_tracks <- lapply(line2, function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  current_track <- as.data.frame(do.call("cbind", json_tracks))
+}
+current_track$frame_id = current_track$frame_id %>% as.integer()
+current_track$period = current_track$period %>% as.integer()
+current_track$track_id = current_track$track_id %>% as.integer()
+current_track$jersey_number = current_track$jersey_number %>% as.integer()
+current_track$x_ft = current_track$x_ft %>% as.double()
+current_track$y_ft = current_track$y_ft %>% as.double()
+current_track$vel_x = current_track$vel_x %>% as.double()
+current_track$vel_y = current_track$vel_y %>% as.double()
+
+# Set up the related event data
+line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
+line4 <- eval(parse(text=line3))
+if(length(line4$game_date)!=0){
+  json_events <- lapply(line4[1:24], function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  current_event <- as.data.frame(do.call("cbind", json_events))
+}
+```
+
+
+```{r}
+# Given a set location for the puck, find all potential spots the puck could be moved to
+x_puck = 138.8515
+y_puck = 68.89724
+passes = create_points(x_puck,y_puck)
+
+passes %>% head()
+```
+```{r}
+# Select single frame to analyze
+frame = current_track$frame_id[1]
+tracking_data = current_track %>% filter(frame_id==frame)
+event = current_event %>% filter(clock_seconds==frame)
+tracking_data
+```
+
+```{r}
+# Create image of this frame with potential passes
+plot_rink(ggplot(tracking_data)) +
+  geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(data = passes, aes(x = x_coor, y = y_coor), size = 1, shape = 4) +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none") 
+
+```
+```{r}
+get_to_point(x_puck,y_puck,tracking_data,passes[162,],'USA')
+get_to_point(x_puck,y_puck,tracking_data,passes[162,],'Canada')
+```
+
+```{r}
+# Save a gif of the selected powerplay shot
+# Note: mp4 will save in the same spot as hockey_pipeline.R, I tried to fix but couldn't get it to.
+power_play <- 0
+shot <- 6
+save_play(dat, power_play, shot, "mp4")
+```
+
