@@ -77,12 +77,44 @@ plot_rink(ggplot(tracking_data)) +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
-  guides(colour = "none") 
-
+  guides(colour = "none")+ 
+  geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+                  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
 ```{r}
-get_to_point(x_puck,y_puck,tracking_data,passes[162,],'USA')
-get_to_point(x_puck,y_puck,tracking_data,passes[162,],'Canada')
+point_val <- get_to_point(x_puck,y_puck,passes[162,],'Canada',want_plot=TRUE)
+point_val[[1]] #gives you the value of that point -100 to 100, -100 defence has power, 0 neutral, +100 offence has power
+point_val[[2]]
+```
+```{r}
+#point_val <- get_to_point(x_puck,y_puck,passes[162,],'Canada',want_plot=FALSE)
+#point_val
+all_point_val <- apply(passes,1,get_to_point,x_puck=138.8515,y_puck=68.89724,offence='Canada',want_plot=FALSE)
+passes_with_vals = cbind(passes,values=all_point_val)
+passes_with_vals #values are negative if USA controlled area, positive if Canada controlled area
+```
+
+```{r}
+# Create image of this frame with potential passes
+
+p <- ggplot(data = passes_with_vals,aes(x=x_coor, y=y_coor,z=values)) +
+   stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
+  scale_fill_gradient(low="light grey", high="orange") +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(expand = c(0, 0))
+
+plot_rink(p) +
+  geom_point(aes(x = x_coor, y = y_coor), size = 1, shape = 4)
+
+plot_rink(ggplot(tracking_data)) +
+  geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+                  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
 
 ```{r}
