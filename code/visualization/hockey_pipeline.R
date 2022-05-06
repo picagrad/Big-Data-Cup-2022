@@ -121,7 +121,7 @@ get_to_point <- function(x_puck,y_puck, points, offence,want_plot){
   speed=10; dir=points$angle*180/pi
   blockers_xdef=def_tracks[,'x_ft']; blockers_ydef=def_tracks[,'y_ft']
   blockers_xoff=off_tracks[,'x_ft']; blockers_yoff=off_tracks[,'y_ft']
-  reaction_time = 0; max_speed = 20; blocker_time_multiplier = 5
+  reaction_time = 0; max_speed = 20; blocket_rime_multiplier = 5
   
   # i. Determine defenders' positions after reaction_time total seconds at their same speed and direction
   angle = case_when(
@@ -342,7 +342,7 @@ save_play <- function(data, r, t_start, type){
 
 # This function gives the distance a player would be from a target point
 # given starting location and velocity and a target time t 
-dist_to_xyt <- function(tx,ty,x0,y0,vx,vy,t, vmax = 30, alpha = 1.3, r_t = 0.5){
+dist_to_xyt <- function(tx,ty,x0,y0,vx,vy,t, vmax = 30, alpha = 1.3, t_r = 0.5){
   
   # tx,ty - target location
   # x0,y0 - current location
@@ -350,27 +350,80 @@ dist_to_xyt <- function(tx,ty,x0,y0,vx,vy,t, vmax = 30, alpha = 1.3, r_t = 0.5){
   # t - relevant arrival time
   # vmax - maximum speed
   # alpha - decay coefficient (related to acceleration)
-  # r_t - reaction time
+  # t_r - reaction time
   
   
-  # Assuming here that the time is larger than reaction time
-  # If it is not, we need to think exactly about what to do
-  
+  # If time is smaller than reaction time, skater keeps going at initial speed
+  if (t<t_r){
+    c_x = x0 +vx * t
+    c_y = y0 + vy * t
+    r = 0
+    }
   #first accounting for reaction time
-  x0 = x0 + r_t * vx
-  y0 = y0 + r_t * vy
-  t = t - r_t
+  else{
+    x0 = x0 + t_r * vx
+    y0 = y0 + t_r * vy
+    t = t - t_r
   
   # Now building the motion model for the remaining time
   
-  c_x = x0 + vx * (1-exp(-alpha * t))/alpha
-  c_y = y0 + vy * (1-exp(-alpha * t))/alpha
-  r = vmax * (t - (1-exp(-alpha * t))/alpha)
+    c_x = x0 + vx * (1-exp(-alpha * t))/alpha
+    c_y = y0 + vy * (1-exp(-alpha * t))/alpha
+    r = vmax * (t - (1-exp(-alpha * t))/alpha)
+  }
   
   remaining_dist = ((tx-c_x)^2 + (ty-c_y)^2)^0.5-r
   return(max(remaining_dist,0))
   
-} 
+}
+
+time_center_radius <- function(x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r = 0.5, tmax = 15, tres = 1/30){
+  ti <- seq(0,t_r,tres) # initial time - before reaction
+  tr <- seq(0,10-t_r,tres)# reamining time after reaction
+  
+  c_xi <- x0 + ti * vx
+  c_yi <- x0 + ti *vy
+  r_i <- 0 * ti
+  
+  x0 = x0 + t_r * vx
+  y0 = y0 + t_r * vy
+  
+  # Now building the motion model for the remaining time
+  
+  c_xr = x0 + vx * (1-exp(-alpha * tr))/alpha
+  c_yr = y0 + vy * (1-exp(-alpha * tr))/alpha
+  r_r = vmax * (tr - (1-exp(-alpha * tr))/alpha)
+  
+  c_xf <- c(c_xi,c_xr)
+  c_yf <- c(c_yi,c_yr)
+  r_f <- c(r_i,r_r)
+  
+  t <- c(ti, tr+t_r)
+  
+  return(data.frame(t = t, cx = c_xf, cy = c_yf, r = r_f))
+  
+}
+
+t_reach <- function(loc, t_c_r){
+  tx = loc[1]
+  ty = loc[2]
+  remaining_dist = ((tx-t_c_r$cx)^2 + (ty-t_c_r$cy)^2)^0.5-t_c_r$r
+  ix  <- max(which(remaining_dist>0))
+  return(ifelse(ix == -Inf, 0, t_c_r$t[ix+1]))
+}
+
+player_arrival_times <- function(x0,y0,vx,vy,
+                                 grid = expand.grid(x = seq(0,200,0.5), y = seq(0,85,0.5)),
+                                 vmax = 30,
+                                 alpha = 1.3, 
+                                 t_r = 0.5, 
+                                 tmax = 15, 
+                                 tres = 1/30
+                                 ){
+  t_c_r <- time_center_radius(x0, y0, vx, vy, vmax = vmax, alpha = alpha, t_r = t_r, tmax = tmax, tres = tres)
+  times <- apply(grid,1,t_reach,t_c_r)
+  return(cbind(grid, arr_times = times))
+}
 
 
 
