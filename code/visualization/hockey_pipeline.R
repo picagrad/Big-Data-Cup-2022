@@ -340,6 +340,37 @@ save_play <- function(data, r, t_start, type){
 }
 
 
+# This function gives the distance a player would be from a target point
+# given starting location and velocity and a target time t 
+dist_to_xyt <- function(tx,ty,x0,y0,vx,vy,t, vmax = 30, alpha = 1.3, r_t = 0.5){
+  
+  # tx,ty - target location
+  # x0,y0 - current location
+  # vx,vy - current speed
+  # t - relevant arrival time
+  # vmax - maximum speed
+  # alpha - decay coefficient (related to acceleration)
+  # r_t - reaction time
+  
+  
+  # Assuming here that the time is larger than reaction time
+  # If it is not, we need to think exactly about what to do
+  
+  #first accounting for reaction time
+  x0 = x0 + r_t * vx
+  y0 = y0 + r_t * vy
+  t = t - r_t
+  
+  # Now building the motion model for the remaining time
+  
+  c_x = x0 + vx * (1-exp(-alpha * t))/alpha
+  c_y = y0 + vy * (1-exp(-alpha * t))/alpha
+  r = vmax * (t - (1-exp(-alpha * t))/alpha)
+  
+  remaining_dist = ((tx-c_x)^2 + (ty-c_y)^2)^0.5-r
+  return(max(remaining_dist,0))
+  
+} 
 
 
 
