@@ -51,6 +51,7 @@ create_points <- function(x_puck,y_puck,x_min = 125,x_max = 200,y_min = 0,y_max 
 assess_value <- function(pass,offence,d_min,o_min,int_d,int_o){
   point_val_off = 0
   point_val_def = 0
+  stick = 6.5 #meters, stick plus arm length
   
   pickup_min=rbind(d_min,o_min)
   pickup_min$dist_to_int = NULL
@@ -76,11 +77,11 @@ assess_value <- function(pass,offence,d_min,o_min,int_d,int_o){
     
     h_int = sqrt(int_od$x_int^2+int_od$y_int^2)
     h_angle = atan(int_od$vel_y/int_od$vel_x)
-    stick = 6.5 #meters, stick plus arm length
+    
     x_mean = int_od$x_int+cos(h_angle)*int_od$dist_to_int
     y_mean = int_od$y_int+sin(h_angle)*int_od$dist_to_int
     h_mean = sqrt(x_mean^2+y_mean^2)
-    int_od$prob_int = abs(dnorm(h_int+stick, mean = h_mean, sd = stick)-dnorm(h_int-stick, mean = h_mean, sd = stick))
+    int_od$prob_int = abs(dnorm((h_int+stick-h_mean)/stick)-dnorm((h_int-stick-h_mean)/stick))
     
     off_intercept = int_od$prob_int[which(int_od$team_name==offence)]
     if(length(off_intercept)>0){
@@ -98,7 +99,7 @@ assess_value <- function(pass,offence,d_min,o_min,int_d,int_o){
   x_mean_puck = pass$x_coor+cos(pickup_angle)*pickup_min$dist_to_int
   y_mean_puck = pass$y_coor+sin(pickup_angle)*pickup_min$dist_to_int
   h_mean_puck = sqrt(x_mean_puck^2+y_mean_puck^2)
-  pickup_min$prob_int = abs(dnorm(h_int_puck+stick, mean = h_mean_puck, sd = stick)-dnorm(h_int_puck-stick, mean = h_mean_puck, sd = stick))
+  pickup_min$prob_int = abs(dnorm((h_int_puck+stick-h_mean_puck)/stick)-dnorm((h_int_puck-stick-h_mean_puck)/stick))
   
   
   point_val_off = (point_val_def+mean(pickup_min$prob_int[-which(pickup_min$team_name==offence)]))*100
@@ -195,7 +196,7 @@ get_to_point <- function(x_puck,y_puck, points, offence,want_plot){
     plot_pass=plot_rink(ggplot(tracks)) +
               geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
               geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
-              geom_point(aes(x = x_puck, y = y_puck), size = 3, shape = 4) + 
+              geom_point(aes(x = x_puck+2, y = y_puck-0.5), size = 2, shape = 16, colour='black') + 
               geom_point(data = points, aes(x = x_coor, y = y_coor), size = 2, shape = 4) +
               geom_point(data =intercept_def,aes(x = x_int, y = y_int),color='light blue', size = 3, shape = 8) +
               geom_point(data =intercept_off,aes(x = x_int, y = y_int),color='pink', size = 3, shape = 8) +

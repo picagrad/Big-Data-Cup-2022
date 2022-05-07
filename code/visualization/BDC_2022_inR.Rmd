@@ -97,7 +97,6 @@ all_defence = unlist(all_point_val)[-which(names(unlist(all_point_val))=='Off_va
 
 all_pressure = cbind(Off = all_offence,Def = all_defence, Diff = all_offence-all_defence)
 rownames(all_pressure) = NULL
-all_pressure
 
 passes_with_vals <- cbind(passes,all_pressure)
 ```
@@ -115,26 +114,6 @@ plot_half_rink(p) +
   geom_point(aes(x = x_coor, y = y_coor), size = 1, shape = 4)+
   geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black')
 
-p1 <- ggplot(data = passes_with_vals,aes(x=x_coor, y=y_coor,z=Off)) +
-   stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-  scale_fill_gradient(low="white", high="red") +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0))
-
-plot_half_rink(p1) +
-  geom_point(aes(x = x_coor, y = y_coor), size = 1, shape = 4)+
-  geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black')
-
-p2 <- ggplot(data = passes_with_vals,aes(x=x_coor, y=y_coor,z=Def)) +
-   stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE) +
-  scale_fill_gradient(low="white", high="blue") +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(expand = c(0, 0))
-
-plot_half_rink(p2) +
-  geom_point(aes(x = x_coor, y = y_coor), size = 1, shape = 4)+
-  geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black')
-
 plot_half_rink(ggplot(tracking_data)) +
   geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
@@ -145,9 +124,6 @@ plot_half_rink(ggplot(tracking_data)) +
   guides(colour = "none")+ 
   geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-```
-```{r}
-
 ```
 
 ```{r}
