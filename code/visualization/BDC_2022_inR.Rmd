@@ -127,6 +127,107 @@ plot_half_rink(ggplot(tracking_data)) +
 ```
 
 ```{r}
+save_play <- function(data, r, t_start, type){
+  r=0 # powerplay of interest
+  t=7 # shot of interest
+  
+  # Set up the tracking data
+  line1 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')
+  line2 <- eval(parse(text=line1))
+  if(length(line2$frame_id)!=0){
+    json_tracks <- lapply(line2, function(x) {
+      x[sapply(x, is.null)] <- NA
+      unlist(x)
+    })
+    current_track <- as.data.frame(do.call("cbind", json_tracks))
+  }
+  current_track$frame_id = current_track$frame_id %>% as.integer()
+  current_track$period = current_track$period %>% as.integer()
+  current_track$track_id = current_track$track_id %>% as.integer()
+  current_track$jersey_number = current_track$jersey_number %>% as.integer()
+  current_track$x_ft = current_track$x_ft %>% as.double()
+  current_track$y_ft = current_track$y_ft %>% as.double()
+  current_track$vel_x = current_track$vel_x %>% as.double()
+  current_track$vel_y = current_track$vel_y %>% as.double()
+  
+  # Set up the related event data
+  line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
+  line4 <- eval(parse(text=line3))
+  if(length(line4$game_date)!=0){
+    json_events <- lapply(line4[1:24], function(x) {
+      x[sapply(x, is.null)] <- NA
+      unlist(x)
+    })
+    current_event <- as.data.frame(do.call("cbind", json_events))
+  }
+  
+  
+  line1 <- paste('data$relevant_events$\'',r,'\'$tracks$\'',t_start,'\'',sep='')
+  line2 <- eval(parse(text=line1))
+  if(length(line2$frame_id)!=0){
+    json_tracks <- lapply(line2, function(x) {
+      x[sapply(x, is.null)] <- NA
+      unlist(x)
+    })
+    tracking_data <- as.data.frame(do.call("cbind", json_tracks))
+    rownames(tracking_data) = NULL
+    teams <- unique(tracking_data$team_name)
+    team1 <- teams[1]
+    team2 <- teams[2]
+    title = paste("PP", r, "_", team1, "_", team2, "_SS", t_start, sep = "")
+    
+    tracking_data$frame_id = tracking_data$frame_id %>% as.integer()
+    #tracking_data$frame_id = tracking_data$frame_id - min(tracking_data$frame_id)+1
+    tracking_data$period = tracking_data$period %>% as.integer()
+    tracking_data$track_id = tracking_data$track_id %>% as.integer()
+    tracking_data$team_id = tracking_data$team_id %>% as.character()
+    tracking_data$team_name = tracking_data$team_name %>% as.character()
+    tracking_data$jersey_number = tracking_data$jersey_number %>% as.integer()
+    tracking_data$x_ft = tracking_data$x_ft %>% as.double()
+    tracking_data$y_ft = tracking_data$y_ft %>% as.double()
+
+    ## ANIMATED PLOTS ##
+    
+    # Set the specs for the gif we want to create (lower res to make it run quicker)
+    options(gganimate.dev_args = list(width = 10, height = 6, units = 'in', res = 320))
+    
+    # Source in the plot_rink function
+    #source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/OTTHAC_Tutorial/Code/plot_rink.R")
+    #source("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial/Code/plot_rink.R")
+    
+    # Create a gif of this play
+    p = plot_rink(ggplot(tracking_data)) +
+      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), shape = 21, size = 6) +
+      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+      # Additional specs
+      geom_text(aes(x = 25, y = 40, label = frame_id), size = 5) +
+      transition_time(frame_id) + 
+      labs(fill = "Team") +
+      guides(colour = "none")
+    
+    
+    # Get the maximum and minimum frame number (so we know how long the gif should be)
+    max_frame = tracking_data$frame_id %>% max()
+    min_frame = tracking_data$frame_id %>% min() 
+    
+    # Render the animation
+    if(type == "mp4"){
+    # Save as mp4
+      p2 = animate(p, renderer = ffmpeg_renderer(), fps = 30, duration = (max_frame - min_frame+1)/30)#((max_frame - min_frame)/30 + 1))
+      anim_save(paste(title,".mp4",sep=""), p2)
+    #
+    }else{
+    #Save as gif
+      anim_save(paste(title,".gif",sep=""), p, fps = 30, duration = (max_frame - min_frame+1)/30)
+    }
+  }
+}
+```
+
+
+```{r}
 # Save a gif of the selected powerplay shot
 # Note: mp4 will save in the same spot as hockey_pipeline.R, I tried to fix but couldn't get it to.
 power_play <- 0
