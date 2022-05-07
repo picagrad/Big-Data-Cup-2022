@@ -49,41 +49,61 @@ create_points <- function(x_puck,y_puck,x_min = 125,x_max = 200,y_min = 0,y_max 
 }
 
 assess_value <- function(pass,offence,d_min,o_min,int_d,int_o){
+  point_val_off = 0
+  point_val_def = 0
+  
   pickup_min=rbind(d_min,o_min)
+  pickup_min$dist_to_int = NULL
+  for(j in 1:nrow(pickup_min)){
+    pickup_min$dist_to_int[j]=dist_to_xyt(pass$x_coor,pass$y_coor,pickup_min$x_ft[j],pickup_min$y_ft[j],
+                                          pickup_min$vel_x[j],pickup_min$vel_y[j],pickup_min$puck_2_p[j])
+    #print(pickup_min$dist_to_int[j])
+  }
+  
   int_od=rbind(int_d,int_o)
-  #Interceptions
-  #Keep only int_o and int_d where player_2_p < puck_2_p
-  #Each intercepter will get a probability of intercepting
-  #Who has smaller sqrt((x_int-x_puck)^2+(y_int-y_puck)^2) will intercept the puck first and 
-  int_od$h_int = sqrt(int_od$x_int^2+int_od$y_int^2)
-  int_od$h_mean = int_od$h_int+int_od$h_vel*int_od$puck_2_p
-  h_angle = asin(int_od$vel_x/int_od$h_vel)
-  stick = 2 #meters, stick plus arm length
-  x_s = sin(h_angle)*stick
-  y_s = cos(h_angle)*stick
-  h_s = sqrt(x_s^2+y_s^2)
-  int_od$prob_int = dnorm(int_od$h_int+h_s, mean = int_od$h_mean, sd = stick, log = FALSE)-dnorm(int_od$h_int-h_s, mean = int_od$h_mean, log = FALSE)
-  
-  pickup_min$h_int = sqrt(pass$x_coor^2+pass$y_coor^2)
-  pickup_min$h_vel = sqrt(pickup_min$vel_x^2+pickup_min$vel_y^2)
-  pickup_angle = asin(pickup_min$vel_x/pickup_min$h_vel)
-  x_angle = sin(pickup_angle)*stick
-  y_angle = cos(pickup_angle)*stick
-  h_angle = sqrt(x_angle^2+y_angle^2)
-  pickup_min$h_mean = pickup_min$h_int+pickup_min$h_vel*pickup_min$puck_2_p
-  pickup_min$prob_int = dnorm(pickup_min$h_int+h_angle, mean = pickup_min$h_mean, sd = stick, log = FALSE)-dnorm(pickup_min$h_int-h_angle, mean = pickup_min$h_mean, log = FALSE)
-  
-  point_value = 0
-  off_intercept = int_od$prob_int[which(int_od$team_name==offence)]
-  if(length(off_intercept)>0){
-    point_value=point_value+mean(off_intercept)
+  int_od$dist_to_int = NULL
+  if(nrow(int_od)>0){
+    for(i in 1:nrow(int_od)){
+      int_od$dist_to_int[i]=dist_to_xyt(int_od$x_int[i],int_od$y_int[i],int_od$x_ft[i],int_od$y_ft[i],
+                                        int_od$vel_x[i],int_od$vel_y[i],int_od$puck_2_p[i])
+      #print(int_od$dist_to_int[i])
+    }
+    
+    #Interceptions
+    #Keep only int_o and int_d where player_2_p < puck_2_p
+    #Each intercepter will get a probability of intercepting
+    #Who has smaller sqrt((x_int-x_puck)^2+(y_int-y_puck)^2) will intercept the puck first and 
+    
+    h_int = sqrt(int_od$x_int^2+int_od$y_int^2)
+    h_angle = atan(int_od$vel_y/int_od$vel_x)
+    stick = 6.5 #meters, stick plus arm length
+    x_mean = int_od$x_int+cos(h_angle)*int_od$dist_to_int
+    y_mean = int_od$y_int+sin(h_angle)*int_od$dist_to_int
+    h_mean = sqrt(x_mean^2+y_mean^2)
+    int_od$prob_int = abs(dnorm(h_int+stick, mean = h_mean, sd = stick)-dnorm(h_int-stick, mean = h_mean, sd = stick))
+    
+    off_intercept = int_od$prob_int[which(int_od$team_name==offence)]
+    if(length(off_intercept)>0){
+      point_val_off=point_val_off+mean(off_intercept)
+    }
+    def_intercept = int_od$prob_int[-which(int_od$team_name==offence)]
+    if(length(def_intercept)>0){
+      point_val_def=point_val_def+mean(def_intercept)
+    }
   }
-  def_intercept = int_od$prob_int[-which(int_od$team_name==offence)]
-  if(length(def_intercept)>0){
-    point_value=point_value-mean(def_intercept)
-  }
-  point_value = (point_value + mean(pickup_min$prob_int[which(pickup_min$team_name==offence)])- mean(pickup_min$prob_int[-which(pickup_min$team_name==offence)]))*100/2
-  return(point_value)
+  
+  
+  h_int_puck = sqrt(pass$x_coor^2+pass$y_coor^2)
+  pickup_angle = atan(pickup_min$vel_y/pickup_min$vel_x)
+  x_mean_puck = pass$x_coor+cos(pickup_angle)*pickup_min$dist_to_int
+  y_mean_puck = pass$y_coor+sin(pickup_angle)*pickup_min$dist_to_int
+  h_mean_puck = sqrt(x_mean_puck^2+y_mean_puck^2)
+  pickup_min$prob_int = abs(dnorm(h_int_puck+stick, mean = h_mean_puck, sd = stick)-dnorm(h_int_puck-stick, mean = h_mean_puck, sd = stick))
+  
+  
+  point_val_off = (point_val_def+mean(pickup_min$prob_int[-which(pickup_min$team_name==offence)]))*100
+  point_val_def = (point_val_def+mean(pickup_min$prob_int[which(pickup_min$team_name==offence)]))*100
+  return(list(Off_val=point_val_off, Def_val=point_val_def))
 }
 
 # Given the current frame and eligible points find the minimum time a player will take to reach that point. separate for each time. 
@@ -96,7 +116,7 @@ get_to_point <- function(x_puck,y_puck, points, offence,want_plot){
   tracks$vel_x[which(tracks$vel_x==0)]=0.5
   tracks$vel_y[which(tracks$vel_y==0)]=0.5
   
-  s=40 #40 m/s puck speed
+  s=120 #120 ft/s puck speed
   teams = tracks$team_name %>% unique()
   defence = teams[-which(teams==offence)]
   
@@ -267,6 +287,66 @@ plot_rink = function(p_object){
     geom_path(data = lower_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 0.5) +
     ## ADDITIONAL SPECS ##
     scale_x_continuous(expand = c(0, 0), limits = c(0,200)) + scale_y_continuous(expand = c(0,0), limits = c(0,85)) +
+    coord_fixed() +
+    theme_void()
+  
+  return(p)
+}
+
+plot_half_rink = function(p_object){
+  
+  require(ggforce)
+  require(cowplot)
+  require(tidyverse)
+  
+  upper_outline = data.frame(
+    x = c(
+      125,
+      172 + 28*sin(seq(0,pi/2,length=20)),
+      172 + 28*sin(seq(pi/2,0,length=20)),
+      125
+    ),
+    y = c(
+      0, 
+      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
+      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
+      85
+    )
+  )
+  
+  lower_outline = data.frame(
+    x = c(
+      115,
+      100-72 - 28*sin(seq(0,pi/2,length=20)),
+      100-72 - 28*sin(seq(pi/2,0,length=20)),
+      115
+    ),
+    y = c(
+      0, 
+      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
+      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
+      85
+    )
+  )
+  
+  p = p_object +
+    ## FACEOFF CIRCLES ##
+    geom_circle(data = data.frame(x0 = 169, y0 = 20.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
+    geom_circle(data = data.frame(x0 = 169, y0 = 64.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
+    ## FACEOFF DOTS ##
+    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 169), col = "gray50", size = 1) +
+    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 169), col = "gray50", size = 1) +
+    ## BLUE AND RED LINES ##
+    annotate("segment", col = "gray50",  x = 125, xend = 125, y = 0, yend = 85, lwd = 0.5) +
+    ## NET AND GOAL LINE ##
+    geom_segment(col = "gray50", inherit.aes = FALSE, lwd = 0.5, aes(y = 5.75, x = 189, yend = 79.25, xend = 189)) +
+    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 45.5, xend = 192.5)) + 
+    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 39.5, xend = 189)) +  
+    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 45.5, x = 192.5, yend = 45.5, xend = 189)) +
+    ## OUTLINE ##
+    geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 0.5) +
+    ## ADDITIONAL SPECS ##
+    scale_x_continuous(expand = c(0, 0), limits = c(125,200)) + scale_y_continuous(expand = c(0,0), limits = c(0,85)) +
     coord_fixed() +
     theme_void()
   
@@ -462,3 +542,41 @@ player_arrival_times <- function(x0,y0,vx,vy,
 
 frame_rate = 1/30
 
+#Old stuff
+assess_value_old <- function(pass,offence,d_min,o_min,int_d,int_o){
+  pickup_min=rbind(d_min,o_min)
+  int_od=rbind(int_d,int_o)
+  #Interceptions
+  #Keep only int_o and int_d where player_2_p < puck_2_p
+  #Each intercepter will get a probability of intercepting
+  #Who has smaller sqrt((x_int-x_puck)^2+(y_int-y_puck)^2) will intercept the puck first and 
+  int_od$h_int = sqrt(int_od$x_int^2+int_od$y_int^2)
+  int_od$h_mean = int_od$h_int+int_od$h_vel*int_od$puck_2_p
+  h_angle = asin(int_od$vel_x/int_od$h_vel)
+  stick = 2 #meters, stick plus arm length
+  x_s = sin(h_angle)*stick
+  y_s = cos(h_angle)*stick
+  h_s = sqrt(x_s^2+y_s^2)
+  int_od$prob_int = dnorm(int_od$h_int+h_s, mean = int_od$h_mean, sd = stick, log = FALSE)-dnorm(int_od$h_int-h_s, mean = int_od$h_mean, log = FALSE)
+  
+  pickup_min$h_int = sqrt(pass$x_coor^2+pass$y_coor^2)
+  pickup_min$h_vel = sqrt(pickup_min$vel_x^2+pickup_min$vel_y^2)
+  pickup_angle = asin(pickup_min$vel_x/pickup_min$h_vel)
+  x_angle = sin(pickup_angle)*stick
+  y_angle = cos(pickup_angle)*stick
+  h_angle = sqrt(x_angle^2+y_angle^2)
+  pickup_min$h_mean = pickup_min$h_int+pickup_min$h_vel*pickup_min$puck_2_p
+  pickup_min$prob_int = dnorm(pickup_min$h_int+h_angle, mean = pickup_min$h_mean, sd = stick, log = FALSE)-dnorm(pickup_min$h_int-h_angle, mean = pickup_min$h_mean, log = FALSE)
+  
+  point_value = 0
+  off_intercept = int_od$prob_int[which(int_od$team_name==offence)]
+  if(length(off_intercept)>0){
+    point_value=point_value+mean(off_intercept)
+  }
+  def_intercept = int_od$prob_int[-which(int_od$team_name==offence)]
+  if(length(def_intercept)>0){
+    point_value=point_value-mean(def_intercept)
+  }
+  point_value = (point_value + mean(pickup_min$prob_int[which(pickup_min$team_name==offence)])- mean(pickup_min$prob_int[-which(pickup_min$team_name==offence)]))*100/2
+  return(point_value)
+}
