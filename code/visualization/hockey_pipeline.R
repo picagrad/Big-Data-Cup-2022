@@ -423,15 +423,17 @@ save_play <- function(data, r, t_start, type){
 
 # This function gives the distance a player would be from a target point
 # given starting location and velocity and a target time t 
-dist_to_xyt <- function(tx,ty,x0,y0,vx,vy,t, vmax = 30, alpha = 1.3, t_r = 0.5){
+dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r = 0.5){
   
-  # tx,ty - target location
+  # xyt - triplet of x y t of desired location and time
   # x0,y0 - current location
-  # vx,vy - current speed
-  # t - relevant arrival time
+  # vx,vy - current speeD
   # vmax - maximum speed
   # alpha - decay coefficient (related to acceleration)
   # t_r - reaction time
+  tx <- xyt['x']
+  ty <- xyt['y']
+  t <- xyt['t']  
   
   
   # If time is smaller than reaction time, skater keeps going at initial speed
@@ -507,7 +509,15 @@ player_arrival_times <- function(x0,y0,vx,vy,
 }
 
 
-
+puck_motion_model <- function(x0,y0,vx,vy, t = seq(0,15,0.2), mu = 0.1, beta = 0.1322, g = 32.174){
+  
+  vmag <-  sqrt(vx^2 + vy^2)
+  
+  x <-  x0 + (vx + mu*g * vx/vmag/beta) * (1 - exp(-beta * t))/beta - (mu*g * vx/vmag)/beta * t
+  y <-  y0 + (vy + mu*g * vy/vmag/beta) * (1 - exp(-beta * t))/beta - (mu*g * vy/vmag)/beta * t
+  
+  return(data.frame(x = x, y = y, t = t))
+}
 
 
 
