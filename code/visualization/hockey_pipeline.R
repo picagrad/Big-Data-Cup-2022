@@ -1,3 +1,4 @@
+x_puck=138.8515;y_puck=68.89724;offence='Canada';points=new_pass[160,]
 
 probs_to_point <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
   points=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),points)
@@ -43,7 +44,11 @@ probs_to_point <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
   def_probs = new_data2[,def_lines+3]
   
   
-  off_max = apply(off_probs,1,max)
+  all_rank = t(apply(new_data2[,4:ncol(new_data2)],1,rank))
+  for(p in nrow(all_rank):1){
+    new_data2[1,all_rank[1,]==p]
+  }
+  
   off_p = off_max[length(off_max)]
   for(p in (length(off_max)-1):1){
     off_p = off_p+off_p*off_max[p]
