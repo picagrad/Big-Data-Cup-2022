@@ -43,8 +43,33 @@ probs_to_point <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
   off_probs = new_data2[,off_lines+3]
   def_probs = new_data2[,def_lines+3]
   
+  off_mat = t(replicate(nrow(new_data2),tracks$team_name==offence))
   
-  all_rank = t(apply(new_data2[,4:ncol(new_data2)],1,rank))
+  all_rank = t(apply(-pickup_probs,1,rank))
+  rix <-  as.vector(t(replicate(ncol(pickup_probs),seq(1,nrow(pickup_probs),1))))
+  
+  ranked_probs <-  pickup_probs * 0
+  ranked_probs[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(pickup_probs))
+  
+  ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
+  for (c in 3:ncol(ranked_probs)){
+    ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
+  }
+  
+  ranked_off_mat <- off_mat * 0
+  ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(off_mat))
+  
+  shot_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
+                           def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
+                mutate(None = 1 - off - def)
+  
+  # shot_probs2 <- shot_probs
+
+  for (r in 2:nrow(shot_probs)){
+    shot_probs[r,] = shot_probs[r,] * shot_probs$None[r-1]
+  }
+  
+  
   for(p in nrow(all_rank):1){
     new_data2[1,all_rank[1,]==p]
   }
