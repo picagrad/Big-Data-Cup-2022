@@ -16,7 +16,6 @@ dat <- fromJSON(json_file)
 ```
 
 ```{r}
-#Statletes data
 r=0 # powerplay of interest
 t=7 # shot of interest
 
@@ -56,10 +55,18 @@ if(length(line4$game_date)!=0){
 # Given a set location for the puck, find all potential spots the puck could be moved to
 x_puck = 138.8515
 y_puck = 68.89724
-passes = create_points(x_puck,y_puck)
+#passes = create_points(x_puck,y_puck)
 
-passes %>% head()
+theta = seq(-pi,pi,by=0.15)
+passes = data.frame(x=c(),y=c(), t=c())
+for(angle in theta){
+  passes = rbind(passes,puck_motion_model2(x_puck,y_puck,angle))
+}
+#passes = mapply(puck_motion_model2,x0=x_puck,y0=y_puck,angle=theta,vmag=speed_puck, t = seq(0,15,0.2), mu = 0.1, beta = 0.1322, g = 32.174)
+new_pass <- cbind(theta,clean_pass(passes))
+new_pass %>% head()
 ```
+
 ```{r}
 # Select single frame to analyze
 frame = current_track$frame_id[1]
@@ -74,7 +81,7 @@ plot_half_rink(ggplot(tracking_data)) +
   geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
   geom_point(aes(x = x_puck+2, y = y_puck-0.5), size = 2, shape = 16, colour='black') +
-  geom_point(data = passes, aes(x = x_coor, y = y_coor), size = 1, shape = 4) +
+  geom_point(data = new_pass, aes(x = x, y = y), size = 1, shape = 4) +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
@@ -83,7 +90,8 @@ plot_half_rink(ggplot(tracking_data)) +
                   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
 ```{r}
-point_val <- get_to_point(x_puck,y_puck,passes[156,],'Canada',want_plot=TRUE)
+point_val = probs_to_point(x_puck,y_puck,new_pass[160,],'Canada',TRUE)
+#point_val <- get_to_point(x_puck,y_puck,new_pass[162,],'Canada',want_plot=TRUE)
 point_val[[1]] #gives you the value of that point -100 to 100, -100 defence has power, 0 neutral, +100 offence has power
 point_val[[2]]
 ```
@@ -91,14 +99,23 @@ point_val[[2]]
 ```{r}
 #point_val <- get_to_point(x_puck,y_puck,passes[162,],'Canada',want_plot=FALSE)
 #point_val
-all_point_val <- apply(passes,1,get_to_point,x_puck=138.8515,y_puck=68.89724,offence='Canada',want_plot=FALSE)
-all_offence = unlist(all_point_val)[which(names(unlist(all_point_val))=='Off_val')]
-all_defence = unlist(all_point_val)[-which(names(unlist(all_point_val))=='Off_val')]
+#all_point_val <- apply(passes,1,get_to_point,x_puck=138.8515,y_puck=68.89724,offence='Canada',want_plot=FALSE)
+#all_offence = unlist(all_point_val)[which(names(unlist(all_point_val))=='Off_val')]
+#all_defence = unlist(all_point_val)[-which(names(unlist(all_point_val))=='Off_val')]
+#all_pressure = cbind(Off = all_offence,Def = all_defence, Diff = all_offence-all_defence)
 
-all_pressure = cbind(Off = all_offence,Def = all_defence, Diff = all_offence-all_defence)
-rownames(all_pressure) = NULL
+all_point_val <- apply(new_pass,1,probs_to_point,x_puck=138.8515,y_puck=68.89724,offence='Canada',want_plot=FALSE)
 
-passes_with_vals <- cbind(passes,all_pressure)
+combine_probs <- function(tracks=tracking_data, all_pass=new_pass, probs=all_point_val){
+  tracks
+  all_pass[160,]
+  all_point_val[[160]]
+}
+
+
+#rownames(all_pressure) = NULL
+
+#passes_with_vals <- cbind(passes,all_pressure)
 ```
 
 ```{r}
@@ -126,105 +143,6 @@ plot_half_rink(ggplot(tracking_data)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
 
-```{r}
-save_play <- function(data, r, t_start, type){
-  r=0 # powerplay of interest
-  t=7 # shot of interest
-  
-  # Set up the tracking data
-  line1 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')
-  line2 <- eval(parse(text=line1))
-  if(length(line2$frame_id)!=0){
-    json_tracks <- lapply(line2, function(x) {
-      x[sapply(x, is.null)] <- NA
-      unlist(x)
-    })
-    current_track <- as.data.frame(do.call("cbind", json_tracks))
-  }
-  current_track$frame_id = current_track$frame_id %>% as.integer()
-  current_track$period = current_track$period %>% as.integer()
-  current_track$track_id = current_track$track_id %>% as.integer()
-  current_track$jersey_number = current_track$jersey_number %>% as.integer()
-  current_track$x_ft = current_track$x_ft %>% as.double()
-  current_track$y_ft = current_track$y_ft %>% as.double()
-  current_track$vel_x = current_track$vel_x %>% as.double()
-  current_track$vel_y = current_track$vel_y %>% as.double()
-  
-  # Set up the related event data
-  line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
-  line4 <- eval(parse(text=line3))
-  if(length(line4$game_date)!=0){
-    json_events <- lapply(line4[1:24], function(x) {
-      x[sapply(x, is.null)] <- NA
-      unlist(x)
-    })
-    current_event <- as.data.frame(do.call("cbind", json_events))
-  }
-  
-  
-  line1 <- paste('data$relevant_events$\'',r,'\'$tracks$\'',t_start,'\'',sep='')
-  line2 <- eval(parse(text=line1))
-  if(length(line2$frame_id)!=0){
-    json_tracks <- lapply(line2, function(x) {
-      x[sapply(x, is.null)] <- NA
-      unlist(x)
-    })
-    tracking_data <- as.data.frame(do.call("cbind", json_tracks))
-    rownames(tracking_data) = NULL
-    teams <- unique(tracking_data$team_name)
-    team1 <- teams[1]
-    team2 <- teams[2]
-    title = paste("PP", r, "_", team1, "_", team2, "_SS", t_start, sep = "")
-    
-    tracking_data$frame_id = tracking_data$frame_id %>% as.integer()
-    #tracking_data$frame_id = tracking_data$frame_id - min(tracking_data$frame_id)+1
-    tracking_data$period = tracking_data$period %>% as.integer()
-    tracking_data$track_id = tracking_data$track_id %>% as.integer()
-    tracking_data$team_id = tracking_data$team_id %>% as.character()
-    tracking_data$team_name = tracking_data$team_name %>% as.character()
-    tracking_data$jersey_number = tracking_data$jersey_number %>% as.integer()
-    tracking_data$x_ft = tracking_data$x_ft %>% as.double()
-    tracking_data$y_ft = tracking_data$y_ft %>% as.double()
-
-    ## ANIMATED PLOTS ##
-    
-    # Set the specs for the gif we want to create (lower res to make it run quicker)
-    options(gganimate.dev_args = list(width = 10, height = 6, units = 'in', res = 320))
-    
-    # Source in the plot_rink function
-    #source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/OTTHAC_Tutorial/Code/plot_rink.R")
-    #source("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial/Code/plot_rink.R")
-    
-    # Create a gif of this play
-    p = plot_rink(ggplot(tracking_data)) +
-      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), shape = 21, size = 6) +
-      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
-      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
-      # Additional specs
-      geom_text(aes(x = 25, y = 40, label = frame_id), size = 5) +
-      transition_time(frame_id) + 
-      labs(fill = "Team") +
-      guides(colour = "none")
-    
-    
-    # Get the maximum and minimum frame number (so we know how long the gif should be)
-    max_frame = tracking_data$frame_id %>% max()
-    min_frame = tracking_data$frame_id %>% min() 
-    
-    # Render the animation
-    if(type == "mp4"){
-    # Save as mp4
-      p2 = animate(p, renderer = ffmpeg_renderer(), fps = 30, duration = (max_frame - min_frame+1)/30)#((max_frame - min_frame)/30 + 1))
-      anim_save(paste(title,".mp4",sep=""), p2)
-    #
-    }else{
-    #Save as gif
-      anim_save(paste(title,".gif",sep=""), p, fps = 30, duration = (max_frame - min_frame+1)/30)
-    }
-  }
-}
-```
 
 
 ```{r}
