@@ -13,23 +13,22 @@ probs_to_point <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
   off_tracks = tracks %>% filter(team_name==offence)
   def_tracks = tracks %>% filter(team_name==defence)
   
-  n_step = round(sqrt((points$x-x_puck)^2+(points$y-y_puck)^2))
-  steps = seq(1,n_step,by=5) #look at every 5 foot distance along the line
-  t_step = seq(0,points$t,length.out=length(steps)) #for now, consider equal time to target
+  n_step = round(sqrt((points$x-x_puck)^2+(points$y-y_puck)^2)/5)+2
+  steps = seq(1,n_step,by=1) #look at every 5 foot distance along the line
+  t_step = seq(0,points$t,length.out=length(steps)+1) #for now, consider equal time to target
   
-  theta_p = atan((y_puck-points$y)/(x_puck-points$x))
-  x_new = points$x-steps*cos(theta_p)
-  y_new = points$y-steps*sin(theta_p)
+  #theta_p = atan((x_puck-points$x)/(y_puck-points$y))
+  x_new = (points$x+(n_step:0)*(x_puck-points$x)/n_step)[-1]
+  y_new = (points$y+(n_step:0)*(y_puck-points$y)/n_step)[-1]
   
-  #plot(c(x_puck, x_new,points$x),c(y_puck, y_new,points$y))
+  #plot(c(x_puck, x_new,points$x),c(y_puck, y_new,points$y), col=c('black',rep('blue',length(x_new)),'red'))
   
-  new_data = data.frame(x=x_new,y=y_new,t=t_step)
+  new_data = data.frame(x=x_new,y=y_new,t=t_step[-1])
   
   #point_val_off = 0
   #point_val_def = 0
   
-  
-  dist_to_points = matrix(nrow=length(steps), ncol=nrow(tracks))
+  dist_to_points = matrix(nrow=n_step, ncol=nrow(tracks))
   for(player in 1:nrow(tracks)){
     dist_to_points[,player]=apply(new_data,1,dist_to_xyt,x0=tracks$x_ft[player],y0=tracks$y_ft[player],vx=tracks$vel_x[player],vy=tracks$vel_y[player])
   }
@@ -37,6 +36,32 @@ probs_to_point <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
   
   pickup_probs = abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick))
   new_data2 = cbind(new_data,pickup_probs)
+  
+  off_lines = which(tracks$team_name==offence)
+  def_lines = which(tracks$team_name!=offence)
+  off_probs = new_data2[,off_lines+3]
+  def_probs = new_data2[,def_lines+3]
+  
+  
+  off_max = apply(off_probs,1,max)
+  off_p = off_max[length(off_max)]
+  for(p in (length(off_max)-1):1){
+    off_p = off_p+off_p*off_max[p]
+  }
+  
+  def_max = apply(def_probs,1,max)
+  def_p = def_max[length(def_max)]
+  for(p in (length(def_max)-1):1){
+    def_p = def_p+def_p*def_max[p]
+  }
+  
+  diff_max = off_max-def_max
+  diff_max = diff_max*(length(diff_max):1)
+  diff_p = mean(diff_max)
+  
+  #what to return? we could return ratio as in here. Will give back present of control by the offensive team over the defensive team, always between 0 and 1.
+  #should we divide by number of players on either team? p_off/n_off and p_def/n_def. Also the number of points along the line depends on length of pass,
+  #should we standardize somehow?
   
   if(want_plot){
     plot_pass=plot_half_rink(ggplot(tracks)) +
@@ -52,9 +77,9 @@ probs_to_point <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(new_data2,plot_pass))
+    return(list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max,plot_pass))
   }else{
-    return(new_data2)
+    return(diff_p)#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
   }
 }
 
@@ -147,10 +172,10 @@ plot_half_rink = function(p_object){
   
   upper_outline = data.frame(
     x = c(
-      125,
+      115,
       172 + 28*sin(seq(0,pi/2,length=20)),
       172 + 28*sin(seq(pi/2,0,length=20)),
-      125
+      115
     ),
     y = c(
       0, 
@@ -407,8 +432,8 @@ clean_pass <- function(passes, xmin=125, xmax=200, ymin=0, ymax=85){
   #Size of convex hull for each team
   #Defender angles between shooter, defender and goal edges.
 
-stick = 6.5 #feet, stick plus arm length
-speed_puck = 120 #120 ft/s puck speed
+stick = 5 #feet, stick plus arm length
+speed_puck = 150 #120 ft/s puck speed
 frame_rate = 1/30
 
 #Old stuff
