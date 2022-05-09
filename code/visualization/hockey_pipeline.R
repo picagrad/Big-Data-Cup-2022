@@ -63,7 +63,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
   shot_good = cumsum(shot_probs[,1])/(cumsum(shot_probs[,1])+cumsum(shot_probs[,2]))#-shot_probs[,3]
   
   if(want_plot){
-    plot_pass=plot_half_rink(ggplot(tracks)) +
+    plot_pass=plot_half_rink(ggplot(tracking_data)) +
       geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
       geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1

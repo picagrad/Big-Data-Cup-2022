@@ -104,7 +104,7 @@ plot_rink(ggplot(tracking_data)) +
 l<-1
 point_val = probs_to_point(x_puck,y_puck,calc_pass[l,],new_pass,'Canada',TRUE)
 #point_val <- get_to_point(x_puck,y_puck,new_pass[162,],'Canada',want_plot=TRUE)
-point_val[[1]] 
+point_val[[1]]$off %>% sum() 
 point_val[[2]]
 ```
 
@@ -118,6 +118,7 @@ point_val[[2]]
 all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=138.8515,y_puck=68.89724,all_ang=new_pass,offence='Canada',want_plot=FALSE)
 
 pass_potential <- bind_rows(all_point_val, .id = "column_label")
+pass_potential
 ```
 
 ```{r}
