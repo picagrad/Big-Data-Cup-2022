@@ -50,17 +50,19 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
   ranked_off_mat <- off_mat * 0
   ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(off_mat))
   
-  shot_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
+  pass_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
                            def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
     mutate(None = 1 - off - def)
   
-  # shot_probs2 <- shot_probs
+  # pass_probs2 <- pass_probs
   
-  for (r in 2:nrow(shot_probs)){
-    shot_probs[r,] = shot_probs[r,] * shot_probs$None[r-1]
+  for (r in 2:nrow(pass_probs)){
+    pass_probs[r,] = pass_probs[r,] * pass_probs$None[r-1]
   }
   
-  shot_good = cumsum(shot_probs[,1])/(cumsum(shot_probs[,1])+cumsum(shot_probs[,2]))#-shot_probs[,3]
+  
+  
+  pass_good = cumsum(pass_probs[,1])/(cumsum(pass_probs[,1])+cumsum(pass_probs[,2]))#-pass_probs[,3]
   
   if(want_plot){
     plot_pass=plot_half_rink(ggplot(tracking_data)) +
@@ -76,9 +78,9 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(cbind(new_data2,shot_probs,prob=shot_good),plot_pass))
+    return(list(cbind(new_data2,pass_probs,prob=pass_good),plot_pass))
   }else{
-    return(cbind(new_data2,shot_probs,prob=shot_good))#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
+    return(cbind(new_data2,pass_probs,prob=pass_good))#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
   }
 }
 
@@ -394,6 +396,38 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = seq(0.05,5,0.05)
   y <-  y0 + (vy + mu*g * vy/vmag/beta) * (1 - exp(-beta * t))/beta - (mu*g * vy/vmag)/beta * t
   
   return(data.frame(x = x, y = y, t = t))
+}
+
+ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.5, beta = 2.5){
+
+  x0 <- loc_vel['x_ft']
+  y0 <-  loc_vel['y_ft']
+  vx <- loc_vel['vel_x']
+  vy <- loc_vel['vel_y']
+  grid <- xyt %>% select(x,y)
+  x_y_tarr <- player_arrival_times(x0,y0,vx,vy,grid = grid)
+  x_y_tarr$arr_times = x_y_tarr$arr_times - xyt$t
+  
+  return(ctrl = loc_vel['team_label'] * x_y_tarr$arr_times ^ (-beta))
+}
+
+
+teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.5, beta = 2.5){
+  ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
+  return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
+}
+
+score_prob <- function(xyt, decay_x = 2000, decay_y = 500){
+  x = xyt['x']
+  y = xyt['y']
+  Prob <- abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))*exp(-((189-x)^2/decay_x+(42.5-y)^2/decay_y))
+  
+  if(x > 189){
+    Prob <- ifelse(Prob-0.5<0, 0, Prob-0.5)
+  }
+  
+  return(Prob)
+  
 }
 
 clean_pass <- function(passes, xmin=125, xmax=200, ymin=0, ymax=85){
