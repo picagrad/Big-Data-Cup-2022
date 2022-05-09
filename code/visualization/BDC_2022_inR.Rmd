@@ -42,7 +42,7 @@ current_track$vel_y = current_track$vel_y %>% as.double()
 line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
 line4 <- eval(parse(text=line3))
 if(length(line4$game_date)!=0){
-  json_events <- lapply(line4[1:24], function(x) {
+  json_events <- lapply(line4[1:26], function(x) {
     x[sapply(x, is.null)] <- NA
     unlist(x)
   })
@@ -53,8 +53,8 @@ if(length(line4$game_date)!=0){
 
 ```{r}
 # Given a set location for the puck, find all potential spots the puck could be moved to
-x_puck = 138.8515
-y_puck = 68.89724
+x_puck = 179.0701 #138.8515
+y_puck = 70.62241# 68.89724
 #passes = create_points(x_puck,y_puck)
 
 theta = seq(-pi,pi,by=0.15)
@@ -100,12 +100,24 @@ plot_rink(ggplot(tracking_data)) +
   geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
                   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
+
 ```{r}
-l<-1
+offence <- 'Canada'
+xyt <- new_pass %>% select(x,y,t)
+loc_vel <- tracking_data %>% mutate(team_label = ifelse(team_name == offence,1,-1)) %>% select(x_ft,y_ft,vel_x,vel_y, team_label) 
+new_pass <- new_pass %>% 
+  mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
+  mutate(pass_value = score_prob * ((all_ctrl+1)/2)^3)
+new_pass
+```
+
+```{r}
+l<-13
 point_val = probs_to_point(x_puck,y_puck,calc_pass[l,],new_pass,'Canada',TRUE)
 #point_val <- get_to_point(x_puck,y_puck,new_pass[162,],'Canada',want_plot=TRUE)
-point_val[[1]]$off %>% sum() 
+point_val[[1]]
 point_val[[2]]
+point_val[[3]]
 ```
 
 ```{r}

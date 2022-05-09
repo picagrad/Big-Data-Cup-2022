@@ -60,9 +60,17 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
     pass_probs[r,] = pass_probs[r,] * pass_probs$None[r-1]
   }
   
+  new_data3 <- cbind(points,pass_probs)
+  colnames(new_data3) <- c("theta","x","y","t","all_ctrl","score_prob","pass_value","off","def","None")
   
+  #what to return
+  cum_pass_good = cumsum(new_data3$pass_value*new_data3$off)
+  cum_pass_off = cumsum(new_data3$off)
+  cum_pass_val = cumsum(new_data3$pass_value)
   
-  pass_good = cumsum(pass_probs[,1])/(cumsum(pass_probs[,1])+cumsum(pass_probs[,2]))#-pass_probs[,3]
+  pass_good = sum(new_data3$all_ctrl*new_data3$score_prob*new_data3$off)
+  pass_off = sum(new_data3$off)
+  pass_val = sum(new_data3$pass_value)
   
   if(want_plot){
     plot_pass=plot_half_rink(ggplot(tracking_data)) +
@@ -78,9 +86,9 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(cbind(new_data2,pass_probs,prob=pass_good),plot_pass))
+    return(list(new_data3,pass_good,plot_pass))
   }else{
-    return(cbind(new_data2,pass_probs,prob=pass_good))#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
+    return(list(new_data3,pass_good))#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
   }
 }
 
