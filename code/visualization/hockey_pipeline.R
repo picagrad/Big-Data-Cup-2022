@@ -1,10 +1,15 @@
 
-probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FALSE){
+probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks,offence,want_plot=FALSE){
   points1=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),points1)
   names(points1)=c('theta','x','y','t')
   points=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),all_ang[which(all_ang$angle==points1$theta),])
   names(points)=c('theta','x','y','t')
-  tracks=tracking_data
+  #tracks=rbind(data.frame('frame_id'=c(),'period'=c(),'track_id'=c(),'team_id'=c(),
+   #                       'team_name'=c(),'jersey_number'=c(),'x_ft'=c(),'y_ft'=c(),
+    #                      'video_shot'=c(),'game_seconds'=c(),'vel_x'=c(),'vel_y'=c(),'angle'=c()),tracks1)
+  #names(tracks)=c('frame_id','period','track_id','team_id',
+   #               'team_name','jersey_number','x_ft','y_ft',
+    #              'video_shot','game_seconds','vel_x','vel_y','angle')
   tracks = tracks[-which.min((tracks$x_ft-x_puck)^2+(tracks$y_ft-y_puck)^2),]
   #give slight movement to avoid dividing by zero
   tracks$vel_x[which(tracks$vel_x==0)]=0.5
@@ -13,9 +18,12 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
   teams = tracks$team_name %>% unique()
   defence = teams[-which(teams==offence)]
   
-  off_tracks = tracks %>% filter(team_name==offence)
-  def_tracks = tracks %>% filter(team_name==defence)
-  
+  if(any(tracks$team_name==offence)){
+    off_tracks = tracks %>% filter(team_name==offence)
+  }
+  if(any(tracks$team_name==defence)){
+    def_tracks = tracks %>% filter(team_name==defence)
+  }
   
   #point_val_off = 0
   #point_val_def = 0
@@ -42,10 +50,13 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
   ranked_probs <-  pickup_probs * 0
   ranked_probs[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(pickup_probs))
   
-  ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
-  for (c in 3:ncol(ranked_probs)){
-    ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
+  if(ncol(ranked_probs)>1){
+    ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
+    for (c in 3:ncol(ranked_probs)){
+      ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
+    }
   }
+  
   
   ranked_off_mat <- off_mat * 0
   ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(off_mat))
@@ -56,9 +67,12 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
   
   # pass_probs2 <- pass_probs
   
-  for (r in 2:nrow(pass_probs)){
-    pass_probs[r,] = pass_probs[r,] * pass_probs$None[r-1]
+  if(nrow(pass_probs)>1){
+    for (r in 2:nrow(pass_probs)){
+      pass_probs[r,] = pass_probs[r,] * pass_probs$None[r-1]
+    }
   }
+  
   
   new_data3 <- cbind(points,pass_probs)
   colnames(new_data3) <- c("theta","x","y","t","all_ctrl","score_prob","pass_value","off","def","None")
@@ -73,7 +87,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
   pass_val = sum(new_data3$pass_value)
   
   if(want_plot){
-    plot_pass=plot_half_rink(ggplot(tracking_data)) +
+    plot_pass=plot_half_rink(ggplot(tracks)) +
       geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
       geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
@@ -86,9 +100,9 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, offence,want_plot=FAL
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(new_data3,pass_good,plot_pass))
+    return(list(new_data3,plot_pass))
   }else{
-    return(list(new_data3,pass_good))#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
+    return(new_data3)#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
   }
 }
 
@@ -300,7 +314,7 @@ save_play <- function(data, r, t_start, type){
 
 # This function gives the distance a player would be from a target point
 # given starting location and velocity and a target time t 
-dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r = 0.5){
+dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r =  0.189){#0.5){
   
   # xyt - triplet of x y t of desired location and time
   # x0,y0 - current location
@@ -337,7 +351,7 @@ dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r = 0.5){
   
 }
 
-time_center_radius <- function(x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r = 0.5, tmax = 15, tres = 1/30){
+time_center_radius <- function(x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r =  0.189, tmax = 15, tres = 1/30){ #t_r=0.5
   ti <- seq(0,t_r,tres) # initial time - before reaction
   tr <- seq(0,10-t_r,tres)# reamining time after reaction
   
@@ -376,7 +390,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
                                  grid = expand.grid(x = seq(0,200,0.5), y = seq(0,85,0.5)),
                                  vmax = 30,
                                  alpha = 1.3, 
-                                 t_r = 0.5, 
+                                 t_r = 0.189,#0.5, 
                                  tmax = 15, 
                                  tres = 1/30
                                  ){
@@ -406,7 +420,7 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = seq(0.05,5,0.05)
   return(data.frame(x = x, y = y, t = t))
 }
 
-ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.5, beta = 2.5){
+ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.189, beta = 2.5){ #t_r = 0.5
 
   x0 <- loc_vel['x_ft']
   y0 <-  loc_vel['y_ft']
@@ -420,7 +434,7 @@ ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.5, beta = 2
 }
 
 
-teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.5, beta = 2.5){
+teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.189, beta = 2.5){ #t_r = 0.5
   ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
   return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
 }

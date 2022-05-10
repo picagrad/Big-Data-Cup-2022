@@ -1,0 +1,123 @@
+---
+title: "BDC_PassModel"
+output: pdf_document
+---
+
+```{r}
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate","ggpmisc","ggnewscale","viridis","tictoc")
+install.lib = load.libraries[!load.libraries %in% installed.packages()]
+for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
+sapply(load.libraries, require, character = TRUE)
+tic()
+source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+json_file <- "data/BDC_2022_passOnly.json"
+dat <- fromJSON(json_file)
+
+# Set up the event data to be in a data frame. 
+json_events <- lapply(dat[1:26], function(x) {
+  x[sapply(x, is.null)] <- NA
+  unlist(x)
+})
+current_event <- as.data.frame(do.call("cbind", json_events))
+current_event$team_name[current_event$team_name=="Olympic (Women) - Canada"]="Canada"
+current_event$team_name[current_event$team_name=="Olympic (Women) - United States"]="USA"
+current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="Finland"
+current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
+current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
+toc()
+```
+
+```{r}
+tic()
+theta_index=0.15
+pass_score = vector(mode = "list", length = nrow(current_event))
+n_good=0
+current_event2 = current_event
+for(t in nrow(current_event):1){
+  # Set up the tracking data
+  line1 <- paste('dat$tracks$\'',t,'\'',sep='')
+  line2 <- eval(parse(text=line1))
+  if(length(line2$frame_id)!=0){
+    json_tracks <- lapply(line2, function(x) {
+      x[sapply(x, is.null)] <- NA
+      unlist(x)
+    })
+    current_track <- as.data.frame(do.call("cbind", json_tracks))
+  }
+  current_track$frame_id = current_track$frame_id %>% as.integer()
+  current_track$period = current_track$period %>% as.integer()
+  current_track$track_id = current_track$track_id %>% as.integer()
+  current_track$jersey_number = current_track$jersey_number %>% as.integer()
+  current_track$x_ft = current_track$x_ft %>% as.double()
+  current_track$y_ft = current_track$y_ft %>% as.double()
+  current_track$vel_x = current_track$vel_x %>% as.double()
+  current_track$vel_y = current_track$vel_y %>% as.double()
+  
+  if(current_track$x_ft[1]<100){
+    current_track$x_ft = 200 - current_track$x_ft
+    current_track$vel_x = -current_track$vel_x
+  }
+  
+  event_info <- current_event[t,] %>% select(team_name,Player_1_num,Player_2_num)
+  off <- event_info$team_name
+  puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>% select(team_name,x_ft,y_ft)
+  puck = puck[puck$team_name==off,]
+  if(nrow(puck)>0 & all(t!=c(80,85,124,151,226,233,235))){
+    x_p = puck$x_ft+2
+    y_p = puck$y_ft-0.5
+    
+    theta = seq(-pi,pi,by=theta_index)
+    passes = data.frame(angle=c(),x=c(),y=c(), t=c())
+    for(angle in theta){
+      passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
+    }
+    #passes = mapply(puck_motion_model2,x0=x_puck,y0=y_puck,angle=theta,vmag=speed_puck, t = seq(0,15,0.2), mu = 0.1, beta = 0.1322, g = 32.174)
+    new_pass <- clean_pass(passes)
+    calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
+    
+    
+    xyt <- new_pass %>% select(x,y,t)
+    loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>% select(x_ft,y_ft,vel_x,vel_y, team_label) 
+    new_pass <- new_pass %>% 
+      mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
+      mutate(pass_value = score_prob * ((all_ctrl+1)/2)^3)
+  
+    all_point_val <- apply(calc_pass[1,],1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks=current_track,offence=off,want_plot=FALSE)
+    pass_potential <- bind_rows(all_point_val, .id = "column_label")
+    pass_score[[t]]<- pass_potential
+    print(t)
+    n_good=n_good+1
+  }else{
+    print(paste("Player not tracked in pass",t))
+    current_event2 = current_event2[-t,]
+  }
+    
+}
+toc()
+```
+
+```{r}
+plot_rink(ggplot(current_track)) +
+  geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  geom_point(data = new_pass, aes(x = x, y = y), size = 1, shape = 4) +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+                  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+plot_rink(ggplot(current_track)) +
+  geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  geom_point(data = calc_pass, aes(x = x, y = y), size = 1, shape = 4) +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+                  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+```
