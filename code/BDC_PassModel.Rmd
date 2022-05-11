@@ -83,7 +83,7 @@ for(t in nrow(current_event):1){
       mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
       mutate(pass_value = score_prob * ((all_ctrl+1)/2)^3)
   
-    all_point_val <- apply(calc_pass[1,],1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks=current_track,offence=off,want_plot=FALSE)
+    all_point_val <- apply(calc_pass[1,],1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
     pass_potential <- bind_rows(all_point_val, .id = "column_label")
     pass_score[[t]]<- pass_potential
     print(t)

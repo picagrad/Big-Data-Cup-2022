@@ -1,55 +1,79 @@
+#All distance units are in feet and all time units are in seconds
+#Typically, in hockey you stick should reach your chin. Average height of a woman is 5.33 feet, so to the chin would be approximately 4.66 feet.
+#Skates add maybe 3 inches to that, thus around 5 ft. Length of an arm will add approximately 20 inches. Thus we approximate the maximum stick+arm reach to be 6.5 feet
+stick = 6.5
 
-probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks,offence,want_plot=FALSE){
+#Looking at all direct passes with an (x1,y1,frame1) and (x2,y2,frame2), we can get a five number summary of 
+#(Min=0.9677,Q1=33.7695,Q2=43.1220,Mean=42.8177,Q3=53.1812,Max=94.2355). 
+#We chose to set the speed of the puck as 
+  #90 feet/s show what happens in the case where you sent a good hard pass
+  #55 feet/s show what happens in the case where you sent a reasonably pass
+  #40 feet/s show what happens in the case where you sent an average pass
+
+#Stathletes frame rate for their tracking data
+frame_rate = 1/30 #30 frames per second, value used as tres in time_center_radius and player_arrival_times
+
+max_velocity=30 #value used in v_max
+a = 1.3 #value used as alpha
+tr = 0.189 #value used as t_r
+t_max = 15 #value used as tmax
+mm = 0.1 #value used as mu
+b = 0.1322 #value used as beta
+b2 = 2.5 #value used as beta in ice_ctrl_xyt and teamwise_ice_ctrl_xyt
+gg = 32.174 #value used as g
+x_decay = 2000 #value used as decay_x
+y_decay = 500 #value used as decay_y
+
+
+probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_plot=FALSE){
+  #A few minor adjustments for vectorizing the function
   points1=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),points1)
   names(points1)=c('theta','x','y','t')
   points=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),all_ang[which(all_ang$angle==points1$theta),])
   names(points)=c('theta','x','y','t')
-  #tracks=rbind(data.frame('frame_id'=c(),'period'=c(),'track_id'=c(),'team_id'=c(),
-   #                       'team_name'=c(),'jersey_number'=c(),'x_ft'=c(),'y_ft'=c(),
-    #                      'video_shot'=c(),'game_seconds'=c(),'vel_x'=c(),'vel_y'=c(),'angle'=c()),tracks1)
-  #names(tracks)=c('frame_id','period','track_id','team_id',
-   #               'team_name','jersey_number','x_ft','y_ft',
-    #              'video_shot','game_seconds','vel_x','vel_y','angle')
-  tracks = tracks[-which.min((tracks$x_ft-x_puck)^2+(tracks$y_ft-y_puck)^2),]
-  #give slight movement to avoid dividing by zero
-  tracks$vel_x[which(tracks$vel_x==0)]=0.5
-  tracks$vel_y[which(tracks$vel_y==0)]=0.5
   
+  #We remove the player passing the puck in our calculations as we do not want a player to "pass to themselves"
+  tracks = tracks1[-which.min((tracks1$x_ft-x_puck)^2+(tracks1$y_ft-y_puck)^2),]
+  
+  #As some players, such as the goalie are sometimes not moving, we give them a slight movement to avoid dividing by zero anywhere
+  tracks$vel_x[which(tracks$vel_x==0)]=0.05
+  tracks$vel_y[which(tracks$vel_y==0)]=0.05
+  
+  #Given the team that is on the offence, identify the name of the defence
   teams = tracks$team_name %>% unique()
   defence = teams[-which(teams==offence)]
   
-  if(any(tracks$team_name==offence)){
-    off_tracks = tracks %>% filter(team_name==offence)
-  }
-  if(any(tracks$team_name==defence)){
-    def_tracks = tracks %>% filter(team_name==defence)
-  }
-  
-  #point_val_off = 0
-  #point_val_def = 0
-  
+  #Give the current angle to pass can travel, we look at all equally spaced (through time) points along that trajectory and use the motion model
+  #dist_to_xyt to determine how close the player can get to the point of interest in the given time frame
   dist_to_points = matrix(nrow=nrow(points), ncol=nrow(tracks))
   for(player in 1:nrow(tracks)){
     dist_to_points[,player]=apply(points,1,dist_to_xyt,x0=tracks$x_ft[player],y0=tracks$y_ft[player],vx=tracks$vel_x[player],vy=tracks$vel_y[player])
   }
-  #distance from point of interests for each player
   
+  #Given how close a player gets to their target, we place a Gaussian distribution at that point to add some variability to how close the player can get
+  #and associate a probability to whether or not their could intercept the puck. We use stick length as the standard deviation. This is done for all players
+  #except the passer for each potential intercept point along a trajectory
   pickup_probs = abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick))
-  new_data2 = cbind(points,pickup_probs)
   
+  #Combine the original (angle, x,y,t) points we are evaluating with the pickup probabilities of each player determined in the previous step
+
+  #Split the probabilities into offence and defence
   off_lines = which(tracks$team_name==offence)
   def_lines = which(tracks$team_name!=offence)
-  off_probs = new_data2[,off_lines+4]
-  def_probs = new_data2[,def_lines+4]
+  off_probs = pickup_probs[,off_lines]
+  def_probs = pickup_probs[,def_lines]
   
-  off_mat = t(replicate(nrow(new_data2),tracks$team_name==offence))
+  #Pre-fill a matrix with rank 1 to the number of players who can intercept the puck
+  rank_mat = t(replicate(nrow(pickup_probs),tracks$team_name==offence))
   
+  #Use the probabilities of each player getting to a target to rank them. The player to arrive first, has the best rank and chance to pickup the puck first
   all_rank = t(apply(-pickup_probs,1,rank))
   rix <-  as.vector(t(replicate(ncol(pickup_probs),seq(1,nrow(pickup_probs),1))))
   
+  #Each player following the highest rank has a smaller chance at getting the puck because it is conditional on the player before they getting to that point and missing
+  #We update the probability player i picks up the puck using p_i(new)=p_i(old)*product_j=1^i-1 of (1-p_j)
   ranked_probs <-  pickup_probs * 0
   ranked_probs[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(pickup_probs))
-  
   if(ncol(ranked_probs)>1){
     ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
     for (c in 3:ncol(ranked_probs)){
@@ -57,63 +81,66 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks,offence,want_p
     }
   }
   
-  
-  ranked_off_mat <- off_mat * 0
-  ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(off_mat))
-  
+  #Similarly to above, if there are n_p points along the trajectory, the chance someone picks up the puck at the 3rd point is conditional on no one getting the puck
+  #at points 1 or 2. We update these probabilities using the same method as above.
+  ranked_off_mat <- rank_mat * 0
+  ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(rank_mat))
   pass_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
                            def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
     mutate(None = 1 - off - def)
-  
-  # pass_probs2 <- pass_probs
-  
   if(nrow(pass_probs)>1){
     for (r in 2:nrow(pass_probs)){
       pass_probs[r,] = pass_probs[r,] * pass_probs$None[r-1]
     }
   }
   
+  #Finalize the summary data that has been collected for each point along the trajectory and it's probability of being picked up the offence, defence and no one
+  #Additionally the points data.frame includes previously calculated...
+  #all_ctrl:
+  #score_prob:
+  #pass_value:
+  all_data_probs <- cbind(points,pass_probs)
+  colnames(all_data_probs) <- c("theta","x","y","t","all_ctrl","score_prob","pass_value","off","def","None")
   
-  new_data3 <- cbind(points,pass_probs)
-  colnames(new_data3) <- c("theta","x","y","t","all_ctrl","score_prob","pass_value","off","def","None")
+  #To give one summary statistic for each point along the trajectory, we determine
   
-  #what to return
-  cum_pass_good = cumsum(new_data3$pass_value*new_data3$off)
-  cum_pass_off = cumsum(new_data3$off)
-  cum_pass_val = cumsum(new_data3$pass_value)
+  #the probability that the offence successfully retrieved the puck along the way
+  cum_pass_off = cumsum(all_data_probs$off)
+  #the quality of the point by determining how valuable the target multiplied by offensive pickup probability along the way
+  cum_pass_good = all_data_probs$pass_value*cum_pass_off
+  #cum_pass_val = cumsum(all_data_probs$pass_value)
   
-  pass_good = sum(new_data3$all_ctrl*new_data3$score_prob*new_data3$off)
-  pass_off = sum(new_data3$off)
-  pass_val = sum(new_data3$pass_value)
+  pass_good = all_data_probs$all_ctrl*(all_data_probs$score_prob/2)*cum_pass_off
+  #pass_off = sum(all_data_probs$off)
+  #pass_val = sum(all_data_probs$pass_value)
   
   if(want_plot){
-    plot_pass=plot_half_rink(ggplot(tracks)) +
+    #If desired, we can plot the individual trajectory to look at all points along that path which we are calculating values for
+    plot_pass=plot_half_rink(ggplot(tracks1)) +
       geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
       geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
                    arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
       geom_point(aes(x = x_puck+2, y = y_puck-0.5), size = 2, shape = 16, colour='black') + 
-      geom_point(data = new_data2, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
+      geom_point(data = points, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
       scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
       scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
       geom_segment(data = points,aes(x = x_puck, y = y_puck, xend = x, yend = y),linetype=2)+
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(new_data3,plot_pass))
+    return(list(cbind(points,pass_good),plot_pass))
   }else{
-    return(new_data3)#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
+    return(cbind(points,pass_good))
   }
 }
 
 
-# Create rink plot function
+#Statletes provided code for plotting the full rink. Dims x=200 ft wide and y=85 ft high
 plot_rink = function(p_object){
-  
   require(ggforce)
   require(cowplot)
   require(tidyverse)
-  
   upper_outline = data.frame(
     x = c(
       115,
@@ -185,6 +212,7 @@ plot_rink = function(p_object){
   return(p)
 }
 
+#Adjustment of stathletes code to plot only the blue line to the attacking net that the play takes place in
 plot_half_rink = function(p_object){
   
   require(ggforce)
@@ -314,7 +342,7 @@ save_play <- function(data, r, t_start, type){
 
 # This function gives the distance a player would be from a target point
 # given starting location and velocity and a target time t 
-dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r =  0.189){#0.5){
+dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr){
   
   # xyt - triplet of x y t of desired location and time
   # x0,y0 - current location
@@ -351,7 +379,7 @@ dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r =  0.189){#
   
 }
 
-time_center_radius <- function(x0,y0,vx,vy, vmax = 30, alpha = 1.3, t_r =  0.189, tmax = 15, tres = 1/30){ #t_r=0.5
+time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr, tmax = t_max, tres = frame_rate){ 
   ti <- seq(0,t_r,tres) # initial time - before reaction
   tr <- seq(0,10-t_r,tres)# reamining time after reaction
   
@@ -388,11 +416,11 @@ t_reach <- function(loc, t_c_r){
 
 player_arrival_times <- function(x0,y0,vx,vy,
                                  grid = expand.grid(x = seq(0,200,0.5), y = seq(0,85,0.5)),
-                                 vmax = 30,
-                                 alpha = 1.3, 
-                                 t_r = 0.189,#0.5, 
-                                 tmax = 15, 
-                                 tres = 1/30
+                                 vmax = max_velocity,
+                                 alpha = a, 
+                                 t_r = tr,
+                                 tmax = t_max, 
+                                 tres = frame_rate
                                  ){
   t_c_r <- time_center_radius(x0, y0, vx, vy, vmax = vmax, alpha = alpha, t_r = t_r, tmax = tmax, tres = tres)
   times <- apply(grid,1,t_reach,t_c_r)
@@ -400,7 +428,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
 }
 
 
-puck_motion_model <- function(x0,y0,vx,vy, t = seq(0,15,0.2), mu = 0.1, beta = 0.1322, g = 32.174){
+puck_motion_model <- function(x0,y0,vx,vy, t = time_step, mu = mm, beta = b, g = gg){
   
   vmag <-  sqrt(vx^2 + vy^2)
   
@@ -410,7 +438,7 @@ puck_motion_model <- function(x0,y0,vx,vy, t = seq(0,15,0.2), mu = 0.1, beta = 0
   return(data.frame(x = x, y = y, t = t))
 }
 
-puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = seq(0.05,5,0.05), mu = 0.1, beta = 0.1322, g = 32.174){
+puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = mm, beta = b, g = gg){
   vx = vmag*sin(angle)
   vy = vmag*cos(angle)
   
@@ -420,7 +448,7 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = seq(0.05,5,0.05)
   return(data.frame(x = x, y = y, t = t))
 }
 
-ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.189, beta = 2.5){ #t_r = 0.5
+ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
 
   x0 <- loc_vel['x_ft']
   y0 <-  loc_vel['y_ft']
@@ -434,12 +462,12 @@ ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.189, beta =
 }
 
 
-teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = 30, alpha = 1.3, t_r = 0.189, beta = 2.5){ #t_r = 0.5
+teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
   ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
   return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
 }
 
-score_prob <- function(xyt, decay_x = 2000, decay_y = 500){
+score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
   x = xyt['x']
   y = xyt['y']
   Prob <- abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))*exp(-((189-x)^2/decay_x+(42.5-y)^2/decay_y))
@@ -464,393 +492,3 @@ clean_pass <- function(passes, xmin=125, xmax=200, ymin=0, ymax=85){
 
 
 
-
-
-
-
-
-
-#Use get_to_point values to make heatmap. May need to smooth for points between discrete spots. 
-
-#Delete points that will get intercepted prior to arrival.
-
-#Identify which points have a high probability of resulting in a successful pass or shot on goal. Or places close to the puck carrier, they could move to.
-
-#Use these probabilities to predict the next move. With some type of model.
-
-#Rank players who make the correct decisions.
-
-#Other metrics
-  #Calculate minimum arrival time to carrier
-  #Size of convex hull for each team
-  #Defender angles between shooter, defender and goal edges.
-
-stick = 6.5 #feet, stick plus arm length
-speed_puck = 120 #120 ft/s puck speed
-frame_rate = 1/30
-
-#Old stuff
-assess_value_old <- function(pass,offence,d_min,o_min,int_d,int_o){
-  pickup_min=rbind(d_min,o_min)
-  int_od=rbind(int_d,int_o)
-  #Interceptions
-  #Keep only int_o and int_d where player_2_p < puck_2_p
-  #Each intercepter will get a probability of intercepting
-  #Who has smaller sqrt((x_int-x_puck)^2+(y_int-y_puck)^2) will intercept the puck first and 
-  int_od$h_int = sqrt(int_od$x_int^2+int_od$y_int^2)
-  int_od$h_mean = int_od$h_int+int_od$h_vel*int_od$puck_2_p
-  h_angle = asin(int_od$vel_x/int_od$h_vel)
-  stick = 2 #meters, stick plus arm length
-  x_s = sin(h_angle)*stick
-  y_s = cos(h_angle)*stick
-  h_s = sqrt(x_s^2+y_s^2)
-  int_od$prob_int = dnorm(int_od$h_int+h_s, mean = int_od$h_mean, sd = stick, log = FALSE)-dnorm(int_od$h_int-h_s, mean = int_od$h_mean, log = FALSE)
-  
-  pickup_min$h_int = sqrt(pass$x_coor^2+pass$y_coor^2)
-  pickup_min$h_vel = sqrt(pickup_min$vel_x^2+pickup_min$vel_y^2)
-  pickup_angle = asin(pickup_min$vel_x/pickup_min$h_vel)
-  x_angle = sin(pickup_angle)*stick
-  y_angle = cos(pickup_angle)*stick
-  h_angle = sqrt(x_angle^2+y_angle^2)
-  pickup_min$h_mean = pickup_min$h_int+pickup_min$h_vel*pickup_min$puck_2_p
-  pickup_min$prob_int = dnorm(pickup_min$h_int+h_angle, mean = pickup_min$h_mean, sd = stick, log = FALSE)-dnorm(pickup_min$h_int-h_angle, mean = pickup_min$h_mean, log = FALSE)
-  
-  point_value = 0
-  off_intercept = int_od$prob_int[which(int_od$team_name==offence)]
-  if(length(off_intercept)>0){
-    point_value=point_value+mean(off_intercept)
-  }
-  def_intercept = int_od$prob_int[-which(int_od$team_name==offence)]
-  if(length(def_intercept)>0){
-    point_value=point_value-mean(def_intercept)
-  }
-  point_value = (point_value + mean(pickup_min$prob_int[which(pickup_min$team_name==offence)])- mean(pickup_min$prob_int[-which(pickup_min$team_name==offence)]))*100/2
-  return(point_value)
-}
-
-
-assess_value <- function(pass,offence,d_min,o_min,int_d,int_o){
-  point_val_off = 0
-  point_val_def = 0
-  stick = 6.5 #meters, stick plus arm length
-  
-  pickup_min=rbind(d_min,o_min)
-  pickup_min$dist_to_int = NULL
-  for(j in 1:nrow(pickup_min)){
-    pickup_min$dist_to_int[j]=dist_to_xyt(pass$x_coor,pass$y_coor,pickup_min$x_ft[j],pickup_min$y_ft[j],
-                                          pickup_min$vel_x[j],pickup_min$vel_y[j],pickup_min$puck_2_p[j])
-    #print(pickup_min$dist_to_int[j])
-  }
-  
-  int_od=rbind(int_d,int_o)
-  int_od$dist_to_int = NULL
-  if(nrow(int_od)>0){
-    for(i in 1:nrow(int_od)){
-      int_od$dist_to_int[i]=dist_to_xyt(int_od$x_int[i],int_od$y_int[i],int_od$x_ft[i],int_od$y_ft[i],
-                                        int_od$vel_x[i],int_od$vel_y[i],int_od$puck_2_p[i])
-      #print(int_od$dist_to_int[i])
-    }
-    
-    #Interceptions
-    #Keep only int_o and int_d where player_2_p < puck_2_p
-    #Each intercepter will get a probability of intercepting
-    #Who has smaller sqrt((x_int-x_puck)^2+(y_int-y_puck)^2) will intercept the puck first and 
-    
-    h_int = sqrt(int_od$x_int^2+int_od$y_int^2)
-    h_angle = atan(int_od$vel_y/int_od$vel_x)
-    
-    x_mean = int_od$x_int+cos(h_angle)*int_od$dist_to_int
-    y_mean = int_od$y_int+sin(h_angle)*int_od$dist_to_int
-    h_mean = sqrt(x_mean^2+y_mean^2)
-    int_od$prob_int = abs(dnorm((h_int+stick-h_mean)/stick)-dnorm((h_int-stick-h_mean)/stick))
-    
-    off_intercept = int_od$prob_int[which(int_od$team_name==offence)]
-    if(length(off_intercept)>0){
-      point_val_off=point_val_off+mean(off_intercept)
-    }
-    def_intercept = int_od$prob_int[-which(int_od$team_name==offence)]
-    if(length(def_intercept)>0){
-      point_val_def=point_val_def+mean(def_intercept)
-    }
-  }
-  
-  
-  h_int_puck = sqrt(pass$x_coor^2+pass$y_coor^2)
-  pickup_angle = atan(pickup_min$vel_y/pickup_min$vel_x)
-  x_mean_puck = pass$x_coor+cos(pickup_angle)*pickup_min$dist_to_int
-  y_mean_puck = pass$y_coor+sin(pickup_angle)*pickup_min$dist_to_int
-  h_mean_puck = sqrt(x_mean_puck^2+y_mean_puck^2)
-  pickup_min$prob_int = abs(dnorm((h_int_puck+stick-h_mean_puck)/stick)-dnorm((h_int_puck-stick-h_mean_puck)/stick))
-  
-  
-  point_val_off = (point_val_def+mean(pickup_min$prob_int[-which(pickup_min$team_name==offence)]))*100
-  point_val_def = (point_val_def+mean(pickup_min$prob_int[which(pickup_min$team_name==offence)]))*100
-  return(list(Off_val=point_val_off, Def_val=point_val_def))
-}
-
-# Given the current frame and eligible points find the minimum time a player will take to reach that point. separate for each time. 
-#get min offense and defense times. Use speed of players and angle. Similar to arrival time in pipeline_functions.R
-get_to_point <- function(x_puck,y_puck, points, offence,want_plot,s=speed_puck){#120 ft/s puck speed
-  points=rbind(data.frame('angle'=c(),'r'=c(),'x_coor'=c(),'y_coor'=c()),points)
-  names(points)=c('angle','r','x_coor','y_coor')
-  tracks=tracking_data
-  #give slight movement to avoid dividing by zero
-  tracks$vel_x[which(tracks$vel_x==0)]=0.5
-  tracks$vel_y[which(tracks$vel_y==0)]=0.5
-  
-  teams = tracks$team_name %>% unique()
-  defence = teams[-which(teams==offence)]
-  
-  off_tracks = tracks %>% filter(team_name==offence)
-  def_tracks = tracks %>% filter(team_name==defence)
-  
-  
-  off_time_2_p = sqrt((points$x_coor-off_tracks$x_ft)^2+(points$y_coor-off_tracks$y_ft)^2)
-  off_min = off_tracks[which.min(off_time_2_p),]
-  off_min$min_d=min(off_time_2_p)
-  off_min$puck_2_p = sqrt((points$x_coor-x_puck)^2+(points$y_coor-y_puck)^2)/s
-  off_min$player_2_p = min(off_time_2_p)/sqrt(off_min$vel_x^2+off_min$vel_y^2)
-  
-  def_time_2_p = sqrt((points$x_coor-def_tracks$x_ft)^2+(points$y_coor-def_tracks$y_ft)^2)
-  def_min = def_tracks[which.min(def_time_2_p),]#,min=min(def_time_2_p))
-  def_min$min_d=min(def_time_2_p)
-  def_min$puck_2_p = off_min$puck_2_p
-  def_min$player_2_p = min(def_time_2_p)/sqrt(def_min$vel_x^2+def_min$vel_y^2)
-  
-  target_x = points$x_coor; target_y=points$y_coor
-  defenders_x=x_puck; defenders_y=y_puck
-  speed=10; dir=points$angle*180/pi
-  blockers_xdef=def_tracks[,'x_ft']; blockers_ydef=def_tracks[,'y_ft']
-  blockers_xoff=off_tracks[,'x_ft']; blockers_yoff=off_tracks[,'y_ft']
-  reaction_time = 0; max_speed = 20; blocket_rime_multiplier = 5
-  
-  # i. Determine defenders' positions after reaction_time total seconds at their same speed and direction
-  angle = case_when(
-    dir <= 90 ~ 90 - dir,
-    dir > 90 & dir < 180 ~ dir - 90,
-    dir > 180 & dir < 270 ~ 270 - dir,
-    TRUE ~ dir - 270
-  )
-  
-  reaction_x = defenders_x + ifelse(dir < 180, cos(angle * pi/180)*(speed * reaction_time), -cos(angle * pi / 180)*(speed * reaction_time))
-  reaction_y = defenders_y + ifelse(dir > 90 & dir < 270, sin(angle * pi/180)*(speed * reaction_time), -sin((angle * pi)/180)*(speed * reaction_time))
-  # Set (x1,y1) = location of defender after reaction time, (x2,y2) = target location, (x3,y3) = blocker location
-  i=1;k=1
-  x1 = reaction_x[i]; y1 = reaction_y[i]
-  x2 = target_x[k]; y2 = target_y[k]
-  
-  # Calculate the perpendicular projection of the blocker's position onto the line formed by the defender and the target
-  b_def = -((x1-blockers_xdef)*(x2-x1)+(y1-blockers_ydef)*(y2-y1))/((x2-x1)^2+(y2-y1)^2)
-  intercept_xdef = x1 + b_def*(x2 - x1)
-  intercept_ydef = (y1 + b_def*(y2 - y1))
-  
-  intercept_def = data.frame(def_tracks[,c(3:8,11:13)],x_int = unlist(intercept_xdef),y_int = unlist(intercept_ydef))
-  intercept_def= intercept_def[which((y1-intercept_def$y_int)<=(y1-y2) & 0<(y1-intercept_def$y_int)),]
-  intercept_def$h_vel = sqrt(intercept_def$vel_x^2+intercept_def$vel_y^2) #hypotenuse velocity
-  intercept_def$h_dist = sqrt((intercept_def$x_ft-intercept_def$x_int)^2+(intercept_def$y_ft-intercept_def$y_int)^2)
-  intercept_def$v_dist = sqrt(intercept_def$vel_x^2+intercept_def$vel_y^2)
-  intercept_def$hv_dist = sqrt((intercept_def$x_ft+intercept_def$vel_x-intercept_def$x_int)^2+(intercept_def$y_ft+intercept_def$vel_y-intercept_def$y_int)^2)
-  intercept_def$int_angle = acos((intercept_def$h_dist^2+intercept_def$v_dist^2-intercept_def$hv_dist^2)/(2*intercept_def$h_dist*intercept_def$v_dist)) 
-  #law of cosines b2=a2+c2-2accos(b), angle in radians
-  intercept_def$puck_2_p = sqrt((x_puck-intercept_def$x_int)^2+(y_puck-intercept_def$y_int)^2)/s
-  intercept_def$player_2_p = sqrt((intercept_def$x_ft-intercept_def$x_int)^2+(intercept_def$y_ft-intercept_def$y_int)^2)/intercept_def$h_vel
-  
-  b_off = -((x1-blockers_xoff)*(x2-x1)+(y1-blockers_yoff)*(y2-y1))/((x2-x1)^2+(y2-y1)^2)
-  intercept_xoff = x1 + b_off*(x2 - x1)
-  intercept_yoff = (y1 + b_off*(y2 - y1))
-  
-  intercept_off = data.frame(off_tracks[,c(3:8,11:13)],x_int = unlist(intercept_xoff),y_int = unlist(intercept_yoff))
-  intercept_off= intercept_off[which((y1-intercept_off$y_int)<=(y1-y2) & 0<(y1-intercept_off$y_int)),]
-  intercept_off$h_vel = sqrt(intercept_off$vel_x^2+intercept_off$vel_y^2) #hypotenuse velocity
-  intercept_off$h_dist = sqrt((intercept_off$x_ft-intercept_off$x_int)^2+(intercept_off$y_ft-intercept_off$y_int)^2)
-  intercept_off$v_dist = sqrt(intercept_off$vel_x^2+intercept_off$vel_y^2)
-  intercept_off$hv_dist = sqrt((intercept_off$x_ft+intercept_off$vel_x-intercept_off$x_int)^2+(intercept_off$y_ft+intercept_off$vel_y-intercept_off$y_int)^2)
-  intercept_off$int_angle = acos((intercept_off$h_dist^2+intercept_off$v_dist^2-intercept_off$hv_dist^2)/(2*intercept_off$h_dist*intercept_off$v_dist)) 
-  #law of cosines b2=a2+c2-2accos(b), angle in radians
-  intercept_off$puck_2_p = sqrt((x_puck-intercept_off$x_int)^2+(y_puck-intercept_off$y_int)^2)/s
-  intercept_off$player_2_p = sqrt((intercept_off$x_ft-intercept_off$x_int)^2+(intercept_off$y_ft-intercept_off$y_int)^2)/intercept_off$h_vel
-  
-  value_at_p = assess_value(points,offence,def_min,off_min,intercept_def,intercept_off)
-  
-  if(want_plot){
-    plot_pass=plot_rink(ggplot(tracks)) +
-      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
-      geom_point(aes(x = x_puck+2, y = y_puck-0.5), size = 2, shape = 16, colour='black') + 
-      geom_point(data = points, aes(x = x_coor, y = y_coor), size = 2, shape = 4) +
-      geom_point(data =intercept_def,aes(x = x_int, y = y_int),color='light blue', size = 3, shape = 8) +
-      geom_point(data =intercept_off,aes(x = x_int, y = y_int),color='pink', size = 3, shape = 8) +
-      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
-      geom_segment(data = points,aes(x = x_puck, y = y_puck, xend = x_coor, yend = y_coor),linetype=2)+
-      labs(fill = "Team") +
-      guides(colour = "none")+ 
-      geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-                   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') 
-    return(list(value_at_p,plot_pass))
-  }else{
-    return(value_at_p)
-  }
-}
-#puck speeds https://www.sidmartinbio.org/how-fast-does-the-average-hockey-puck-travel/ 
-
-#Given the current puck location, find all points on the ice they could move the puck to. Use angles and speed of pass
-create_points <- function(x_puck,y_puck,x_min = 125,x_max = 200,y_min = 0,y_max = 85, boundary_step = 8, r_step = 5){
-  boundary_step = as.integer(boundary_step)
-  passes = data.frame(angle=integer(),r=double(),x_coor=double(),y_coor=double())
-  
-  upper_outline = data.frame(
-    x = c(
-      rep(x_min,boundary_step),
-      seq(x_min,x_max-28,length=boundary_step),
-      x_max-28 + 28*sin(seq(0,pi/2,length=boundary_step)),
-      rep(x_max,round(boundary_step/2)),
-      x_max-28 + 28*sin(seq(pi/2,0,length=boundary_step)),
-      seq(x_min,x_max-28,length=boundary_step)
-    ),
-    y = c(
-      seq(y_min,y_max,length=boundary_step),
-      rep(y_min,boundary_step), 
-      y_min + 28 - 28*cos(seq(0,pi/2,length=boundary_step)),
-      seq(28,y_max-28,length=round(boundary_step/2)),
-      y_max - 28 + 28*cos(seq(pi/2,0,length=boundary_step)),
-      rep(y_max,boundary_step)
-    )
-  )
-  for(spot in 1:nrow(upper_outline)){
-    x_spot = upper_outline[spot,1]
-    y_spot = upper_outline[spot,2]
-    angle = atan((x_spot-x_puck)/(y_spot-y_puck))
-    
-    angle = case_when(
-      x_spot>x_puck & y_spot<y_puck ~ angle+pi,
-      x_spot<x_puck & y_spot<y_puck ~ angle+pi,
-      x_spot<x_puck & y_spot>y_puck ~ angle+2*pi,
-      x_spot>x_puck & y_spot>y_puck ~ angle
-    )
-    
-    r = sqrt((x_spot-x_puck)^2+(y_spot-y_puck)^2)
-    while(r>r_step){
-      passes = rbind(passes,c(angle,r,x_spot,y_spot))
-      r = case_when(
-        r>20 ~ r-r/r_step,
-        r<=20 ~ r-2*r/r_step
-      )
-      x_spot = x_puck + r*sin(angle)
-      y_spot = y_puck + r*cos(angle)
-    }
-  }
-  colnames(passes) = c('angle','r','x_coor','y_coor')
-  return(passes)
-}
-
-probs_to_point_old <- function(x_puck,y_puck, points, offence,want_plot=FALSE){
-  points=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),points)
-  names(points)=c('theta','x','y','t')
-  tracks=tracking_data
-  #give slight movement to avoid dividing by zero
-  tracks$vel_x[which(tracks$vel_x==0)]=0.5
-  tracks$vel_y[which(tracks$vel_y==0)]=0.5
-  
-  teams = tracks$team_name %>% unique()
-  defence = teams[-which(teams==offence)]
-  
-  off_tracks = tracks %>% filter(team_name==offence)
-  def_tracks = tracks %>% filter(team_name==defence)
-  
-  n_step = round(sqrt((points$x-x_puck)^2+(points$y-y_puck)^2)/5)+2
-  steps = seq(1,n_step,by=1) #look at every 5 foot distance along the line
-  t_step = seq(0,points$t,length.out=length(steps)+1) #for now, consider equal time to target
-  
-  #theta_p = atan((x_puck-points$x)/(y_puck-points$y))
-  x_new = (points$x+(n_step:0)*(x_puck-points$x)/n_step)[-1]
-  y_new = (points$y+(n_step:0)*(y_puck-points$y)/n_step)[-1]
-  
-  #plot(c(x_puck, x_new,points$x),c(y_puck, y_new,points$y), col=c('black',rep('blue',length(x_new)),'red'))
-  
-  new_data = data.frame(x=x_new,y=y_new,t=t_step[-1])
-  
-  #point_val_off = 0
-  #point_val_def = 0
-  
-  dist_to_points = matrix(nrow=n_step, ncol=nrow(tracks))
-  for(player in 1:nrow(tracks)){
-    dist_to_points[,player]=apply(new_data,1,dist_to_xyt,x0=tracks$x_ft[player],y0=tracks$y_ft[player],vx=tracks$vel_x[player],vy=tracks$vel_y[player])
-  }
-  #distance from point of interests for each player
-  
-  pickup_probs = abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick))
-  new_data2 = cbind(new_data,pickup_probs)
-  
-  off_lines = which(tracks$team_name==offence)
-  def_lines = which(tracks$team_name!=offence)
-  off_probs = new_data2[,off_lines+3]
-  def_probs = new_data2[,def_lines+3]
-  
-  off_mat = t(replicate(nrow(new_data2),tracks$team_name==offence))
-  
-  all_rank = t(apply(-pickup_probs,1,rank))
-  rix <-  as.vector(t(replicate(ncol(pickup_probs),seq(1,nrow(pickup_probs),1))))
-  
-  ranked_probs <-  pickup_probs * 0
-  ranked_probs[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(pickup_probs))
-  
-  ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
-  for (c in 3:ncol(ranked_probs)){
-    ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
-  }
-  
-  ranked_off_mat <- off_mat * 0
-  ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(off_mat))
-  
-  shot_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
-                           def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
-    mutate(None = 1 - off - def)
-  
-  # shot_probs2 <- shot_probs
-  
-  for (r in 2:nrow(shot_probs)){
-    shot_probs[r,] = shot_probs[r,] * shot_probs$None[r-1]
-  }
-  
-  shot_good = sum(shot_probs[,1]-shot_probs[,2]-shot_probs[nrow(shot_probs),3])
-  
-  if(want_plot){
-    plot_pass=plot_half_rink(ggplot(tracks)) +
-      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
-      geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-                   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
-      geom_point(aes(x = x_puck+2, y = y_puck-0.5), size = 2, shape = 16, colour='black') + 
-      geom_point(data = new_data2, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
-      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
-      geom_segment(data = points,aes(x = x_puck, y = y_puck, xend = x, yend = y),linetype=2)+
-      geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
-      labs(fill = "Team") +
-      guides(colour = "none") 
-    return(list(shot_good,cbind(new_data,shot_probs),plot_pass))
-  }else{
-    return(shot_good)#list(diff_p,100*off_p/(off_p+def_p),off_probs,def_probs,off_max,def_max))
-  }
-}
-
-
-#off_p = off_max[length(off_max)]
-#for(p in (length(off_max)-1):1){
-#  off_p = off_p+off_p*off_max[p]
-#}
-
-#def_max = apply(def_probs,1,max)
-#def_p = def_max[length(def_max)]
-#for(p in (length(def_max)-1):1){
-#  def_p = def_p+def_p*def_max[p]
-#}
-
-#diff_max = off_max-def_max
-#diff_max = diff_max*(length(diff_max):1)
-#diff_p = mean(diff_max)
-
-#what to return? we could return ratio as in here. Will give back present of control by the offensive team over the defensive team, always between 0 and 1.
-#should we divide by number of players on either team? p_off/n_off and p_def/n_def. Also the number of points along the line depends on length of pass,
-#should we standardize somehow?
