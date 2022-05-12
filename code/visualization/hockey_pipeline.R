@@ -15,13 +15,13 @@ frame_rate = 1/30 # 30 frames per second, value used as tres (Alon: We might wan
                   # in time_center_radius and player_arrival_times
 
 max_velocity=30 # maximum skater velocity in ft/sec
-a = 1.3 # acceleration coefficient (not exactly acceleration exactly)
+a = 1.3 # acceleration coefficient (not directly acceleration, but more like a speed decay)
 tr = 0.189 # reaction time (based on the article Phil sent)
 t_max = 15 # Maximum value used to use for numerically solving arrival times 
-mm = 0.1 #value used as mu
-b = 0.1322 #value used as beta
-b2 = 2.5 #value used as beta in ice_ctrl_xyt and teamwise_ice_ctrl_xyt
-gg = 32.174 #value used as g
+mm = 0.1 # Coefficient of friction between puck and ice, I'll find the source for this
+b = 0.1322 # Puck air drag coefficient (actuall it's the coefficient divided by the mass so beta = k/m if k is the drag coefficient)
+b2 = 2.5 # pitch control coefficient used as beta in ice_ctrl_xyt and teamwise_ice_ctrl_xyt, taken from the Spearman paper
+gg = 32.174 # g (as in the gravity acceleration in ft/s^2)
 x_decay = 2000 #value used as decay_x
 y_decay = 500 #value used as decay_y
 
