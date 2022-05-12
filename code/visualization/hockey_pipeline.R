@@ -461,7 +461,7 @@ ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, b
   vy <- loc_vel['vel_y']
   grid <- xyt %>% select(x,y)
   x_y_tarr <- player_arrival_times(x0,y0,vx,vy,grid = grid)
-  x_y_tarr$arr_times = x_y_tarr$arr_times - xyt$t
+  x_y_tarr$arr_times = pmax(x_y_tarr$arr_times - xyt$t, 0.001)
   
   return(ctrl = loc_vel['team_label'] * x_y_tarr$arr_times ^ (-beta))
 }

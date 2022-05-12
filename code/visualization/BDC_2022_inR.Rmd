@@ -17,8 +17,8 @@ speed_puck = 90 #ft/s
 #speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
 json_file <- "data/BDC_2022_all_data.json"
 dat <- fromJSON(json_file)
 ```
@@ -119,6 +119,14 @@ new_pass <- new_pass %>%
   mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
   mutate(pass_value = score_prob * ((all_ctrl+1)/2)^3)
 new_pass
+```
+
+```{r}
+which(is.na(new_pass$all_ctrl))
+
+# new_pass[386,]
+# teamwise_ice_ctrl_xyt(loc_vel, xyt)
+# loc_vel
 ```
 
 ```{r}
