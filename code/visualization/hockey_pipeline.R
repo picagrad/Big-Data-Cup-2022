@@ -11,12 +11,13 @@ stick = 6.5
   #40 feet/s show what happens in the case where you sent an average pass
 
 #Stathletes frame rate for their tracking data
-frame_rate = 1/30 #30 frames per second, value used as tres in time_center_radius and player_arrival_times
+frame_rate = 1/30 # 30 frames per second, value used as tres (Alon: We might want to use a different time for this) 
+                  # in time_center_radius and player_arrival_times
 
-max_velocity=30 #value used in v_max
-a = 1.3 #value used as alpha
-tr = 0.189 #value used as t_r
-t_max = 15 #value used as tmax
+max_velocity=30 # maximum skater velocity in ft/sec
+a = 1.3 # acceleration coefficient (not exactly acceleration exactly)
+tr = 0.189 # reaction time (based on the article Phil sent)
+t_max = 15 # Maximum value used to use for numerically solving arrival times 
 mm = 0.1 #value used as mu
 b = 0.1322 #value used as beta
 b2 = 2.5 #value used as beta in ice_ctrl_xyt and teamwise_ice_ctrl_xyt
