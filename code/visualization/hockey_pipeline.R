@@ -17,21 +17,30 @@ frame_rate = 1/30 # 30 frames per second, value used as tres (Alon: We might wan
 max_velocity=30 # maximum skater velocity in ft/sec
 a = 1.3 # acceleration coefficient (not directly acceleration, but more like a speed decay)
 tr = 0.189 # reaction time (based on the article Phil sent)
+<<<<<<< HEAD
 t_max = 15 # Maximum value used to use for numerically solving arrival times 
 mm = 0.1 # Coefficient of friction between puck and ice, I'll find the source for this
 b = 0.1322 # Puck air drag coefficient (actuall it's the coefficient divided by the mass so beta = k/m if k is the drag coefficient)
 b2 = 2.5 # pitch control coefficient used as beta in ice_ctrl_xyt and teamwise_ice_ctrl_xyt, taken from the Spearman paper
 gg = 32.174 # g (as in the gravity acceleration in ft/s^2)
+=======
+t_max = 50 # Maximum value used to use for numerically solving arrival times 
+mm = 0.1 #value used as mu
+b = 0.1322 #value used as beta
+b2 = 2.5 #value used as beta in ice_ctrl_xyt and teamwise_ice_ctrl_xyt
+gg = 32.174 #value used as g
+>>>>>>> bd9ba7e85b2e2374fbd6e06377dfd591849dcf4f
 x_decay = 2000 #value used as decay_x
 y_decay = 500 #value used as decay_y
+t_rez = 1/100
 
 
 probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_plot=FALSE){
   #A few minor adjustments for vectorizing the function
-  points1=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),points1)
+  points1=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double()),points1)
   names(points1)=c('theta','x','y','t')
-  points=rbind(data.frame('theta'=c(),'x'=c(),'y'=c(),'t'=c()),all_ang[which(all_ang$angle==points1$theta),])
-  names(points)=c('theta','x','y','t')
+  points=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double(),'all_ctrl'=double(), 'score_prob'=double(), 'pass_value'=double()),all_ang[which(all_ang$angle==points1$theta),])
+  names(points)=c('theta','x','y','t','all_ctrl', 'score_prob', 'pass_value')
   
   #We remove the player passing the puck in our calculations as we do not want a player to "pass to themselves"
   tracks = tracks1[-which.min((tracks1$x_ft-x_puck)^2+(tracks1$y_ft-y_puck)^2),]
@@ -54,7 +63,8 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #Given how close a player gets to their target, we place a Gaussian distribution at that point to add some variability to how close the player can get
   #and associate a probability to whether or not their could intercept the puck. We use stick length as the standard deviation. This is done for all players
   #except the passer for each potential intercept point along a trajectory
-  pickup_probs = abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick))
+  norm_probs = (abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick)))
+  pickup_probs = norm_probs*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
   
   #Combine the original (angle, x,y,t) points we are evaluating with the pickup probabilities of each player determined in the previous step
 
@@ -107,11 +117,13 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   
   #the probability that the offence successfully retrieved the puck along the way
   cum_pass_off = cumsum(all_data_probs$off)
+  cum_pass_def = cumsum(all_data_probs$def)
   #the quality of the point by determining how valuable the target multiplied by offensive pickup probability along the way
   cum_pass_good = all_data_probs$pass_value*cum_pass_off
   #cum_pass_val = cumsum(all_data_probs$pass_value)
   
-  pass_good = all_data_probs$all_ctrl*(all_data_probs$score_prob/2)*cum_pass_off
+  pass_good = all_data_probs$pass_value*all_data_probs$off#cum_pass_off
+  
   #pass_off = sum(all_data_probs$off)
   #pass_val = sum(all_data_probs$pass_value)
   
@@ -380,7 +392,7 @@ dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  
   
 }
 
-time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr, tmax = t_max, tres = frame_rate){ 
+time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr, tmax = t_max, tres = t_rez){ 
   ti <- seq(0,t_r,tres) # initial time - before reaction
   tr <- seq(0,10-t_r,tres)# reamining time after reaction
   
@@ -421,7 +433,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
                                  alpha = a, 
                                  t_r = tr,
                                  tmax = t_max, 
-                                 tres = frame_rate
+                                 tres = t_rez
                                  ){
   t_c_r <- time_center_radius(x0, y0, vx, vy, vmax = vmax, alpha = alpha, t_r = t_r, tmax = tmax, tres = tres)
   times <- apply(grid,1,t_reach,t_c_r)
@@ -481,7 +493,7 @@ score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
   
 }
 
-clean_pass <- function(passes, xmin=125, xmax=200, ymin=0, ymax=85){
+clean_pass <- function(passes, xmin=115, xmax=200, ymin=0, ymax=85){
   passes1 <- passes %>% filter(xmin<x) %>% filter(ymin<y) %>% filter(x<xmax) %>% filter(y<ymax)
   
   return(passes1)
