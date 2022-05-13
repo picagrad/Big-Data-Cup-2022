@@ -9,26 +9,32 @@ install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
 
-#time_step = seq(0.01,10,0.005) #extra fine scale
-time_step = seq(0.05,10,0.05) #regular scale
-#theta_scale = 0.01 #extra fine scale
-theta_scale = 0.05 #regular scale
-speed_puck = 90 #ft/s
-#speed_puck = 55 #ft/s
+time_step = seq(0.01,10,0.01) #extra fine scale
+#time_step = seq(0.05,10,0.05) #regular scale
+theta_scale = 0.01 #extra fine scale
+#theta_scale = 0.05 #regular scale
+#speed_puck = 90 #ft/s
+speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
-json_file <- "data/BDC_2022_all_data.json"
+#source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+#setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+
+
+json_file <- "data/BDC_2022_all_direct_wFrames.json" #"data/BDC_2022_all_data.json"
 dat <- fromJSON(json_file)
 ```
 
 ```{r}
-r=0 # powerplay of interest
-t=7 # shot of interest
+#r=0 # powerplay of interest
+t_track=10 # shot of interest
 
 # Set up the tracking data
-line1 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')
+
+#line1 <- paste('dat$relevant_events$\'',r,'\'$tracks$\'',t,'\'',sep='')
+line1 <- paste('dat$tracks$\'',t_track,'\'',sep='')
 line2 <- eval(parse(text=line1))
 if(length(line2$frame_id)!=0){
   json_tracks <- lapply(line2, function(x) {
@@ -47,23 +53,23 @@ current_track$vel_x = current_track$vel_x %>% as.double()
 current_track$vel_y = current_track$vel_y %>% as.double()
 
 # Set up the related event data
-line3 <- paste('dat$relevant_events$\'',r,'\'',sep='')
+line3 <- paste('dat',sep='')
 line4 <- eval(parse(text=line3))
-if(length(line4$game_date)!=0){
-  json_events <- lapply(line4[1:26], function(x) {
+if(length(dat$game_date)!=0){
+  json_events <- lapply(dat[1:28], function(x) {
     x[sapply(x, is.null)] <- NA
     unlist(x)
   })
-  current_event <- as.data.frame(do.call("cbind", json_events))
+  current_event_all <- as.data.frame(do.call("cbind", json_events))
 }
-
+current_event <- current_event_all[t_track+1,]
 ```
 
 
 ```{r}
 # Given a set location for the puck, find all potential spots the puck could be moved to
-x_puck = 179.0701
-y_puck = 70.62241
+x_puck = current_event$x_coord %>% as.double()+3
+y_puck = 85-current_event$y_coord %>% as.double()-4.5
 
 theta = seq(-pi,pi,by=theta_scale)
 passes = data.frame(angle=c(),x=c(),y=c(), t=c())
@@ -76,7 +82,7 @@ calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
 
 ```{r}
 # Select single frame to analyze
-frame = current_track$frame_id[1]
+frame = current_event$frame_id_1 %>% as.integer()
 tracking_data = current_track %>% filter(frame_id==frame)
 event = current_event %>% filter(clock_seconds==frame)
 tracking_data
@@ -109,6 +115,7 @@ plot_rink(ggplot(tracking_data)) +
 ```
 
 ```{r}
+#As some players, such as the goalie are sometimes not moving, we give them a slight movement to avoid dividing by zero anywhere
 tracking_data$vel_x[which(tracking_data$vel_x==0)]=0.05
 tracking_data$vel_y[which(tracking_data$vel_y==0)]=0.05
 
@@ -137,10 +144,11 @@ point_val[[2]]
 ```
 
 ```{r}
-all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=138.8515,y_puck=68.89724,all_ang=new_pass,tracks1=tracking_data,offence='Canada',want_plot=FALSE)
+all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_puck,y_puck=y_puck,all_ang=new_pass,tracks1=tracking_data,offence='Canada',want_plot=FALSE)
 
 pass_potential <- bind_rows(all_point_val, .id = "column_label")
 pass_potential
+#pass_potential$pass_good = pass_potential$pass_good %>% rescale()
 ```
 
 ```{r}
@@ -148,9 +156,8 @@ pass_potential
 # Create image of this frame with potential passes
 #ggplot(data = pass_potential,aes(x=x, y=y)) + stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE)
 p <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = pass_good),size=2, shape=16) +
-    scale_color_viridis(option = "D") +
-    scale_colour_gradient2(na.value="white",low = muted("blue"), mid = "white", high = muted("red"))+
+    geom_point(aes(color = score_prob ),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("blue"), mid = "white", high = muted("red"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+

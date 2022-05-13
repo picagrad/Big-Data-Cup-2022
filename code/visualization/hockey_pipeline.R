@@ -37,10 +37,6 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #We remove the player passing the puck in our calculations as we do not want a player to "pass to themselves"
   tracks = tracks1[-which.min((tracks1$x_ft-x_puck)^2+(tracks1$y_ft-y_puck)^2),]
   
-  #As some players, such as the goalie are sometimes not moving, we give them a slight movement to avoid dividing by zero anywhere
-  tracks$vel_x[which(tracks$vel_x==0)]=0.05
-  tracks$vel_y[which(tracks$vel_y==0)]=0.05
-  
   #Given the team that is on the offence, identify the name of the defence
   teams = tracks$team_name %>% unique()
   defence = teams[-which(teams==offence)]
@@ -56,7 +52,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #and associate a probability to whether or not their could intercept the puck. We use stick length as the standard deviation. This is done for all players
   #except the passer for each potential intercept point along a trajectory
   norm_probs = (abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick)))
-  pickup_probs = norm_probs*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
+  pickup_probs = norm_probs#*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
   
   #Combine the original (angle, x,y,t) points we are evaluating with the pickup probabilities of each player determined in the previous step
 
@@ -134,9 +130,9 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(cbind(points,pass_good),plot_pass))
+    return(list(cbind(points,all_data_probs$off,all_data_probs$def,cum_pass_off,cum_pass_def,cum_pass_good,pass_good),plot_pass))
   }else{
-    return(cbind(points,pass_good))
+    return(cbind(points,all_data_probs$off,all_data_probs$def,cum_pass_off,cum_pass_def,cum_pass_good,pass_good))
   }
 }
 
