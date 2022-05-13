@@ -9,10 +9,10 @@ install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
 
-time_step = seq(0.01,10,0.01) #extra fine scale
+time_step = seq(0.01,10,0.02) #extra fine scale
 #time_step = seq(0.05,10,0.05) #regular scale
-theta_scale = 0.01 #extra fine scale
-#theta_scale = 0.05 #regular scale
+#theta_scale = 0.01 #extra fine scale
+theta_scale = 0.05 #regular scale
 #speed_puck = 90 #ft/s
 speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
@@ -124,7 +124,7 @@ xyt <- new_pass %>% select(x,y,t)
 loc_vel <- tracking_data %>% mutate(team_label = ifelse(team_name == offence,1,-1)) %>% select(x_ft,y_ft,vel_x,vel_y, team_label) 
 new_pass <- new_pass %>% 
   mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
-  mutate(pass_value = score_prob * ((all_ctrl+1)/2)^3)
+  mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
 new_pass
 ```
 
@@ -137,7 +137,7 @@ which(is.na(new_pass$all_ctrl))
 ```
 
 ```{r}
-l<-20
+l<-6
 point_val = probs_to_point(x_puck,y_puck,calc_pass[l,],new_pass,tracking_data,'Canada',TRUE)
 point_val[[1]]
 point_val[[2]]
@@ -148,6 +148,8 @@ all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_puck,y_puck=y_puck,al
 
 pass_potential <- bind_rows(all_point_val, .id = "column_label")
 pass_potential
+
+
 #pass_potential$pass_good = pass_potential$pass_good %>% rescale()
 ```
 
@@ -156,7 +158,7 @@ pass_potential
 # Create image of this frame with potential passes
 #ggplot(data = pass_potential,aes(x=x, y=y)) + stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE)
 p <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = score_prob ),size=2, shape=16) +
+    geom_point(aes(color = off_prob),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("blue"), mid = "white", high = muted("red"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +

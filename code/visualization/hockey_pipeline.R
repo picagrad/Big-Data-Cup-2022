@@ -13,7 +13,7 @@ stick = 6.5
 #Stathletes frame rate for their tracking data
 frame_rate = 1/30 # 30 frames per second, value used as tres (Alon: We might want to use a different time for this) 
                   # in time_center_radius and player_arrival_times
-
+time_penalty = 1/10
 max_velocity=30 # maximum skater velocity in ft/sec
 a = 1.3 # acceleration coefficient (not directly acceleration, but more like a speed decay)
 tr = 0.189 # reaction time (based on the article Phil sent)
@@ -31,7 +31,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #A few minor adjustments for vectorizing the function
   points1=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double()),points1)
   names(points1)=c('theta','x','y','t')
-  points=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double(),'all_ctrl'=double(), 'score_prob'=double(), 'pass_value'=double()),all_ang[which(all_ang$angle==points1$theta),])
+  points=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double(),'all_ctrl'=double(), 'score_prob'=double(), 'pass_value'=double()),all_ang[which(round(all_ang$angle,4)==round(points1$theta,4)),])
   names(points)=c('theta','x','y','t','all_ctrl', 'score_prob', 'pass_value')
   
   #We remove the player passing the puck in our calculations as we do not want a player to "pass to themselves"
@@ -51,8 +51,12 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #Given how close a player gets to their target, we place a Gaussian distribution at that point to add some variability to how close the player can get
   #and associate a probability to whether or not their could intercept the puck. We use stick length as the standard deviation. This is done for all players
   #except the passer for each potential intercept point along a trajectory
-  norm_probs = (abs(dnorm((dist_to_points+stick)/stick)-dnorm((dist_to_points-stick)/stick)))
-  pickup_probs = norm_probs#*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
+  #t_star = 1- pmin(abs(dist_to_points+stick)/(2*stick),1)-pmin(abs(dist_to_points-stick)/(2*stick),1)
+  
+  #1-(abs(dist_to_points+stick)/stick)^3
+  
+  norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*(points$t[2]-points$t[1])/time_penalty
+  pickup_probs = norm_probs*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
   
   #Combine the original (angle, x,y,t) points we are evaluating with the pickup probabilities of each player determined in the previous step
 
@@ -87,6 +91,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   pass_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
                            def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
     mutate(None = 1 - off - def)
+  adj_offence = pass_probs$off
   if(nrow(pass_probs)>1){
     for (r in 2:nrow(pass_probs)){
       pass_probs[r,] = pass_probs[r,] * pass_probs$None[r-1]
@@ -108,13 +113,19 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   cum_pass_def = cumsum(all_data_probs$def)
   #the quality of the point by determining how valuable the target multiplied by offensive pickup probability along the way
   cum_pass_good = all_data_probs$pass_value*cum_pass_off
-  #cum_pass_val = cumsum(all_data_probs$pass_value)
   
-  pass_good = all_data_probs$pass_value*all_data_probs$off#cum_pass_off
   
-  #pass_off = sum(all_data_probs$off)
-  #pass_val = sum(all_data_probs$pass_value)
+  adj_pass_value = all_data_probs$pass_value*adj_offence
+  location_pass_value = all_data_probs$pass_value*all_data_probs$off
+  keep_possesion_prob = cumsum(all_data_probs$off)
   
+  expected_pass_value = sum(location_pass_value)
+  max_pass_value = max(all_data_probs$pass_value)
+  best_case_pass_value = max(adj_pass_value)
+  successful_pass_prob = sum(all_data_probs$off)
+  
+  mat_to_return = cbind(points,adj_pass_value,off_prob=all_data_probs$off,def_prob=all_data_probs$def,none_prob=all_data_probs$None,location_pass_value,keep_possesion_prob,expected_pass_value=expected_pass_value,max_pass_value=max_pass_value,best_case_pass_value=best_case_pass_value,successful_pass_prob=successful_pass_prob)
+
   if(want_plot){
     #If desired, we can plot the individual trajectory to look at all points along that path which we are calculating values for
     plot_pass=plot_half_rink(ggplot(tracks1)) +
@@ -130,9 +141,9 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
       geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
-    return(list(cbind(points,all_data_probs$off,all_data_probs$def,cum_pass_off,cum_pass_def,cum_pass_good,pass_good),plot_pass))
+    return(list(mat_to_return,plot_pass))
   }else{
-    return(cbind(points,all_data_probs$off,all_data_probs$def,cum_pass_off,cum_pass_def,cum_pass_good,pass_good))
+    return(mat_to_return)
   }
 }
 
@@ -410,7 +421,7 @@ time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r 
 t_reach <- function(loc, t_c_r){
   tx = loc[1]
   ty = loc[2]
-  remaining_dist = ((tx-t_c_r$cx)^2 + (ty-t_c_r$cy)^2)^0.5-t_c_r$r
+  remaining_dist = ((tx-t_c_r$cx)^2 + (ty-t_c_r$cy)^2)^0.5-t_c_r$r-3
   ix  <- max(which(remaining_dist>0))
   return(ifelse(ix == -Inf, 0, t_c_r$t[ix+1]))
 }
@@ -471,15 +482,12 @@ teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_
 score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
   x = xyt['x']
   y = xyt['y']
-  Prob <- abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))*exp(-((189-x)^2/decay_x+(42.5-y)^2/decay_y))
-  
-  if(x > 189){
-    Prob <- ifelse(Prob-0.5<0, 0, Prob-0.5)
-  }
+  Prob <- (abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))+1)/ifelse(x>189,8,4)*exp(-((189-x)^2/decay_x +(42.5-y)^2/decay_y))
   
   return(Prob)
   
 }
+
 
 clean_pass <- function(passes, xmin=115, xmax=200, ymin=0, ymax=85){
   passes1 <- passes %>% filter(xmin<x) %>% filter(ymin<y) %>% filter(x<xmax) %>% filter(y<ymax)
