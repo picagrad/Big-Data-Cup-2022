@@ -1,5 +1,5 @@
 #All distance units are in feet and all time units are in seconds
-#Typically, in hockey you stick should reach your chin. Average height of a woman is 5.33 feet, so to the chin would be approximately 4.66 feet.
+#Typically, in hockey your stick should reach your chin. Average height of a woman is 5.33 feet, so to the chin would be approximately 4.66 feet.
 #Skates add maybe 3 inches to that, thus around 5 ft. Length of an arm will add approximately 20 inches. Thus we approximate the maximum stick+arm reach to be 6.5 feet
 stick = 6.5
 
@@ -77,6 +77,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   
   #Use the probabilities of each player getting to a target to rank them. The player to arrive first, has the best rank and chance to pickup the puck first
   all_rank = t(apply(-pickup_probs,1,rank))
+  
   rix <-  as.vector(t(replicate(ncol(pickup_probs),seq(1,nrow(pickup_probs),1))))
   
   #Each player following the highest rank has a smaller chance at getting the puck because it is conditional on the player before they getting to that point and missing
@@ -85,8 +86,10 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   ranked_probs[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(pickup_probs))
   if(ncol(ranked_probs)>1){
     ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
-    for (c in 3:ncol(ranked_probs)){
-      ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
+    if(ncol(ranked_probs)>2){
+      for (c in 3:ncol(ranked_probs)){
+        ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
+      }
     }
   }
   
