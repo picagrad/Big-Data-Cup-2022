@@ -17,10 +17,10 @@ theta_scale = 0.05 #regular scale
 speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-#source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-#setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
-source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+# source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+# setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
 
 
 json_file <- "data/BDC_2022_all_direct_wFrames.json" #"data/BDC_2022_all_data.json"
@@ -83,7 +83,8 @@ calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
 ```{r}
 # Select single frame to analyze
 frame = current_event$frame_id_1 %>% as.integer()
-tracking_data = current_track %>% filter(frame_id==frame)
+tracking_data = current_track %>% filter(frame_id==frame) %>% 
+  mutate(goalie = ifelse(goalie=='TRUE',T,F))
 event = current_event %>% filter(clock_seconds==frame)
 tracking_data
 ```
@@ -114,17 +115,20 @@ plot_rink(ggplot(tracking_data)) +
                   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
 
-```{r}
+```{r, warnings=False}
 #As some players, such as the goalie are sometimes not moving, we give them a slight movement to avoid dividing by zero anywhere
 tracking_data$vel_x[which(tracking_data$vel_x==0)]=0.05
 tracking_data$vel_y[which(tracking_data$vel_y==0)]=0.05
 
 offence <- 'Canada'
 xyt <- new_pass %>% select(x,y,t)
-loc_vel <- tracking_data %>% mutate(team_label = ifelse(team_name == offence,1,-1)) %>% select(x_ft,y_ft,vel_x,vel_y, team_label) 
+loc_vel <- tracking_data %>% mutate(team_label = ifelse(team_name == offence,1,-1)) %>%
+  select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
+# options(warn=-1)
 new_pass <- new_pass %>% 
   mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
   mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
+# options(warn=0)
 new_pass
 ```
 
@@ -137,7 +141,7 @@ which(is.na(new_pass$all_ctrl))
 ```
 
 ```{r}
-l<-6
+l<-45
 point_val = probs_to_point(x_puck,y_puck,calc_pass[l,],new_pass,tracking_data,'Canada',TRUE)
 point_val[[1]]
 point_val[[2]]
@@ -158,7 +162,7 @@ pass_potential
 # Create image of this frame with potential passes
 #ggplot(data = pass_potential,aes(x=x, y=y)) + stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE)
 p <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = off_prob),size=2, shape=16) +
+    geom_point(aes(color = max_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("blue"), mid = "white", high = muted("red"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +

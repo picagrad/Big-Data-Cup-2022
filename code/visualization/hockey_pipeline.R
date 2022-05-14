@@ -25,6 +25,7 @@ gg = 32.174 # g (as in the gravity acceleration in ft/s^2)
 x_decay = 2000 #value used as decay_x
 y_decay = 500 #value used as decay_y
 t_rez = 1/100
+goalie_dist = 8 # maximum reasonable distance for goalie to go away from goal
 
 
 probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_plot=FALSE){
@@ -37,6 +38,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #We remove the player passing the puck in our calculations as we do not want a player to "pass to themselves"
   tracks = tracks1[-which.min((tracks1$x_ft-x_puck)^2+(tracks1$y_ft-y_puck)^2),]
   
+  
   #Given the team that is on the offence, identify the name of the defence
   teams = tracks$team_name %>% unique()
   defence = teams[-which(teams==offence)]
@@ -47,6 +49,10 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   for(player in 1:nrow(tracks)){
     dist_to_points[,player]=apply(points,1,dist_to_xyt,x0=tracks$x_ft[player],y0=tracks$y_ft[player],vx=tracks$vel_x[player],vy=tracks$vel_y[player])
   }
+  
+  dist_to_points[,tracks$goalie] = ifelse(((points$x-189)^2 +(points$y-42.5)^2) <= goalie_dist^2,
+                                          dist_to_points[,tracks$goalie],
+                                          pmax(dist_to_points[,tracks$goalie],((points$x-189)^2 +(points$y-42.5)^2)^0.5-goalie_dist))
   
   #Given how close a player gets to their target, we place a Gaussian distribution at that point to add some variability to how close the player can get
   #and associate a probability to whether or not their could intercept the puck. We use stick length as the standard deviation. This is done for all players
@@ -396,7 +402,7 @@ time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r 
   tr <- seq(0,10-t_r,tres)# reamining time after reaction
   
   c_xi <- x0 + ti * vx
-  c_yi <- x0 + ti *vy
+  c_yi <- y0 + ti *vy
   r_i <- 0 * ti
   
   x0 = x0 + t_r * vx
@@ -418,12 +424,19 @@ time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r 
   
 }
 
-t_reach <- function(loc, t_c_r){
+t_reach <- function(loc, t_c_r, goalie_flag = F, goalie_radius = goalie_dist){
   tx = loc[1]
   ty = loc[2]
+  goalie_delay = 1
+  if ((ty-42.5)^2+(tx-189)^2 > goalie_radius^2 & goalie_flag){
+    extra_distance <- ((ty-42.5)^2+(tx-189)^2)^0.5 - goalie_radius
+    goalie_delay <- exp(extra_distance/goalie_radius)
+  }
   remaining_dist = ((tx-t_c_r$cx)^2 + (ty-t_c_r$cy)^2)^0.5-t_c_r$r-3
-  ix  <- max(which(remaining_dist>0))
-  return(ifelse(ix == -Inf, 0, t_c_r$t[ix+1]))
+  # print(remaining_dist)
+  # ix  <- max(which(remaining_dist>0))
+  # return(ifelse(ix == -Inf, 0, t_c_r$t[ix+1] * goalie_delay))
+  return(ifelse(max(remaining_dist)<0, 0, t_c_r$t[max(which(remaining_dist>0))+1] * goalie_delay))
 }
 
 player_arrival_times <- function(x0,y0,vx,vy,
@@ -432,13 +445,43 @@ player_arrival_times <- function(x0,y0,vx,vy,
                                  alpha = a, 
                                  t_r = tr,
                                  tmax = t_max, 
-                                 tres = t_rez
+                                 tres = t_rez,
+                                 goalie = F
                                  ){
-  t_c_r <- time_center_radius(x0, y0, vx, vy, vmax = vmax, alpha = alpha, t_r = t_r, tmax = tmax, tres = tres)
-  times <- apply(grid,1,t_reach,t_c_r)
+  t_c_r <- time_center_radius(x0, y0, vx, vy)
+  times <- apply(grid,1,t_reach,t_c_r,goalie_flag = goalie)
+  # print(times)
   return(cbind(grid, arr_times = times))
 }
 
+ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
+
+  x0 <- loc_vel['x_ft']
+  y0 <-  loc_vel['y_ft']
+  vx <- loc_vel['vel_x']
+  vy <- loc_vel['vel_y']
+  goalie_flag <- loc_vel['goalie']
+  grid <- xyt %>% select(x,y)
+  x_y_tarr <- player_arrival_times(x0,y0,vx,vy,grid = grid, goalie = goalie_flag)
+  x_y_tarr$arr_times = pmax(x_y_tarr$arr_times - xyt$t, 0.001)
+  
+  return(ctrl = loc_vel['team_label'] * x_y_tarr$arr_times ^ (-beta))
+}
+
+
+teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
+  ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
+  return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
+}
+
+score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
+  x = xyt['x']
+  y = xyt['y']
+  Prob <- (abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))+1)/ifelse(x>189,8,4)*exp(-((189-x)^2/decay_x +(42.5-y)^2/decay_y))
+  
+  return(Prob)
+  
+}
 
 puck_motion_model <- function(x0,y0,vx,vy, t = time_step, mu = mm, beta = b, g = gg){
   
@@ -458,34 +501,6 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = 
   y <-  y0 + (vy + mu*g * vy/vmag/beta) * (1 - exp(-beta * t))/beta - (mu*g * vy/vmag)/beta * t
   
   return(data.frame(x = x, y = y, t = t))
-}
-
-ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
-
-  x0 <- loc_vel['x_ft']
-  y0 <-  loc_vel['y_ft']
-  vx <- loc_vel['vel_x']
-  vy <- loc_vel['vel_y']
-  grid <- xyt %>% select(x,y)
-  x_y_tarr <- player_arrival_times(x0,y0,vx,vy,grid = grid)
-  x_y_tarr$arr_times = pmax(x_y_tarr$arr_times - xyt$t, 0.001)
-  
-  return(ctrl = loc_vel['team_label'] * x_y_tarr$arr_times ^ (-beta))
-}
-
-
-teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
-  ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
-  return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
-}
-
-score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
-  x = xyt['x']
-  y = xyt['y']
-  Prob <- (abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))+1)/ifelse(x>189,8,4)*exp(-((189-x)^2/decay_x +(42.5-y)^2/decay_y))
-  
-  return(Prob)
-  
 }
 
 
