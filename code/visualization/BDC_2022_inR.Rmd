@@ -62,7 +62,11 @@ if(length(dat$game_date)!=0){
   })
   current_event_all <- as.data.frame(do.call("cbind", json_events))
 }
+current_event_all <- cbind(current_event_all, calc_vmag_ang(current_event_all)) # replace this with the next line if you commented out the relevant line in hockey_pipeline.R
+# current_event_all <- current_event_all %>% calc_vmag_ang 
 current_event <- current_event_all[t_track+1,]
+current_event_all %>% head()
+
 ```
 
 
@@ -162,7 +166,7 @@ pass_potential
 # Create image of this frame with potential passes
 #ggplot(data = pass_potential,aes(x=x, y=y)) + stat_density_2d(aes(fill = ..density..), geom = "raster", contour = FALSE)
 p <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = max_pass_value),size=2, shape=16) +
+    geom_point(aes(color = best_case_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("blue"), mid = "white", high = muted("red"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +

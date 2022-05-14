@@ -510,7 +510,18 @@ clean_pass <- function(passes, xmin=115, xmax=200, ymin=0, ymax=85){
   return(passes1)
 }
 
-
+calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
+  out <- events %>% mutate(x_coord = as.double(x_coord),x_coord_2 = as.double(x_coord_2), 
+                           y_coord = as.double(y_coord),y_coord_2 = as.double(y_coord_2),
+                           frame_id_1 = as.double(frame_id_1), frame_id_2 = as.double(frame_id_2))%>% 
+    mutate(delta_x = x_coord_2 - x_coord, delta_y = y_coord_2 - y_coord,
+           delta_t = (frame_id_2 - frame_id_1)*frame_rate) %>% 
+    mutate(delta_r = (delta_x^2 + delta_y^2)^0.5,
+           ang = (atan(delta_x/delta_y) + ifelse(delta_y<0,pi,0)+pi) %% (2*pi) - pi) %>%
+    mutate(vmag = (delta_r * beta + mu * g * delta_t)/(1-exp(-beta * delta_t)) - mu *g /beta) %>% 
+    select(vmag, ang) # Comment this out to get a full data frame with all the additional calculations (delta_x/y/t/r)
+  return(out)
+}
 
 
 
