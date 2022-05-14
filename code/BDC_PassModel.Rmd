@@ -41,10 +41,10 @@ toc()
 
 ```{r}
 tic()
-pass_speed = vector(mode = "list", length = nrow(current_event))
+pass_speed = vector(mode = "list", length = 4)
 n_good=0
 index_spot=1
-for(speed in double(45,60,75,90)){
+for(speed in c(45,60,75,90)){
   pass_score = vector(mode = "list", length = nrow(current_event))
   speed_puck = speed
   source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
@@ -121,6 +121,7 @@ for(speed in double(45,60,75,90)){
   pass_speed[[index_spot]]=pass_score
   index_spot = index_spot+1
 }
+save(pass_speed, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_4speeds.Rdata")
 toc()
 ```
 
