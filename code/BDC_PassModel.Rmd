@@ -44,85 +44,228 @@ tic()
 pass_speed = vector(mode = "list", length = 4)
 n_good=0
 index_spot=1
-for(speed in c(45,60,75,90)){
+all_speed = c(45,60,75,90)
+for(speed in 1:5){
   pass_score = vector(mode = "list", length = nrow(current_event))
-  speed_puck = speed
-  source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
   for(t_track in 1:nrow(current_event)){
-  # Set up the tracking data
-  line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
-  line2 <- eval(parse(text=line1))
-  if(length(line2$frame_id)!=0){
-    json_tracks <- lapply(line2, function(x) {
-      x[sapply(x, is.null)] <- NA
-      unlist(x)
-    })
-    current_track <- as.data.frame(do.call("cbind", json_tracks))
-  }
-  current_track$frame_id = current_track$frame_id %>% as.integer()
-  current_track$period = current_track$period %>% as.integer()
-  current_track$track_id = current_track$track_id %>% as.integer()
-  current_track$jersey_number = current_track$jersey_number %>% as.integer()
-  current_track$x_ft = current_track$x_ft %>% as.double()
-  current_track$y_ft = current_track$y_ft %>% as.double()
-  current_track$vel_x = current_track$vel_x %>% as.double()
-  current_track$vel_y = current_track$vel_y %>% as.double()
-  
-  current_track$vel_x[which(current_track$vel_x==0)]=0.05
-  current_track$vel_y[which(current_track$vel_y==0)]=0.05
-  current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
-  
-  if(current_track$x_ft[1]<100){
-    current_track$x_ft = 200 - current_track$x_ft
-    current_track$vel_x = -current_track$vel_x
-  }
-  
-  event_info <- current_event[t_track,] %>% select(team_name,Player_1_num,Player_2_num)
-  off <- event_info$team_name
-  puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>% select(team_name,x_ft,y_ft)
-  puck = puck[puck$team_name==off,]
-  
-  n_players <- table(current_track$team_name)
-  n_off <- sum(n_players[names(n_players)==off])
-  n_def <- sum(n_players[names(n_players)!=off])
-  if(nrow(puck)>0 & length(n_players)==2 & n_off>2 & n_def>2){
-    
-    x_p = puck$x_ft+2
-    y_p = puck$y_ft-0.5
-    
-    theta = seq(-pi,pi,by=theta_scale)
-    passes = data.frame(angle=c(),x=c(),y=c(), t=c())
-    for(angle in theta){
-      passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
+    # Set up the tracking data
+    line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
+    line2 <- eval(parse(text=line1))
+    if(length(line2$frame_id)!=0){
+      json_tracks <- lapply(line2, function(x) {
+        x[sapply(x, is.null)] <- NA
+        unlist(x)
+      })
+      current_track <- as.data.frame(do.call("cbind", json_tracks))
     }
-    new_pass <- clean_pass(passes)
-    calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
-   
-    xyt <- new_pass %>% select(x,y,t)
-    loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
-      select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
-    # options(warn=-1)
-    new_pass <- new_pass %>% 
-      mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
-      mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
-    # options(warn=0)
+    current_track$frame_id = current_track$frame_id %>% as.integer()
+    current_track$period = current_track$period %>% as.integer()
+    current_track$track_id = current_track$track_id %>% as.integer()
+    current_track$jersey_number = current_track$jersey_number %>% as.integer()
+    current_track$x_ft = current_track$x_ft %>% as.double()
+    current_track$y_ft = current_track$y_ft %>% as.double()
+    current_track$vel_x = current_track$vel_x %>% as.double()
+    current_track$vel_y = current_track$vel_y %>% as.double()
     
-    all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
-    pass_potential <- bind_rows(all_point_val, .id = "column_label")
-
-    pass_score[[t_track]]<- pass_potential
-    print(t_track)
-    n_good=n_good+1
-  }else{
-    print(paste("Pass track failed conditions:",t_track))
-  }
+    current_track$vel_x[which(current_track$vel_x==0)]=0.05
+    current_track$vel_y[which(current_track$vel_y==0)]=0.05
+    current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
+    
+    if(current_track$x_ft[1]<100){
+      current_track$x_ft = 200 - current_track$x_ft
+      current_track$vel_x = -current_track$vel_x
+    }
+    
+    if(index_spot==5){
+      # determine speed of actual puck 
+      speed_puck = current_event$vel_init[t_track]
+      if(is.na(speed_puck)){
+        speed_puck=50 #current_event$vel_init %>% mean(na.rm=TRUE) gives 46.0478, as we already did 45, we will default to 50
+      }
+    }else{
+      speed_puck = all_speed[speed]
+    }
+    source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+    
+    event_info <- current_event[t_track,] %>% select(team_name,Player_1_num,Player_2_num)
+    off <- event_info$team_name
+    puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>% select(team_name,x_ft,y_ft)
+    puck = puck[puck$team_name==off,]
+    
+    n_players <- table(current_track$team_name)
+    n_off <- sum(n_players[names(n_players)==off])
+    n_def <- sum(n_players[names(n_players)!=off])
+    if(nrow(puck)>0 & length(n_players)==2 & n_off>2 & n_def>2){
+      
+      x_p = puck$x_ft+2
+      y_p = puck$y_ft-0.5
+      
+      theta = seq(-pi,pi,by=theta_scale)
+      passes = data.frame(angle=c(),x=c(),y=c(), t=c())
+      for(angle in theta){
+        passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
+      }
+      new_pass <- clean_pass(passes)
+      calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
+      
+      xyt <- new_pass %>% select(x,y,t)
+      loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
+        select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
+      # options(warn=-1)
+      new_pass <- new_pass %>% 
+        mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
+        mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
+      # options(warn=0)
+      
+      all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
+      pass_potential <- bind_rows(all_point_val, .id = "column_label")
+      
+      pass_score[[t_track]]<- pass_potential
+      print(t_track)
+      n_good=n_good+1
+    }else{
+      print(paste("Pass track failed conditions:",t_track))
+    }
     
   }
   pass_speed[[index_spot]]=pass_score
   index_spot = index_spot+1
 }
-save(pass_speed, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_4speeds.Rdata")
+save(pass_speed, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
 toc()
+```
+
+```{r}
+current_event$max_best_case_within_45 = NaN
+current_event$ang_best_case_overall_45 = NaN
+current_event$max_best_case_overall_45 = NaN
+current_event$max_best_case_within_60 = NaN
+current_event$ang_best_case_overall_60 = NaN
+current_event$max_best_case_overall_60 = NaN
+current_event$max_best_case_within_75 = NaN
+current_event$ang_best_case_overall_75 = NaN
+current_event$max_best_case_overall_75 = NaN
+current_event$max_best_case_within_90 = NaN
+current_event$ang_best_case_overall_90 = NaN
+current_event$max_best_case_overall_90 = NaN
+current_event$max_best_case_within_Vel_init = NaN
+current_event$ang_best_case_overall_Vel_init = NaN
+current_event$max_best_case_overall_Vel_init = NaN
+
+current_event$max_keep_possession_within_45 = NaN
+current_event$ang_keep_possession_overall_45 = NaN
+current_event$max_keep_possession_overall_45 = NaN
+current_event$max_keep_possession_within_60 = NaN
+current_event$ang_keep_possession_overall_60 = NaN
+current_event$max_keep_possession_overall_60 = NaN
+current_event$max_keep_possession_within_75 = NaN
+current_event$ang_keep_possession_overall_75 = NaN
+current_event$max_keep_possession_overall_75 = NaN
+current_event$max_keep_possession_within_90 = NaN
+current_event$ang_keep_possession_overall_90 = NaN
+current_event$max_keep_possession_overall_90 = NaN
+current_event$max_keep_possession_within_Vel_init = NaN
+current_event$ang_keep_possession_overall_Vel_init = NaN
+current_event$max_keep_possession_overall_Vel_init = NaN
+
+current_event$max_expected_pass_value_within_45 = NaN
+current_event$ang_expected_pass_value_overall_45 = NaN
+current_event$max_expected_pass_value_overall_45 = NaN
+current_event$max_expected_pass_value_within_60 = NaN
+current_event$ang_expected_pass_value_overall_60 = NaN
+current_event$max_expected_pass_value_overall_60 = NaN
+current_event$max_expected_pass_value_within_75 = NaN
+current_event$ang_expected_pass_value_overall_75 = NaN
+current_event$max_expected_pass_value_overall_75 = NaN
+current_event$max_expected_pass_value_within_90 = NaN
+current_event$ang_expected_pass_value_overall_90 = NaN
+current_event$max_expected_pass_value_overall_90 = NaN
+current_event$max_expected_pass_value_within_Vel_init = NaN
+current_event$ang_expected_pass_value_overall_Vel_init = NaN
+current_event$max_expected_pass_value_overall_Vel_init = NaN
+```
+
+
+```{r}
+#load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
+#0.05*10*180/pi gives us a range of about 30 degrees around the intended target
+
+for(track_pick in 1:nrow(current_event)){
+  ang_shot = current_event$ang_init[track_pick]
+  
+  #speed 45
+  track_pass = pass_speed[[1]][[track_pick]]
+  if(!is.null(track_pass)){
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_45[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_45[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_45[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_keep_possession_within_45[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_45[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_45[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_expected_pass_value_within_45[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_45[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_45[track_pick] = max(track_pass$expected_pass_value)
+    
+    #speed 60
+    track_pass = pass_speed[[2]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_60[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_60[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_60[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_keep_possession_within_60[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_60[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_60[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_expected_pass_value_within_60[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_60[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_60[track_pick] = max(track_pass$expected_pass_value)
+    
+    #speed 75
+    track_pass = pass_speed[[3]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_75[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_75[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_75[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_keep_possession_within_75[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_75[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_75[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_expected_pass_value_within_75[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_75[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_75[track_pick] = max(track_pass$expected_pass_value)
+    
+    #speed 90
+    track_pass = pass_speed[[4]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_90[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_90[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_90[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_keep_possession_within_90[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_90[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_90[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_expected_pass_value_within_90[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_90[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_90[track_pick] = max(track_pass$expected_pass_value)
+    
+    #speed Vel_init
+    track_pass = pass_speed[[5]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_Vel_init[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_Vel_init[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_keep_possession_within_Vel_init[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_Vel_init[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_expected_pass_value_within_Vel_init[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_Vel_init[track_pick] = max(track_pass$expected_pass_value)
+  }
+}
+save(current_event, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
 
 ```{r}
