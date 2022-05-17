@@ -143,6 +143,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
                    arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
       geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black') + 
+      geom_segment(aes(x = x_puck, y = y_puck, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
       geom_point(data = points, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
       scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
       scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +

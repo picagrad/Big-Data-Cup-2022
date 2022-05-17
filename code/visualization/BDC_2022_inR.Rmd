@@ -38,6 +38,17 @@ current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="F
 current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
 
+current_event$x_coord = current_event$x_coord %>% as.double()
+current_event$y_coord = current_event$y_coord %>% as.double()
+current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
+current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
+
+current_event$x_coord[current_event$x_coord < 100] = 200-current_event$x_coord[current_event$x_coord < 100]
+current_event$x_coord_2[which(current_event$x_coord_2 < 100)] = 200-current_event$x_coord_2[which(current_event$x_coord_2 < 100)]
+
+current_event$y_coord = 85-current_event$y_coord
+current_event$y_coord_2 = 85-current_event$y_coord_2
+
 vel_ang = calc_vmag_ang(current_event)
 current_event$vel_init = vel_ang[,1]
 current_event$ang_init = vel_ang[,2]
@@ -45,7 +56,7 @@ current_event$ang_init = vel_ang[,2]
 
 ```{r}
 #r=0 # powerplay of interest
-t_track=11 # 11 is right before a goal
+t_track=405 # 11, 393, 406 is right before a goal, 221 passer not in view
 #69 is the first images I shared
 
 line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
@@ -86,8 +97,12 @@ n_def <- sum(n_players[names(n_players)!=off])
 ```
 
 ```{r}
-x_p = puck$x_ft+2
-y_p = puck$y_ft-0.5
+x_p = current_event[t_track,"x_coord"]#puck$x_ft
+y_p = current_event[t_track,"y_coord"]#puck$y_ft
+
+if(abs(y_p-puck$y_ft)>20){
+  y_p = 85-y_p
+}
 
 theta = seq(-pi,pi,by=theta_scale)
 passes = data.frame(angle=c(),x=c(),y=c(), t=c())
@@ -115,6 +130,7 @@ plot_rink(ggplot(current_track)) +
   geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(data = new_pass, aes(x = x, y = y), size = 1, shape = 4) +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -127,6 +143,7 @@ plot_rink(ggplot(current_track)) +
   geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   geom_point(data = calc_pass, aes(x = x, y = y), size = 1, shape = 4) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
@@ -171,6 +188,7 @@ p <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -189,6 +207,7 @@ p2 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -207,6 +226,7 @@ p3 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -225,6 +245,7 @@ p4 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -244,6 +265,7 @@ p5 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -263,6 +285,7 @@ p6 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -282,6 +305,7 @@ p7 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -301,6 +325,7 @@ p8 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -320,6 +345,7 @@ p9 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -339,6 +365,7 @@ p10 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -358,6 +385,7 @@ p11 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
   geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
@@ -370,7 +398,7 @@ p11 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
 ```{r}
 #copy into console
 require(gridExtra)
-grid.arrange(plot_half_rink(p), plot_half_rink(p2),plot_half_rink(p3),plot_half_rink(p4),
+grid.arrange(point_val[[2]],plot_half_rink(p), plot_half_rink(p2),plot_half_rink(p3),plot_half_rink(p4),
              plot_half_rink(p5),plot_half_rink(p6),plot_half_rink(p7),plot_half_rink(p8),
              plot_half_rink(p9),plot_half_rink(p10),plot_half_rink(p11),ncol=4)
 ```

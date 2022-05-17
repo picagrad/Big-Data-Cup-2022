@@ -37,6 +37,11 @@ current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="F
 current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
 
+current_event$x_coord[which(current_event$x_coord < 100)] = 200-current_event$x_coord
+current_event$x_coord_2[which(current_event$x_coord_2 < 100)] = 200-current_event$x_coord_2
+current_event$y_coord = 85-current_event$y_coord
+current_event$y_coord_2 = 85-current_event$y_coord_2
+
 vel_ang = calc_vmag_ang(current_event)
 current_event$vel_init = vel_ang[,1]
 current_event$ang_init = vel_ang[,2]
@@ -101,8 +106,14 @@ for(speed in 1:5){
     n_def <- sum(n_players[names(n_players)!=off])
     if(nrow(puck)>0 & length(n_players)==2 & n_off>2 & n_def>2){
       
-      x_p = puck$x_ft+2
-      y_p = puck$y_ft-0.5
+      #x_p = puck$x_ft+2
+      #y_p = puck$y_ft-0.5
+      x_p = current_event[t_track,"x_coord"]#puck$x_ft
+      y_p = current_event[t_track,"y_coord"]#puck$y_ft
+      
+      if(abs(y_p-puck$y_ft)>20){
+        y_p = 85-y_p
+      }
       
       theta = seq(-pi,pi,by=theta_scale)
       passes = data.frame(angle=c(),x=c(),y=c(), t=c())
