@@ -142,7 +142,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
       geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
                    arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
-      geom_point(aes(x = x_puck+2, y = y_puck-0.5), size = 2, shape = 16, colour='black') + 
+      geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black') + 
       geom_point(data = points, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
       scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
       scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +

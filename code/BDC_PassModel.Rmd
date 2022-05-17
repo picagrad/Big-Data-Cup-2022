@@ -36,6 +36,10 @@ current_event$team_name[current_event$team_name=="Olympic (Women) - United State
 current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="Finland"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
+
+vel_ang = calc_vmag_ang(current_event)
+current_event$vel_init = vel_ang[,1]
+current_event$ang_init = vel_ang[,2]
 toc()
 ```
 
@@ -107,6 +111,8 @@ for(speed in 1:5){
       }
       new_pass <- clean_pass(passes)
       calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
+      
+      new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
       
       xyt <- new_pass %>% select(x,y,t)
       loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
