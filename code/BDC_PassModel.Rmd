@@ -206,11 +206,12 @@ current_event$max_expected_pass_value_overall_90 = NaN
 current_event$max_expected_pass_value_within_Vel_init = NaN
 current_event$ang_expected_pass_value_overall_Vel_init = NaN
 current_event$max_expected_pass_value_overall_Vel_init = NaN
+
+current_event$passer_pass_value = NaN
 ```
 
 
 ```{r}
-#load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
 #0.05*10*180/pi gives us a range of about 30 degrees around the intended target
 
 for(track_pick in 1:nrow(current_event)){
@@ -218,7 +219,9 @@ for(track_pick in 1:nrow(current_event)){
   
   #speed 45
   track_pass = pass_speed[[1]][[track_pick]]
+  
   if(!is.null(track_pass)){
+    current_event$passer_pass_value[track_pick] = track_pass[which(track_pass$t==0),"pass_value"]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_45[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -288,7 +291,16 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_Vel_init[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
   }
 }
+
+```
+
+```{r}
 save(current_event, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
+```
+
+```{r}
+load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
+load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
 
 ```{r}
