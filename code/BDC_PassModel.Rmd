@@ -56,7 +56,7 @@ toc()
 
 ```{r}
 tic()
-pass_speed = vector(mode = "list", length = 4)
+pass_speed = vector(mode = "list", length = 5)
 n_good=0
 index_spot=1
 all_speed = c(45,60,75,90)
@@ -223,13 +223,13 @@ for(track_pick in 1:nrow(current_event)){
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_45[track_pick] = max(all_within_ang$best_case_pass_value)
     current_event$ang_best_case_overall_45[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
-    current_event$max_best_case_overall_45[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_best_case_overall_45[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
     current_event$max_keep_possession_within_45[track_pick] = max(all_within_ang$keep_possesion_prob)
     current_event$ang_keep_possession_overall_45[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
-    current_event$max_keep_possession_overall_45[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_keep_possession_overall_45[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
     current_event$max_expected_pass_value_within_45[track_pick] = max(all_within_ang$expected_pass_value)
     current_event$ang_expected_pass_value_overall_45[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
-    current_event$max_expected_pass_value_overall_45[track_pick] = max(track_pass$expected_pass_value)
+    current_event$max_expected_pass_value_overall_45[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 60
     track_pass = pass_speed[[2]][[track_pick]]
@@ -237,13 +237,13 @@ for(track_pick in 1:nrow(current_event)){
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_60[track_pick] = max(all_within_ang$best_case_pass_value)
     current_event$ang_best_case_overall_60[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
-    current_event$max_best_case_overall_60[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_best_case_overall_60[track_pick] =track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
     current_event$max_keep_possession_within_60[track_pick] = max(all_within_ang$keep_possesion_prob)
     current_event$ang_keep_possession_overall_60[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
-    current_event$max_keep_possession_overall_60[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_keep_possession_overall_60[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
     current_event$max_expected_pass_value_within_60[track_pick] = max(all_within_ang$expected_pass_value)
     current_event$ang_expected_pass_value_overall_60[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
-    current_event$max_expected_pass_value_overall_60[track_pick] = max(track_pass$expected_pass_value)
+    current_event$max_expected_pass_value_overall_60[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 75
     track_pass = pass_speed[[3]][[track_pick]]
@@ -251,13 +251,13 @@ for(track_pick in 1:nrow(current_event)){
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_75[track_pick] = max(all_within_ang$best_case_pass_value)
     current_event$ang_best_case_overall_75[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
-    current_event$max_best_case_overall_75[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_best_case_overall_75[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
     current_event$max_keep_possession_within_75[track_pick] = max(all_within_ang$keep_possesion_prob)
     current_event$ang_keep_possession_overall_75[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
-    current_event$max_keep_possession_overall_75[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_keep_possession_overall_75[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
     current_event$max_expected_pass_value_within_75[track_pick] = max(all_within_ang$expected_pass_value)
     current_event$ang_expected_pass_value_overall_75[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
-    current_event$max_expected_pass_value_overall_75[track_pick] = max(track_pass$expected_pass_value)
+    current_event$max_expected_pass_value_overall_75[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 90
     track_pass = pass_speed[[4]][[track_pick]]
@@ -265,13 +265,13 @@ for(track_pick in 1:nrow(current_event)){
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_90[track_pick] = max(all_within_ang$best_case_pass_value)
     current_event$ang_best_case_overall_90[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
-    current_event$max_best_case_overall_90[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_best_case_overall_90[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
     current_event$max_keep_possession_within_90[track_pick] = max(all_within_ang$keep_possesion_prob)
     current_event$ang_keep_possession_overall_90[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
-    current_event$max_keep_possession_overall_90[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_keep_possession_overall_90[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
     current_event$max_expected_pass_value_within_90[track_pick] = max(all_within_ang$expected_pass_value)
     current_event$ang_expected_pass_value_overall_90[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
-    current_event$max_expected_pass_value_overall_90[track_pick] = max(track_pass$expected_pass_value)
+    current_event$max_expected_pass_value_overall_90[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed Vel_init
     track_pass = pass_speed[[5]][[track_pick]]
@@ -279,17 +279,24 @@ for(track_pick in 1:nrow(current_event)){
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_Vel_init[track_pick] = max(all_within_ang$best_case_pass_value)
     current_event$ang_best_case_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
-    current_event$max_best_case_overall_Vel_init[track_pick] = max(track_pass$best_case_pass_value)
+    current_event$max_best_case_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"] 
     current_event$max_keep_possession_within_Vel_init[track_pick] = max(all_within_ang$keep_possesion_prob)
     current_event$ang_keep_possession_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
-    current_event$max_keep_possession_overall_Vel_init[track_pick] = max(track_pass$keep_possesion_prob)
+    current_event$max_keep_possession_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
     current_event$max_expected_pass_value_within_Vel_init[track_pick] = max(all_within_ang$expected_pass_value)
     current_event$ang_expected_pass_value_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
-    current_event$max_expected_pass_value_overall_Vel_init[track_pick] = max(track_pass$expected_pass_value)
+    current_event$max_expected_pass_value_overall_Vel_init[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
   }
 }
 save(current_event, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
+
+```{r}
+plot(current_event$max_expected_pass_value_within_Vel_init,current_event$max_keep_possession_within_Vel_init)
+plot(current_event$max_best_case_within_Vel_init,current_event$max_keep_possession_within_Vel_init)
+plot(current_event$max_expected_pass_value_within_Vel_init,current_event$max_best_case_within_Vel_init)
+```
+
 
 ```{r}
 track_pick = 69
