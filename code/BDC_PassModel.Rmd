@@ -37,8 +37,14 @@ current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="F
 current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
 
-current_event$x_coord[which(current_event$x_coord < 100)] = 200-current_event$x_coord
-current_event$x_coord_2[which(current_event$x_coord_2 < 100)] = 200-current_event$x_coord_2
+current_event$x_coord = current_event$x_coord %>% as.double()
+current_event$y_coord = current_event$y_coord %>% as.double()
+current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
+current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
+
+current_event$x_coord[current_event$x_coord < 100] = 200-current_event$x_coord[current_event$x_coord < 100]
+current_event$x_coord_2[which(current_event$x_coord_2 < 100)] = 200-current_event$x_coord_2[which(current_event$x_coord_2 < 100)]
+
 current_event$y_coord = 85-current_event$y_coord
 current_event$y_coord_2 = 85-current_event$y_coord_2
 
@@ -85,7 +91,7 @@ for(speed in 1:5){
       current_track$vel_x = -current_track$vel_x
     }
     
-    if(index_spot==5){
+    if(speed==5){
       # determine speed of actual puck 
       speed_puck = current_event$vel_init[t_track]
       if(is.na(speed_puck)){
@@ -94,7 +100,6 @@ for(speed in 1:5){
     }else{
       speed_puck = all_speed[speed]
     }
-    source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
     
     event_info <- current_event[t_track,] %>% select(team_name,Player_1_num,Player_2_num)
     off <- event_info$team_name
@@ -110,10 +115,11 @@ for(speed in 1:5){
       #y_p = puck$y_ft-0.5
       x_p = current_event[t_track,"x_coord"]#puck$x_ft
       y_p = current_event[t_track,"y_coord"]#puck$y_ft
-      
       if(abs(y_p-puck$y_ft)>20){
         y_p = 85-y_p
       }
+      source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+
       
       theta = seq(-pi,pi,by=theta_scale)
       passes = data.frame(angle=c(),x=c(),y=c(), t=c())
