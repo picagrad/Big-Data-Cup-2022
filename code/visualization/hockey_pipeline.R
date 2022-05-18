@@ -60,8 +60,12 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #t_star = 1- pmin(abs(dist_to_points+stick)/(2*stick),1)-pmin(abs(dist_to_points-stick)/(2*stick),1)
   
   #1-(abs(dist_to_points+stick)/stick)^3
-  
-  norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*(points$t[2]-points$t[1])/time_penalty
+  if(length(points$t)>1){
+    norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*abs(points$t[2]-points$t[1])/time_penalty
+    
+  }else{
+    norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*(points$t[1])/time_penalty
+  }
   pickup_probs = norm_probs*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
   
   #Combine the original (angle, x,y,t) points we are evaluating with the pickup probabilities of each player determined in the previous step
@@ -100,6 +104,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   pass_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
                            def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
     mutate(None = 1 - off - def)
+  pass_probs$None = ifelse(pass_probs$None<0,0,pass_probs$None) # fix for rounding errors
   adj_offence = pass_probs$off
   if(nrow(pass_probs)>1){
     for (r in 2:nrow(pass_probs)){
@@ -134,7 +139,6 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   successful_pass_prob = sum(all_data_probs$off)
   
   mat_to_return = cbind(points,adj_pass_value,off_prob=all_data_probs$off,def_prob=all_data_probs$def,none_prob=all_data_probs$None,location_pass_value,keep_possesion_prob,expected_pass_value=expected_pass_value,max_pass_value=max_pass_value,best_case_pass_value=best_case_pass_value,successful_pass_prob=successful_pass_prob)
-
   if(want_plot){
     #If desired, we can plot the individual trajectory to look at all points along that path which we are calculating values for
     plot_pass=plot_half_rink(ggplot(tracks1)) +
@@ -243,10 +247,10 @@ plot_half_rink = function(p_object){
   
   upper_outline = data.frame(
     x = c(
-      115,
+      100,
       172 + 28*sin(seq(0,pi/2,length=20)),
       172 + 28*sin(seq(pi/2,0,length=20)),
-      115
+      100
     ),
     y = c(
       0, 
@@ -258,10 +262,10 @@ plot_half_rink = function(p_object){
   
   lower_outline = data.frame(
     x = c(
-      115,
+      100,
       100-72 - 28*sin(seq(0,pi/2,length=20)),
       100-72 - 28*sin(seq(pi/2,0,length=20)),
-      115
+      100
     ),
     y = c(
       0, 
@@ -288,7 +292,7 @@ plot_half_rink = function(p_object){
     ## OUTLINE ##
     geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 0.5) +
     ## ADDITIONAL SPECS ##
-    scale_x_continuous(expand = c(0, 0), limits = c(115,200)) + scale_y_continuous(expand = c(0,0), limits = c(0,85)) +
+    scale_x_continuous(expand = c(0, 0), limits = c(100,200)) + scale_y_continuous(expand = c(0,0), limits = c(0,85)) +
     coord_fixed() +
     theme_void()
   
@@ -508,7 +512,7 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = 
 }
 
 
-clean_pass <- function(passes, xmin=115, xmax=200, ymin=0, ymax=85){
+clean_pass <- function(passes, xmin=100, xmax=200, ymin=0, ymax=85){
   passes1 <- passes %>% filter(xmin<x) %>% filter(ymin<y) %>% filter(x<xmax) %>% filter(y<ymax)
   
   return(passes1)

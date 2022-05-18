@@ -56,7 +56,7 @@ current_event$ang_init = vel_ang[,2]
 
 ```{r}
 #r=0 # powerplay of interest
-t_track=405 # 11, 393, 406 is right before a goal, 221 passer not in view
+t_track=273 # 11, 393, 406 is right before a goal, 221 passer not in view
 #69 is the first images I shared
 
 line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
@@ -157,12 +157,12 @@ which(is.na(new_pass$all_ctrl))
 ```
 
 ```{r}
-#angle_pass <- calc_pass[1,]
-#point_val = probs_to_point(x_p,y_p,angle_pass,new_pass,current_track,off,TRUE)
+angle_pass <- c(0.8584073,	159.4813,	43.145456,	1.26,	-3.333331e-01,	0.323105039,	1.077017e-01)#calc_pass[81,]
+point_val = probs_to_point(x_p,y_p,angle_pass,new_pass,current_track,off,TRUE)
 
 #observed_angle_pass <- calc_pass[which.min(abs(calc_pass$angle-(-pi/2+current_event[t_track,"ang_init"]))),]
-observed_angle_pass <- calc_pass[which.min(abs(calc_pass$angle-current_event[t_track,"ang_init"])),]
-point_val = probs_to_point(x_p,y_p,observed_angle_pass,new_pass,current_track,off,TRUE)
+#observed_angle_pass <- calc_pass[which.min(abs(calc_pass$angle-current_event[t_track,"ang_init"])),]
+#point_val = probs_to_point(x_p,y_p,observed_angle_pass,new_pass,current_track,off,TRUE)
 point_val[[1]]
 point_val[[2]]
 ```
@@ -399,8 +399,8 @@ p11 <- ggplot(data = pass_potential,aes(x = x, y = y)) +
 #copy into console
 require(gridExtra)
 grid.arrange(point_val[[2]],plot_half_rink(p), plot_half_rink(p2),plot_half_rink(p3),plot_half_rink(p4),
-             plot_half_rink(p5),plot_half_rink(p6),plot_half_rink(p7),plot_half_rink(p8),
-             plot_half_rink(p9),plot_half_rink(p10),plot_half_rink(p11),ncol=4)
+plot_half_rink(p5),plot_half_rink(p6),plot_half_rink(p7),plot_half_rink(p8),
+plot_half_rink(p9),plot_half_rink(p10),plot_half_rink(p11),ncol=4)
 ```
 
 
