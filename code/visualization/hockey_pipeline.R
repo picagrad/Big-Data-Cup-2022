@@ -31,11 +31,11 @@ goalie_dist = 8 # maximum reasonable distance for goalie to go away from goal
 #offence side rink lines (upper here is in terms of x values)
 upper_right_quadrant =  data.frame(
   x = c(
-    172 + 28*sin(seq(pi/2,0,length=20)),
+    172 + 28*sin(seq(pi/2,0,length=500)),
     100
   ),
   y = c(
-    85 - 28 + 28*cos(seq(pi/2,0,length=20)),
+    85 - 28 + 28*cos(seq(pi/2,0,length=500)),
     85
   )
 )
@@ -43,11 +43,11 @@ upper_right_quadrant =  data.frame(
 lower_right_quadrant =  data.frame(
   x = c(
     100,
-    172 + 28*sin(seq(0,pi/2,length=20))
+    172 + 28*sin(seq(0,pi/2,length=500))
   ),
   y = c(
     0, 
-    0 + 28 - 28*cos(seq(0,pi/2,length=20))
+    0 + 28 - 28*cos(seq(0,pi/2,length=500))
   )
 )
 
@@ -553,18 +553,18 @@ calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
   return(out)
 }
 
-inside_boards_point <- function(xy, 
-                             upper_rink_line = upper_right_quadrant,
-                             lower_rink_line = lower_right_quadrant){
+inside_boards_point <- function(xy){
   x = xy['x']
   y = xy['y']
-  return(!any(((x>lower_right_quadrant$x) & (y<lower_right_quadrant$y)) | ((x>upper_right_quadrant$x) & (y>upper_right_quadrant$y))))
+  
+  radius = (x>172)*((y>57)*((x-172)^2 + (y-57)^2)^0.5 + (y<28)*((x-172)^2 + (28-y)^2)^0.5)
+  return(radius<=28)
+  # 
+  # return(!any(((x>lower_right_quadrant$x) & (y<lower_right_quadrant$y)) | ((x>upper_right_quadrant$x) & (y>upper_right_quadrant$y))))
   
 }
 
-filter_inside_boards <-function(df, 
-                               upper_rink_line = upper_right_quadrant,
-                               lower_rink_line = lower_right_quadrant){
+filter_inside_boards <-function(df){
   in_rink = apply(df,1,inside_boards_point)
   return(df[in_rink,])
 }
