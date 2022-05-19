@@ -62,7 +62,6 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   #1-(abs(dist_to_points+stick)/stick)^3
   if(length(points$t)>1){
     norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*abs(points$t[2]-points$t[1])/time_penalty
-    
   }else{
     norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*(points$t[1])/time_penalty
   }
@@ -103,8 +102,8 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   ranked_off_mat[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(rank_mat))
   pass_probs <- data.frame(off = rowSums(ranked_probs * ranked_off_mat),
                            def = rowSums(ranked_probs * (1-ranked_off_mat))) %>% 
-    mutate(None = 1 - off - def)
-  pass_probs$None = ifelse(pass_probs$None<0,0,pass_probs$None) # fix for rounding errors
+    mutate(None = pmax(1 - off - def,0))
+  #pass_probs$None = ifelse(pass_probs$None<0,0,pass_probs$None) # fix for rounding errors
   adj_offence = pass_probs$off
   if(nrow(pass_probs)>1){
     for (r in 2:nrow(pass_probs)){
