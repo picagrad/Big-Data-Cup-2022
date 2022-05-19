@@ -28,6 +28,29 @@ t_rez = 1/100
 goalie_dist = 8 # maximum reasonable distance for goalie to go away from goal
 
 
+#offence side rink lines (upper here is in terms of x values)
+upper_right_quadrant =  data.frame(
+  x = c(
+    172 + 28*sin(seq(pi/2,0,length=20)),
+    100
+  ),
+  y = c(
+    85 - 28 + 28*cos(seq(pi/2,0,length=20)),
+    85
+  )
+)
+
+lower_right_quadrant =  data.frame(
+  x = c(
+    100,
+    172 + 28*sin(seq(0,pi/2,length=20))
+  ),
+  y = c(
+    0, 
+    0 + 28 - 28*cos(seq(0,pi/2,length=20))
+  )
+)
+
 probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_plot=FALSE){
   #A few minor adjustments for vectorizing the function
   points1=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double()),points1)
@@ -530,7 +553,21 @@ calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
   return(out)
 }
 
+inside_boards_point <- function(xy, 
+                             upper_rink_line = upper_right_quadrant,
+                             lower_rink_line = lower_right_quadrant){
+  x = xy['x']
+  y = xy['y']
+  return(!any(((x>lower_right_quadrant$x) & (y<lower_right_quadrant$y)) | ((x>upper_right_quadrant$x) & (y>upper_right_quadrant$y))))
+  
+}
 
+filter_inside_boards <-function(df, 
+                               upper_rink_line = upper_right_quadrant,
+                               lower_rink_line = lower_right_quadrant){
+  in_rink = apply(df,1,inside_boards_point)
+  return(df[in_rink,])
+}
 
 
 
