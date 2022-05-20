@@ -20,10 +20,17 @@ theta_scale = 0.05 #regular scale
 speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+# source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+# setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
 json_file <- "data/BDC_2022_passOnly.json"
 dat <- fromJSON(json_file)
+rdata_file = "pass_model_5speeds.Rdata"
+load(rdata_file)
+```
+
+```{r}
 
 # Set up the event data to be in a data frame. 
 json_events <- lapply(dat[1:28], function(x) {

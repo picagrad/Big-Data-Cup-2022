@@ -17,10 +17,10 @@ theta_scale = 0.01 #extra fine scale
 speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-#source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-#setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
-source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+# source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+# setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
 #json_file <- "data/BDC_2022_all_data.json"
 #json_file <- "data/BDC_2022_all_direct_wFrames.json"
 json_file <- "data/BDC_2022_passOnly.json"
