@@ -4,7 +4,7 @@ output: pdf_document
 ---
 
 ```{r}
-load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate","ggpmisc","ggnewscale","viridis","tictoc","scales")
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot")
 install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
@@ -57,7 +57,7 @@ current_event$ang_init = vel_ang[,2]
 
 ```{r}
 #r=0 # powerplay of interest
-t_track=69 # 11, 393, 406 is right before a goal, 221 passer not in view
+t_track=405 # 11, 393, 406 is right before a goal, 221 passer not in view
 #69 is the first images I shared
 speed_puck = current_event$vel_init[t_track]
 line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
@@ -111,6 +111,8 @@ for(angle in theta){
   passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
 }
 new_pass <- clean_pass(passes)
+new_pass <- filter_inside_boards(new_pass)
+
 calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
 
 new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
@@ -133,8 +135,8 @@ plot_rink(ggplot(current_track)) +
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(data = new_pass, aes(x = x, y = y), size = 1, shape = 4) +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
   geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
@@ -145,8 +147,8 @@ plot_rink(ggplot(current_track)) +
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
   geom_point(data = calc_pass, aes(x = x, y = y), size = 1, shape = 4) +
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
   geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
@@ -165,24 +167,24 @@ observed_angle_pass <- calc_pass[which.min(abs(calc_pass$angle-current_event[t_t
 point_val = probs_to_point(x_p,y_p,observed_angle_pass,new_pass,current_track,off,TRUE)
 point_val[[1]]
 
-pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/angle_track69.pdf")
+pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/angle_track406.pdf")
 point_val[[2]]
 dev.off()
 ```
 
 ```{r}
-pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/fullpass_track69.pdf")
+pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/fullpass_track406.pdf")
 plot_half_rink(ggplot(current_track)) +
-      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
                    arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
-      geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') + 
-      geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
+        geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
+  geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_segment(aes(x = x_p, y = y_p, xend = current_event[t_track,"x_coord_2"], yend = current_event[t_track,"y_coord_2"]),colour='dark grey',size = 1,arrow = arrow(length = unit(0.03, "npc")))+
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') + 
   #geom_point(data = points, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
-      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+      scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
       #geom_segment(data = points,aes(x = x_puck, y = y_puck, xend = x, yend = y),linetype=2)+
       #geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
@@ -202,219 +204,213 @@ pass_potential
 
 ```{r}
 p <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = all_ctrl),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = all_ctrl),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+  guides(colour = "none")
 
 p2 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = score_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = score_prob),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+  guides(colour = "none")
 
 p3 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = pass_value),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+  guides(colour = "none")
 
 p4 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = adj_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = adj_pass_value),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+  guides(colour = "none")
 
 p5 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = off_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = off_prob),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
+  guides(colour = "none")
 
 p6 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = location_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = location_pass_value),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
+  guides(colour = "none")
 
 p7 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = keep_possesion_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = keep_possesion_prob),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
+  guides(colour = "none")
 
 p8 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = expected_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = expected_pass_value),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
+  guides(colour = "none")
 
 p9 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = max_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = max_pass_value),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
+  guides(colour = "none")
 
 p10 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = best_case_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = best_case_pass_value),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
+  guides(colour = "none")
 
 p11 <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
-    geom_point(aes(color = successful_pass_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = successful_pass_prob),size=1, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
   #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
-  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')+
   geom_segment(aes(x = x_p, y = y_p, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
   geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
-  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+  scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
   labs(fill = "Team") +
-  guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
-  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+  guides(colour = "none")
 ```
 
 ```{r}
@@ -426,8 +422,10 @@ plot_half_rink(p9),plot_half_rink(p10),plot_half_rink(p11),ncol=4)
 ```
 
 ```{r}
-pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/successful_pass_prob_track69.pdf") 
-plot_half_rink(p11)
+#all_ctrl score_prob pass_value adj_pass_value off_prob location_pass_value keep_possesion_prob expected_pass_value max_pass_value best_case_pass_value successful_pass_prob
+
+pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/all_ctrl_track406.pdf") 
+plot_half_rink(p)
 dev.off()
 ```
 

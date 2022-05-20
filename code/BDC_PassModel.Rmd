@@ -4,7 +4,7 @@ output: pdf_document
 ---
 
 ```{r}
-load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate","ggpmisc","ggnewscale","viridis","tictoc","scales")
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot")
 install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
@@ -17,7 +17,7 @@ time_step = seq(0.01,10,0.05) #extra fine scale
 #theta_scale = 0.01 #extra fine scale
 theta_scale = 0.05 #regular scale
 #speed_puck = 90 #ft/s
-speed_puck = 55 #ft/s
+#speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
 source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
@@ -61,6 +61,7 @@ n_good=0
 index_spot=1
 all_speed = c(45,60,75,90)
 for(speed in 1:5){
+  print(paste("New Speed:",speed))
   pass_score = vector(mode = "list", length = nrow(current_event))
   for(t_track in 1:nrow(current_event)){
     # Set up the tracking data
@@ -127,6 +128,7 @@ for(speed in 1:5){
         passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
       }
       new_pass <- clean_pass(passes)
+      new_pass <- filter_inside_boards(new_pass)
       calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
       
       new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
@@ -254,7 +256,7 @@ for(track_pick in 1:nrow(current_event)){
   ang_shot = current_event$ang_init[track_pick]
   
   #speed 45
-  track_pass = pass_speed2[[1]][[track_pick]]
+  track_pass = pass_speed[[1]][[track_pick]]
   
   if(!is.null(track_pass)){
     current_event$passer_pass_value[track_pick] = track_pass[which(track_pass$t==0),"pass_value"]
@@ -271,7 +273,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_45[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 60
-    track_pass = pass_speed2[[2]][[track_pick]]
+    track_pass = pass_speed[[2]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_60[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -285,7 +287,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_60[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 75
-    track_pass = pass_speed2[[3]][[track_pick]]
+    track_pass = pass_speed[[3]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_75[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -299,7 +301,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_75[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 90
-    track_pass = pass_speed2[[4]][[track_pick]]
+    track_pass = pass_speed[[4]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_90[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -313,7 +315,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_90[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed Vel_init
-    track_pass = pass_speed2[[5]][[track_pick]]
+    track_pass = pass_speed[[5]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_Vel_init[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -331,7 +333,7 @@ for(track_pick in 1:nrow(current_event)){
 ```
 
 ```{r}
-save(current_event, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary_quantile.Rdata")
+save(current_event, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
 
 ```{r}
