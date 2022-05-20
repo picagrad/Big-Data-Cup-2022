@@ -14,7 +14,7 @@ stick = 6.5
 frame_rate = 1/30 # 30 frames per second, value used as tres (Alon: We might want to use a different time for this) 
                   # in time_center_radius and player_arrival_times
 time_penalty = 1/10
-max_velocity=30 # maximum skater velocity in ft/sec
+max_velocity=35#30 # maximum skater velocity in ft/sec
 a = 1.3 # acceleration coefficient (not directly acceleration, but more like a speed decay)
 tr = 0.189 # reaction time (based on the article Phil sent)
 t_max = 15 # Maximum value used to use for numerically solving arrival times 
@@ -164,17 +164,17 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   if(want_plot){
     #If desired, we can plot the individual trajectory to look at all points along that path which we are calculating values for
     plot_pass=plot_half_rink(ggplot(tracks1)) +
-      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
-      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+      geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
+      geom_segment(aes(x = x_puck, y = y_puck, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
+      geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black') + 
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
                    arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
-      geom_point(aes(x = x_puck, y = y_puck), size = 2, shape = 16, colour='black') + 
-      geom_segment(aes(x = x_puck, y = y_puck, xend = puck$x_ft, yend = puck$y_ft),size=1.5, colour='brown')+
+      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
       geom_point(data = points, aes(x = x, y = y), colour='dark grey',size = 1, shape = 16) +
-      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+      scale_colour_manual(values = c("Switzerland" = "white", "Finland" = "white")) +
+      scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
       geom_segment(data = points,aes(x = x_puck, y = y_puck, xend = x, yend = y),linetype=2)+
-      geom_point(data = points, aes(x = x, y = y), size = 2, shape = 4, colour='dark grey') + 
       labs(fill = "Team") +
       guides(colour = "none") 
     return(list(mat_to_return,plot_pass))
@@ -305,16 +305,16 @@ plot_half_rink = function(p_object){
     geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 169), col = "gray50", size = 1) +
     geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 169), col = "gray50", size = 1) +
     ## BLUE AND RED LINES ##
-    annotate("segment", col = "gray50",  x = 125, xend = 125, y = 0, yend = 85, lwd = 0.5) +
+    annotate("segment", col = muted("dark blue"),  x = 125, xend = 125, y = 0, yend = 85, lwd = 3) +
     ## NET AND GOAL LINE ##
-    geom_segment(col = "gray50", inherit.aes = FALSE, lwd = 0.5, aes(y = 5.75, x = 189, yend = 79.25, xend = 189)) +
+    geom_segment(col = muted("dark red"), inherit.aes = FALSE, lwd = 1.5, aes(y = 5.75, x = 189, yend = 79.25, xend = 189)) +
     geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 45.5, xend = 192.5)) + 
     geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 39.5, xend = 189)) +  
     geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 45.5, x = 192.5, yend = 45.5, xend = 189)) +
     ## OUTLINE ##
-    geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 0.5) +
+    geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 2) +
     ## ADDITIONAL SPECS ##
-    scale_x_continuous(expand = c(0, 0), limits = c(100,200)) + scale_y_continuous(expand = c(0,0), limits = c(0,85)) +
+    scale_x_continuous(expand = c(0, 0), limits = c(100,201)) + scale_y_continuous(expand = c(0,0), limits = c(-1,86)) +
     coord_fixed() +
     theme_void()
   
