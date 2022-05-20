@@ -558,7 +558,7 @@ inside_boards_point <- function(xy){
   y = xy['y']
   
   radius = (x>172)*((y>57)*((x-172)^2 + (y-57)^2)^0.5 + (y<28)*((x-172)^2 + (28-y)^2)^0.5)
-  return(radius<=28)
+  return(radius<=27.5)
   # 
   # return(!any(((x>lower_right_quadrant$x) & (y<lower_right_quadrant$y)) | ((x>upper_right_quadrant$x) & (y>upper_right_quadrant$y))))
   
