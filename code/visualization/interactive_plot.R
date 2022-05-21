@@ -73,9 +73,9 @@ p2 = pass_sum %>%
          `Relative Outcome` = avg_ratio,
          `Best Outcome` = avg_best_outcome
   ) %>%
-  mutate(`Line of Best Fit` = "") %>%
+  # mutate(`Line of Best Fit` = "") %>%
   ggplot() +
-  geom_smooth(formula = "y~x", aes(x = `Keep Possession`, y = `Best Conditional Outcome`, label2 = `Line of Best Fit`), method = "lm", se = F, colour = "black") +
+  # geom_smooth(formula = "y~x", aes(x = `Keep Possession`, y = `Best Conditional Outcome`, label2 = `Line of Best Fit`), method = "lm", se = F, colour = "black") +
   labs(x = "Keep Possession", y = "Best Conditional Outcome", title = "Decision Making by Passer", subtitle = "Minimum 5 passes per player")
 
 p_flags = p2 +  ggimage::geom_image(aes(label = `Passer`, label2 = `Team`, label3 = `Number of Passes`, x = `Keep Possession`, y = `Best Conditional Outcome`, image = url, size = I(`Number of Passes`)/500+0.02)) + 
@@ -109,9 +109,9 @@ p2 = pass_sum %>%
          `Relative Outcome` = avg_ratio,
          `Best Outcome` = avg_best_outcome
   ) %>%
-  mutate(`Line of Best Fit` = "") %>%
+  # mutate(`Line of Best Fit` = "") %>%
   ggplot() +
-  geom_smooth(formula = "y~x", aes(x = `Best Outcome`, y = `Relative Outcome`, label2 = `Line of Best Fit`), method = "lm", se = F, colour = "black") +
+  # geom_smooth(formula = "y~x", aes(x = `Best Outcome`, y = `Relative Outcome`, label2 = `Line of Best Fit`), method = "lm", se = F, colour = "black") +
   labs(x = "Best Outcome", y = "Relative Outcome", title = "Overall Passer Performance", subtitle = "Minimum 5 passes per player")
 
 p_flags = p2 +  ggimage::geom_image(aes(label = `Passer`, label2 = `Team`, label3 = `Number of Passes`,x = `Best Outcome`, y = `Relative Outcome`, image = url, size = I(`Number of Passes`)/500+0.02)) + 
