@@ -569,5 +569,39 @@ filter_inside_boards <-function(df){
   return(df[in_rink,])
 }
 
+fill_missing_players <- function(one_event, tracking_data){
+  pl2_num = one_event['player_1_num']
+  pl2_num = one_event['player_2_num']
+  off_team = one_event['team_name']
+  
+  team_tracks = tracking_data %>% filter(team_name == off_team)
+  
+  if (!(pl1_num %in% team_tracks$jersey_number)){
+    temp_track = team_tracks[1,]
+    temp_track['x_ft'] = one_event['x_coord']
+    temp_track['y_ft'] = one_event['y_coord']
+    temp_track['jersey_number'] = pl1_num
+    temp_track['vel_x'] = 0.05
+    temp_track['vel_y'] = 0.05
+    temp_track['track_id'] = -1
+    temp_track['goalie'] = FALSE
+    tracking_data = tracking_data %>% rbind(temp_track)
+  }
+  
+  if (!(pl2_num %in% team_tracks$jersey_number)){
+    temp_track = team_tracks[1,]
+    temp_track['x_ft'] = one_event['x_coord_2']
+    temp_track['y_ft'] = one_event['y_coord_2']
+    temp_track['jersey_number'] = pl2_num
+    temp_track['vel_x'] = 0.05
+    temp_track['vel_y'] = 0.05
+    temp_track['track_id'] = -2
+    temp_track['goalie'] = FALSE
+    tracking_data = tracking_data %>% rbind(temp_track)
+  }
+  
+  return(tracking_data)
+  
+}
 
 
