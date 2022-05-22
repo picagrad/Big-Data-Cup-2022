@@ -4,7 +4,7 @@ output: pdf_document
 ---
 
 ```{r}
-load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate","ggpmisc","ggnewscale","viridis","tictoc","scales")
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot")
 install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
@@ -17,20 +17,14 @@ time_step = seq(0.01,10,0.05) #extra fine scale
 #theta_scale = 0.01 #extra fine scale
 theta_scale = 0.05 #regular scale
 #speed_puck = 90 #ft/s
-speed_puck = 55 #ft/s
+#speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
-#source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-#setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+source("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("F:/Hockey/Current Git/Big-Data-Cup-2022-Private")
 json_file <- "data/BDC_2022_passOnly.json"
 dat <- fromJSON(json_file)
-#rdata_file = "pass_model_5speeds.Rdata"
-#load(rdata_file)
-```
 
-```{r}
 # Set up the event data to be in a data frame. 
 json_events <- lapply(dat[1:28], function(x) {
   x[sapply(x, is.null)] <- NA
@@ -63,12 +57,14 @@ toc()
 ```
 
 ```{r}
-tic()
+
 pass_speed = vector(mode = "list", length = 5)
 n_good=0
 index_spot=1
 all_speed = c(45,60,75,90)
 for(speed in 1:5){
+  tic()
+  print(paste("New Speed:",speed))
   pass_score = vector(mode = "list", length = nrow(current_event))
   for(t_track in 1:nrow(current_event)){
     # Set up the tracking data
@@ -100,8 +96,9 @@ for(speed in 1:5){
       current_track$y_ft = 85 - current_track$y_ft
       current_track$vel_y = -current_track$vel_y
     }
-
+    
     current_track <- fill_missing_players(current_event[t_track,],current_track)
+    
     if(speed==5){
       # determine speed of actual puck 
       speed_puck = current_event$vel_init[t_track]
@@ -129,7 +126,7 @@ for(speed in 1:5){
       if(abs(y_p-puck$y_ft)>20){
         y_p = 85-y_p
       }
-      source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+      source("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
 
       
       theta = seq(-pi,pi,by=theta_scale)
@@ -138,6 +135,7 @@ for(speed in 1:5){
         passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
       }
       new_pass <- clean_pass(passes)
+      new_pass <- filter_inside_boards(new_pass)
       calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
       
       new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
@@ -164,9 +162,10 @@ for(speed in 1:5){
   }
   pass_speed[[index_spot]]=pass_score
   index_spot = index_spot+1
+  toc()
 }
-save(pass_speed, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
-toc()
+save(pass_speed, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
+
 ```
 
 ```{r}
@@ -183,7 +182,7 @@ for(j in 1:5){
   }
   print(j)
 }
-save(combine_dat, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/combine_data.Rdata")
+save(combine_dat, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/combine_data.Rdata")
 
 #to adjust c("adj_pass_value","location_pass_value", "expected_pass_value")
 the_cols = c(11,15,17)
@@ -191,7 +190,7 @@ all_rank = apply(combine_dat[,the_cols],2,rank)
 quant_rank1 = all_rank/nrow(combine_dat)
 
 quant_rank = cbind(combine_dat[,c(1,2)],quant_rank1)
-save(quant_rank, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/quant_columns.Rdata")
+save(quant_rank, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/quant_columns.Rdata")
 
 pass_speed2 <- pass_speed
 for(j in 1:5){
@@ -202,7 +201,7 @@ for(j in 1:5){
   }
   print(j)
 }
-save(pass_speed2, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds_quantile.Rdata")
+save(pass_speed2, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_model_5speeds_quantile.Rdata")
 ```
 
 ```{r}
@@ -265,7 +264,7 @@ for(track_pick in 1:nrow(current_event)){
   ang_shot = current_event$ang_init[track_pick]
   
   #speed 45
-  track_pass = pass_speed2[[1]][[track_pick]]
+  track_pass = pass_speed[[1]][[track_pick]]
   
   if(!is.null(track_pass)){
     current_event$passer_pass_value[track_pick] = track_pass[which(track_pass$t==0),"pass_value"]
@@ -282,7 +281,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_45[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 60
-    track_pass = pass_speed2[[2]][[track_pick]]
+    track_pass = pass_speed[[2]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_60[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -296,7 +295,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_60[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 75
-    track_pass = pass_speed2[[3]][[track_pick]]
+    track_pass = pass_speed[[3]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_75[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -310,7 +309,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_75[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed 90
-    track_pass = pass_speed2[[4]][[track_pick]]
+    track_pass = pass_speed[[4]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_90[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -324,7 +323,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$max_expected_pass_value_overall_90[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
     #speed Vel_init
-    track_pass = pass_speed2[[5]][[track_pick]]
+    track_pass = pass_speed[[5]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
     current_event$max_best_case_within_Vel_init[track_pick] = max(all_within_ang$best_case_pass_value)
@@ -342,12 +341,12 @@ for(track_pick in 1:nrow(current_event)){
 ```
 
 ```{r}
-save(current_event, file="C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary_quantile.Rdata")
+save(current_event, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
 
 ```{r}
-load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
-load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
+load("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_model_5speeds.Rdata")
+load("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
 
 ```{r}
@@ -396,7 +395,7 @@ puck = puck[puck$team_name==off,]
 x_p = puck$x_ft+2
 y_p = puck$y_ft-0.5
     
-p <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = all_ctrl),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -414,7 +413,7 @@ p <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 
-p2 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p2 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = score_prob),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -432,7 +431,7 @@ p2 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 
-p3 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p3 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -450,7 +449,7 @@ p3 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 
-p4 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p4 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = adj_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -469,7 +468,7 @@ p4 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p5 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p5 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = off_prob),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -488,7 +487,7 @@ p5 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p6 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p6 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = location_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -507,7 +506,7 @@ p6 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p7 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p7 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = keep_possesion_prob),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -526,7 +525,7 @@ p7 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p8 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p8 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = expected_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -545,7 +544,7 @@ p8 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p9 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p9 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = max_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -564,7 +563,7 @@ p9 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p10 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p10 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = best_case_pass_value),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
@@ -583,7 +582,7 @@ p10 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 par(mfrow = c(2, 2))
 
-p11 <- ggplot(data = pass_speed2[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+p11 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = successful_pass_prob),size=2, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
     scale_x_continuous(expand = c(0, 0)) +
