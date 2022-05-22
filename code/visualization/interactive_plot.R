@@ -28,7 +28,7 @@ images <- data.frame(team=c("Canada", "USA", "Switzerland", "ROC", "Finland"),
 passes <- current_event %>%  filter(!is.na(passer_pass_value))
 overall_expected_or_hold = passes %>% select(contains("max_expected_pass_value_overall")) #%>% 
 cbind(passes$passer_pass_value)
-overall_expected_or_hold = passes %>% select(contains("max_expected_pass_value_overall"))
+overall_expected = passes %>% select(contains("max_expected_pass_value_overall"))
 actual_expected = passes$max_expected_pass_value_within_Vel_init
 
 
@@ -39,7 +39,7 @@ actual_best_case = passes$max_best_case_within_Vel_init
 
 overall_keep = passes %>% select(contains("max_keep_possession_overall"))
 actual_keep = passes$max_keep_possession_within_Vel_init
-passes <- passes %>% mutate(best_expected_cl  = do.call(pmax,overall_expected_or_hold),#overall_expected), ask alon
+passes <- passes %>% mutate(best_expected_cl  = do.call(pmax,overall_expected),
                             best_expected_or_hold_cl = do.call(pmax,overall_expected_or_hold),
                             best_best_case_cl = do.call(pmax, overall_best_case),
                             best_keep_cl = do.call(pmax, overall_keep),
@@ -134,3 +134,6 @@ p_flags
 dev.off()
 
 save(pass_sum, file = 'data/final_pass_summary.Rdata')
+
+outcomes <- data.frame(estimated_keep = actual_keep, outcome = passes$event_successful=='t')
+outcomes %>% ggplot() + geom_boxplot(mapping = aes(x = outcome, y = estimated_keep))
