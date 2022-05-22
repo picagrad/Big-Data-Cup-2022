@@ -570,9 +570,9 @@ filter_inside_boards <-function(df){
 }
 
 fill_missing_players <- function(one_event, tracking_data){
-  pl2_num = one_event['player_1_num']
-  pl2_num = one_event['player_2_num']
-  off_team = one_event['team_name']
+  pl1_num = one_event[['Player_1_num']]
+  pl2_num = one_event[['Player_2_num']]
+  off_team = one_event[['team_name']]
   
   team_tracks = tracking_data %>% filter(team_name == off_team)
   

@@ -9,18 +9,18 @@ install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
 
-time_step = seq(0.01,10,0.01) #extra fine scale
-#time_step = seq(0.05,10,0.05) #regular scale
-theta_scale = 0.01 #extra fine scale
-#theta_scale = 0.05 #regular scale
+#time_step = seq(0.01,10,0.01) #extra fine scale
+time_step = seq(0.05,10,0.05) #regular scale
+#theta_scale = 0.01 #extra fine scale
+theta_scale = 0.05 #regular scale
 #speed_puck = 90 #ft/s
 speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
-# source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-# setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
+#source("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+#setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
 #json_file <- "data/BDC_2022_all_data.json"
 #json_file <- "data/BDC_2022_all_direct_wFrames.json"
 json_file <- "data/BDC_2022_passOnly.json"
@@ -43,11 +43,14 @@ current_event$y_coord = current_event$y_coord %>% as.double()
 current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
 current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
 
-current_event$x_coord[current_event$x_coord < 100] = 200-current_event$x_coord[current_event$x_coord < 100]
-current_event$x_coord_2[which(current_event$x_coord_2 < 100)] = 200-current_event$x_coord_2[which(current_event$x_coord_2 < 100)]
+wrong_x <- current_event$x_coord<100
 
-current_event$y_coord = 85-current_event$y_coord
-current_event$y_coord_2 = 85-current_event$y_coord_2
+current_event$x_coord[wrong_x] = 200-current_event$x_coord[wrong_x]
+current_event$x_coord_2[wrong_x] = 200-current_event$x_coord_2[wrong_x]
+
+current_event$y_coord[!wrong_x] = 85-current_event$y_coord[!wrong_x]
+current_event$y_coord_2[!wrong_x] = 85-current_event$y_coord_2[!wrong_x]
+
 
 vel_ang = calc_vmag_ang(current_event)
 current_event$vel_init = vel_ang[,1]
@@ -57,7 +60,7 @@ current_event$ang_init = vel_ang[,2]
 
 ```{r}
 #r=0 # powerplay of interest
-t_track=405 # 11, 393, 406 is right before a goal, 221 passer not in view
+t_track=233 # 11, 393, 406 is right before a goal, 221 passer not in view
 #69 is the first images I shared
 speed_puck = current_event$vel_init[t_track]
 line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
@@ -85,7 +88,11 @@ current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
 if(current_track$x_ft[1]<100){
   current_track$x_ft = 200 - current_track$x_ft
   current_track$vel_x = -current_track$vel_x
+  current_track$y_ft = 85 - current_track$y_ft
+  current_track$vel_y = -current_track$vel_y
 }
+
+current_track <- fill_missing_players(current_event[t_track,],current_track)
 
 event_info <- current_event[t_track,] %>% select(team_name,Player_1_num,Player_2_num)
 off <- event_info$team_name
@@ -167,9 +174,9 @@ observed_angle_pass <- calc_pass[which.min(abs(calc_pass$angle-current_event[t_t
 point_val = probs_to_point(x_p,y_p,observed_angle_pass,new_pass,current_track,off,TRUE)
 point_val[[1]]
 
-pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/angle_track406.pdf")
+#pdf("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/images/angle_track406.pdf")
 point_val[[2]]
-dev.off()
+#dev.off()
 ```
 
 ```{r}
