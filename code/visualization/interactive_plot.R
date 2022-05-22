@@ -1,7 +1,8 @@
 #Figures
 
 # load("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
-setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+#setwd("C:/Users/thepi/OneDrive/Documents/Python/Hockey/Big-Data-Cup-2022-Private")
+setwd("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private")
 
 load("data/pass_summary.Rdata")
 
@@ -38,7 +39,7 @@ actual_best_case = passes$max_best_case_within_Vel_init
 
 overall_keep = passes %>% select(contains("max_keep_possession_overall"))
 actual_keep = passes$max_keep_possession_within_Vel_init
-passes <- passes %>% mutate(best_expected_cl  = do.call(pmax,overall_expected),
+passes <- passes %>% mutate(best_expected_cl  = do.call(pmax,overall_expected_or_hold),#overall_expected), ask alon
                             best_expected_or_hold_cl = do.call(pmax,overall_expected_or_hold),
                             best_best_case_cl = do.call(pmax, overall_best_case),
                             best_keep_cl = do.call(pmax, overall_keep),
@@ -76,7 +77,7 @@ p2 = pass_sum %>%
   # mutate(`Line of Best Fit` = "") %>%
   ggplot() +
   # geom_smooth(formula = "y~x", aes(x = `Keep Possession`, y = `Best Conditional Outcome`, label2 = `Line of Best Fit`), method = "lm", se = F, colour = "black") +
-  labs(x = "Keep Possession", y = "Best Conditional Outcome", title = "Decision Making by Passer", subtitle = "Minimum 5 passes per player")
+  labs(x = "Keep Possession", y = "Best Conditional Outcome", title = "Decision Making by Passer", subtitle = "Minimum 3 passes per player")
 
 p_flags = p2 +  ggimage::geom_image(aes(label = `Passer`, label2 = `Team`, label3 = `Number of Passes`, x = `Keep Possession`, y = `Best Conditional Outcome`, image = url, size = I(`Number of Passes`)/500+0.02)) + 
   theme_bw()
@@ -112,7 +113,7 @@ p2 = pass_sum %>%
   # mutate(`Line of Best Fit` = "") %>%
   ggplot() +
   # geom_smooth(formula = "y~x", aes(x = `Best Outcome`, y = `Relative Outcome`, label2 = `Line of Best Fit`), method = "lm", se = F, colour = "black") +
-  labs(x = "Best Outcome", y = "Relative Outcome", title = "Overall Passer Performance", subtitle = "Minimum 5 passes per player")
+  labs(x = "Best Outcome", y = "Relative Outcome", title = "Overall Passer Performance", subtitle = "Minimum 3 passes per player")
 
 p_flags = p2 +  ggimage::geom_image(aes(label = `Passer`, label2 = `Team`, label3 = `Number of Passes`,x = `Best Outcome`, y = `Relative Outcome`, image = url, size = I(`Number of Passes`)/500+0.02)) + 
   theme_bw()
