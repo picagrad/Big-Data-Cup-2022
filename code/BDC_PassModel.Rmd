@@ -20,8 +20,8 @@ theta_scale = 0.05 #regular scale
 #speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("F:/Hockey/Current Git/Big-Data-Cup-2022-Private")
+source("Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+setwd("Big-Data-Cup-2022-Private")
 json_file <- "data/BDC_2022_passOnly.json"
 dat <- fromJSON(json_file)
 
@@ -42,15 +42,10 @@ current_event$y_coord = current_event$y_coord %>% as.double()
 current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
 current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
 
+#correct for flipping the ice
 wrong_x <- current_event$x_coord<100
-
-#current_event$x_coord[wrong_x] = 200-current_event$x_coord[wrong_x]
-#current_event$x_coord_2[wrong_x] = 200-current_event$x_coord_2[wrong_x]
-
 current_event$y_coord = 85-current_event$y_coord
 current_event$y_coord_2 = 85-current_event$y_coord_2
-
-#current_event <- current_event[!wrong_x,]
 
 vel_ang = calc_vmag_ang(current_event)
 current_event$vel_init = vel_ang[,1]
@@ -104,19 +99,18 @@ for(speed in 1:4){
   
     current_track <- fill_missing_players(current_event[t_track,],current_track)
     if(abs(current_track$y_ft[current_track$jersey_number==as.integer(current_event[t_track,'Player_1_num']) & current_track$team_name==current_event$team_name[t_track]]-current_event[t_track,'y_coord'])>20){
-      #current_track$y_ft = 85 - current_track$y_ft
-      #current_track$vel_y = -current_track$vel_y
-      print(paste("y fucked at:",t_track))
+      print(paste("y issue at:",t_track))
     }
     if(abs(current_track$x_ft[current_track$jersey_number==as.integer(current_event[t_track,'Player_1_num']) & current_track$team_name==current_event$team_name[t_track]]-current_event[t_track,'x_coord'])>20){
-      print(paste("x fucked at:",t_track))
+      print(paste("x issue at:",t_track))
     }
     
     if(speed==4){
       # determine speed of actual puck 
       speed_puck = current_event$vel_init[t_track]
       if(is.na(speed_puck)){
-        speed_puck=50 #current_event$vel_init %>% mean(na.rm=TRUE) gives 46.0478, as we already did 45, we will default to 50
+        speed_puck=50 
+        #current_event$vel_init %>% mean(na.rm=TRUE) gives 46.0478, as we already did 45, we will default to 50
       }
     }else{
       speed_puck = all_speed[speed]
@@ -132,16 +126,13 @@ for(speed in 1:4){
     n_def <- sum(n_players[names(n_players)!=off])
     if(nrow(puck)>0 & length(n_players)==2 & n_off>2 & n_def>2){
       
-      #x_p = puck$x_ft+2
-      #y_p = puck$y_ft-0.5
-      x_p = current_event[t_track,"x_coord"]#puck$x_ft
-      y_p = current_event[t_track,"y_coord"]#puck$y_ft
+      x_p = current_event[t_track,"x_coord"]
+      y_p = current_event[t_track,"y_coord"]
       if(abs(y_p-puck$y_ft)>20){
         y_p = 85-y_p
       }
-      source("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
+      source("Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
 
-      
       theta = seq(-pi,pi,by=theta_scale)
       passes = data.frame(angle=c(),x=c(),y=c(), t=c())
       for(angle in theta){
@@ -156,12 +147,10 @@ for(speed in 1:4){
       xyt <- new_pass %>% select(x,y,t)
       loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
         select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
-      # options(warn=-1)
       new_pass <- new_pass %>% 
         mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
         mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
-      # options(warn=0)
-      
+
       all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
       pass_potential <- bind_rows(all_point_val, .id = "column_label")
       
@@ -177,44 +166,7 @@ for(speed in 1:4){
   index_spot = index_spot+1
   toc()
 }
-save(pass_speed, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_model_4speeds.Rdata")
-
-```
-
-```{r}
-#perform quantile normalization
-combine_dat <-cbind("speed"=1,"id"=2,pass_speed[[1]][[2]])
-for(j in 1:5){
-  if(j!=1){
-    combine_dat <- rbind(combine_dat, cbind("speed"=j,"id"=2,pass_speed[[j]][[2]]))
-  }
-  for(i in 3:length(pass_speed[[j]])){
-    if(length(pass_speed[[j]][[i]])>0){
-      combine_dat <- rbind(combine_dat, cbind("speed"=j,"id"=i,pass_speed[[j]][[i]]))
-    }
-  }
-  print(j)
-}
-save(combine_dat, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/combine_data.Rdata")
-
-#to adjust c("adj_pass_value","location_pass_value", "expected_pass_value")
-the_cols = c(11,15,17)
-all_rank = apply(combine_dat[,the_cols],2,rank)
-quant_rank1 = all_rank/nrow(combine_dat)
-
-quant_rank = cbind(combine_dat[,c(1,2)],quant_rank1)
-save(quant_rank, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/quant_columns.Rdata")
-
-pass_speed2 <- pass_speed
-for(j in 1:5){
-  for(i in 1:length(pass_speed[[j]])){
-    if(length(pass_speed[[j]][[i]])>0){
-      pass_speed2[[j]][[i]][,the_cols] = (quant_rank %>% filter(speed==j) %>% filter(id==i))[,3:5]
-    }
-  }
-  print(j)
-}
-save(pass_speed2, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_model_5speeds_quantile.Rdata")
+save(pass_speed, file="Big-Data-Cup-2022-Private/data/pass_model_4speeds.Rdata")
 ```
 
 ```{r}
@@ -331,24 +283,10 @@ for(track_pick in 1:nrow(current_event)){
 ```
 
 ```{r}
-save(current_event, file="F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
+save(current_event, file="Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
 ```
 
 ```{r}
-load("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_model_4speeds.Rdata")
-load("F:/Hockey/Current Git/Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
-```
-
-```{r}
-plot(current_event$max_expected_pass_value_within_Vel_init,current_event$max_keep_possession_within_Vel_init)
-plot(current_event$max_best_case_within_Vel_init,current_event$max_keep_possession_within_Vel_init)
-plot(current_event$max_expected_pass_value_within_Vel_init,current_event$max_best_case_within_Vel_init)
-```
-
-
-```{r}
-#401
-
 track_pick = 1
 t_pick = 5
 # Set up the tracking data
@@ -392,11 +330,10 @@ x_p = puck$x_ft+2
 y_p = puck$y_ft-0.5
     
 p <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    geom_point(aes(color = all_ctrl),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
-  geom_segment(data=current_event[track_pick,], aes(x=x_coord,y=y_coord,xend=x_coord_2,yend=y_coord_2), size=3, colour="dark grey")+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -406,19 +343,14 @@ p <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-plot_half_rink(p)
-```
-
-```{r}
 
 p2 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = score_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -428,15 +360,14 @@ p2 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 
 p3 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -446,15 +377,14 @@ p3 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 
 p4 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = adj_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -464,16 +394,14 @@ p4 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p5 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = off_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -483,16 +411,14 @@ p5 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p6 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = location_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -502,16 +428,14 @@ p6 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p7 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = keep_possesion_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -521,16 +445,14 @@ p7 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p8 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = expected_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -540,16 +462,14 @@ p8 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p9 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = max_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -559,16 +479,14 @@ p9 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p10 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = best_case_pass_value),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -578,16 +496,14 @@ p10 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
-par(mfrow = c(2, 2))
 
 p11 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
     geom_point(aes(color = successful_pass_prob),size=2, shape=16) +
-    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+#,midpoint = 0.5
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
     scale_x_continuous(expand = c(0, 0)) +
     scale_y_continuous(expand = c(0, 0)) +
-  #geom_point(aes(x = x, y = y), size = 1, shape = 4)+
   new_scale_fill() +
   new_scale_color() +
   geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
@@ -597,7 +513,7 @@ p11 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) +
   scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
   labs(fill = "Team") +
   guides(colour = "none")+ 
-  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), #/sqrt(vel_x^2+vel_y^2) to get r=1
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
   arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
 ```
 
