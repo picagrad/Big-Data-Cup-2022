@@ -1,10 +1,12 @@
 ---
-title: "BDC_2022"
+title: "BDC_2022 - Single Frame Pass Analysis"
 output: pdf_document
 ---
 
 ```{r}
-load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot")
+# Load (and install if necessary) libraries and set constants
+
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot", "here")
 install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
@@ -17,11 +19,9 @@ theta_scale = 0.05 #regular scale
 speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("Big-Data-Cup-2022-Private")
-#json_file <- "data/BDC_2022_all_data.json"
-#json_file <- "data/BDC_2022_all_direct_wFrames.json"
-json_file <- "data/BDC_2022_passOnly.json"
+source(here("code","hockey_pipeline.R"))
+
+json_file <-here("data","BDC_2022_passOnly.json")
 dat <- fromJSON(json_file)
 
 # Set up the event data to be in a data frame. 
@@ -30,29 +30,42 @@ json_events <- lapply(dat[1:28], function(x) {
   unlist(x)
 })
 current_event <- as.data.frame(do.call("cbind", json_events))
+
+# Simplify team and opponent team names
 current_event$team_name[current_event$team_name=="Olympic (Women) - Canada"]="Canada"
 current_event$team_name[current_event$team_name=="Olympic (Women) - United States"]="USA"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="Finland"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
 
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Canada"]="Canada"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - United States"]="USA"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Finland"]="Finland"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Switzerland"]="Switzerland"
+
 current_event$x_coord = current_event$x_coord %>% as.double()
 current_event$y_coord = current_event$y_coord %>% as.double()
 current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
 current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
 
+#Identify defensive passes to omit
+defensive_plays <- current_event$x_coord<100
+
 #correct for flipping the ice
-wrong_x <- current_event$x_coord<100
 current_event$y_coord = 85-current_event$y_coord
 current_event$y_coord_2 = 85-current_event$y_coord_2
 
+# get pass speed and angle
 vel_ang = calc_vmag_ang(current_event)
 current_event$vel_init = vel_ang[,1]
 current_event$ang_init = vel_ang[,2]
 ```
 
 ```{r}
-t_track=405
+t_track=405 # Pass index to analyse
+
+#load track
 speed_puck = current_event$vel_init[t_track]
 line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
 line2 <- eval(parse(text=line1))
@@ -63,6 +76,7 @@ if(length(line2$frame_id)!=0){
   })
   current_track <- as.data.frame(do.call("cbind", json_tracks))
 }
+# fix variable types
 current_track$frame_id = current_track$frame_id %>% as.integer()
 current_track$period = current_track$period %>% as.integer()
 current_track$track_id = current_track$track_id %>% as.integer()
@@ -76,6 +90,8 @@ current_track$vel_x[which(current_track$vel_x==0)]=0.05
 current_track$vel_y[which(current_track$vel_y==0)]=0.05
 current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
 
+
+# Flip track if necessary
 if(mean(current_track[current_track$team_name==current_event$team_name[t_track],'x_ft'])<100){
   current_track$x_ft = 200 - current_track$x_ft
   current_track$vel_x = -current_track$vel_x
@@ -83,26 +99,32 @@ if(mean(current_track[current_track$team_name==current_event$team_name[t_track],
   current_track$vel_y = -current_track$vel_y
 }
 
+# Fill in passer and passee if they are missing
 current_track <- fill_missing_players(current_event[t_track,],current_track)
 
+# Identify offensive team and find the puck
 event_info <- current_event[t_track,] %>% select(team_name,Player_1_num,Player_2_num)
 off <- event_info$team_name
 puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>% select(team_name,x_ft,y_ft)
 puck = puck[puck$team_name==off,]
 
+# Count players on each side (to ensure reasonable minimum amount on each team)
 n_players <- table(current_track$team_name)
 n_off <- sum(n_players[names(n_players)==off])
 n_def <- sum(n_players[names(n_players)!=off])
 ```
 
 ```{r}
+# Puck coordinates by the event data 
 x_p = current_event[t_track,"x_coord"]
 y_p = current_event[t_track,"y_coord"]
 
+# Flip puck coordinates if necessary
 if(abs(y_p-puck$y_ft)>30){
   y_p = 85-y_p
 }
 
+# Create all triples x,y,t for pass analysis using puck motion model
 theta = seq(-pi,pi,by=theta_scale)
 passes = data.frame(angle=c(),x=c(),y=c(), t=c())
 for(angle in theta){
@@ -116,6 +138,8 @@ calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
 new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
 
 xyt <- new_pass %>% select(x,y,t)
+
+# Prepare inputs for subsequent calculations
 loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
   select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
 new_pass <- new_pass %>% 
@@ -153,8 +177,7 @@ plot_rink(ggplot(current_track)) +
 ```
 
 ```{r}
-#angle_pass <- calc_pass[81,]
-#point_val = probs_to_point(x_p,y_p,angle_pass,new_pass,current_track,off,TRUE)
+# Get Metrics for actual pass 
 
 observed_angle_pass <- calc_pass[which.min(abs(calc_pass$angle-current_event[t_track,"ang_init"])),]
 point_val = probs_to_point(x_p,y_p,observed_angle_pass,new_pass,current_track,off,TRUE)
@@ -163,7 +186,8 @@ point_val[[2]]
 ```
 
 ```{r}
-pdf("Big-Data-Cup-2022-Private/images/fullpass_track406.pdf")
+# Plot arrow for actual pass
+# Note that legend here needs to be changed manually because of R interpretation of strings
 plot_half_rink(ggplot(current_track)) +
       geom_segment(aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
                    arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan') + 
@@ -176,10 +200,11 @@ plot_half_rink(ggplot(current_track)) +
   scale_fill_manual(values = c("Switzerland" = "red", "Finland" = "blue")) +
       labs(fill = "Team") +
   guides(colour = "none")
-dev.off()
+
 ```
 
 ```{r}
+# Get metrics for all potential passes and put in data frame
 all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
 
 pass_potential <- bind_rows(all_point_val, .id = "column_label")
@@ -187,6 +212,8 @@ pass_potential
 ```
 
 ```{r}
+# Graph all the different metrics
+# Note that legend here needs to be changed manually because of R interpretation of strings
 p <- ggplot(data = pass_potential,aes(x = x, y = y)) + 
     geom_point(aes(color = all_ctrl),size=1, shape=16) +
     scale_colour_gradient2(na.value="white",low = muted("red"), mid = "white", high = muted("blue"))+

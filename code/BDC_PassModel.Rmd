@@ -1,10 +1,12 @@
 ---
-title: "BDC_PassModel"
+title: "BDC_2022 - Pass Analysis for Entire Dataset"
 output: pdf_document
 ---
 
 ```{r}
-load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot")
+#Install (if necessary) and load required packages
+
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot", 'here')
 install.lib = load.libraries[!load.libraries %in% installed.packages()]
 for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
 sapply(load.libraries, require, character = TRUE)
@@ -20,9 +22,9 @@ theta_scale = 0.05 #regular scale
 #speed_puck = 55 #ft/s
 #speed_puck = 40 #ft/s
 
-source("Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-setwd("Big-Data-Cup-2022-Private")
-json_file <- "data/BDC_2022_passOnly.json"
+
+source(here("code","hockey_pipeline.R"))
+json_file <- here("data","BDC_2022_passOnly.json")
 dat <- fromJSON(json_file)
 
 # Set up the event data to be in a data frame. 
@@ -31,22 +33,33 @@ json_events <- lapply(dat[1:28], function(x) {
   unlist(x)
 })
 current_event <- as.data.frame(do.call("cbind", json_events))
+
+# Simplify team and opponent team names
 current_event$team_name[current_event$team_name=="Olympic (Women) - Canada"]="Canada"
 current_event$team_name[current_event$team_name=="Olympic (Women) - United States"]="USA"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="Finland"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
 current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
 
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Canada"]="Canada"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - United States"]="USA"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Finland"]="Finland"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Switzerland"]="Switzerland"
+
 current_event$x_coord = current_event$x_coord %>% as.double()
 current_event$y_coord = current_event$y_coord %>% as.double()
 current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
 current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
 
+#Identify defensive passes to omit
+defensive_plays <- current_event$x_coord<100
+
 #correct for flipping the ice
-wrong_x <- current_event$x_coord<100
 current_event$y_coord = 85-current_event$y_coord
 current_event$y_coord_2 = 85-current_event$y_coord_2
 
+# Get estimate for pass speed and angle
 vel_ang = calc_vmag_ang(current_event)
 current_event$vel_init = vel_ang[,1]
 current_event$ang_init = vel_ang[,2]
@@ -54,7 +67,7 @@ toc()
 ```
 
 ```{r}
-
+# Calculate all metrics for 4 speeds 45-65-85 ft/sec and actual pass speed
 pass_speed = vector(mode = "list", length = 4)
 n_good=0
 index_spot=1
@@ -63,8 +76,10 @@ for(speed in 1:4){
   tic()
   print(paste("New Speed:",speed))
   pass_score = vector(mode = "list", length = nrow(current_event))
-  for(t_track in 394:nrow(current_event)){
-    if(wrong_x[t_track]){
+  # Loop over all tracks (frames of passes)
+  for(t_track in 1:nrow(current_event)){
+    # Skip defensive passes
+    if(defensive_plays[t_track]){
       next
     }
     # Set up the tracking data
@@ -86,10 +101,13 @@ for(speed in 1:4){
     current_track$vel_x = current_track$vel_x %>% as.double()
     current_track$vel_y = current_track$vel_y %>% as.double()
     
+    # Prevent division by zero by assigning small speed to stationary players
     current_track$vel_x[which(current_track$vel_x==0)]=0.05
     current_track$vel_y[which(current_track$vel_y==0)]=0.05
     current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
     
+    
+    # Flipping tracking data if needed
     if(mean(current_track[current_track$team_name==current_event$team_name[t_track],'x_ft'])<100){
       current_track$x_ft = 200 - current_track$x_ft
       current_track$vel_x = -current_track$vel_x
@@ -98,6 +116,8 @@ for(speed in 1:4){
     }
   
     current_track <- fill_missing_players(current_event[t_track,],current_track)
+    
+    #Checking if we have any remaining issues with coordinate flipping
     if(abs(current_track$y_ft[current_track$jersey_number==as.integer(current_event[t_track,'Player_1_num']) & current_track$team_name==current_event$team_name[t_track]]-current_event[t_track,'y_coord'])>20){
       print(paste("y issue at:",t_track))
     }
@@ -116,9 +136,13 @@ for(speed in 1:4){
       speed_puck = all_speed[speed]
     }
     
-    event_info <- current_event[t_track,] %>% select(team_name,Player_1_num,Player_2_num)
+    event_info <- current_event[t_track,] %>% 
+      select(team_name,Player_1_num,Player_2_num)
     off <- event_info$team_name
-    puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>% select(team_name,x_ft,y_ft)
+    
+    # Place puck and event data coordinates
+    puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>%
+      select(team_name,x_ft,y_ft)
     puck = puck[puck$team_name==off,]
     
     n_players <- table(current_track$team_name)
@@ -131,19 +155,21 @@ for(speed in 1:4){
       if(abs(y_p-puck$y_ft)>20){
         y_p = 85-y_p
       }
-      source("Big-Data-Cup-2022-Private/code/visualization/hockey_pipeline.R")
-
+      
+      # Create all possible pass triplets:
       theta = seq(-pi,pi,by=theta_scale)
       passes = data.frame(angle=c(),x=c(),y=c(), t=c())
       for(angle in theta){
-        passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle)))
+        passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle, vmag = speed_puck )))
       }
+
       new_pass <- clean_pass(passes)
       new_pass <- filter_inside_boards(new_pass)
       calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
       
       new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
       
+      # Prepare all inputs for main calculations
       xyt <- new_pass %>% select(x,y,t)
       loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
         select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
@@ -151,6 +177,7 @@ for(speed in 1:4){
         mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
         mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
 
+      # Run main pass model (see hockey_pipeline.R for details)
       all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
       pass_potential <- bind_rows(all_point_val, .id = "column_label")
       
@@ -166,7 +193,7 @@ for(speed in 1:4){
   index_spot = index_spot+1
   toc()
 }
-save(pass_speed, file="Big-Data-Cup-2022-Private/data/pass_model_4speeds.Rdata")
+save(pass_speed, file=here("data","pass_model_4speeds.Rdata"))
 ```
 
 ```{r}
@@ -214,6 +241,8 @@ current_event$passer_pass_value = NaN
 
 
 ```{r}
+# Calculate summary statistics over various speeds and angles
+
 #0.05*10*180/pi gives us a range of about 30 degrees around the intended target
 
 for(track_pick in 1:nrow(current_event)){
@@ -264,7 +293,7 @@ for(track_pick in 1:nrow(current_event)){
     current_event$ang_expected_pass_value_overall_85[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
     current_event$max_expected_pass_value_overall_85[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
     
-    #speed Vel_init
+    #Original speed which is labeled "speed Vel_init"
     track_pass = pass_speed[[4]][[track_pick]]
     target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
     all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
@@ -283,10 +312,13 @@ for(track_pick in 1:nrow(current_event)){
 ```
 
 ```{r}
-save(current_event, file="Big-Data-Cup-2022-Private/data/pass_summary.Rdata")
+save(current_event, file=here("data","pass_summary.Rdata"))
 ```
 
 ```{r}
+
+# Plot all (well most) of our metrics for one specific pass
+
 track_pick = 1
 t_pick = 5
 # Set up the tracking data
