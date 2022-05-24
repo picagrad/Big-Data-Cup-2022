@@ -1,0 +1,558 @@
+---
+title: "BDC_2022 - Pass Analysis for Entire Dataset"
+output: pdf_document
+---
+
+```{r}
+#Install (if necessary) and load required packages
+
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot", 'here')
+install.lib = load.libraries[!load.libraries %in% installed.packages()]
+for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
+sapply(load.libraries, require, character = TRUE)
+```
+
+```{r}
+tic()
+time_step = seq(0.01,10,0.05) #extra fine scale
+#time_step = seq(0.05,10,0.05) #regular scale
+#theta_scale = 0.01 #extra fine scale
+theta_scale = 0.05 #regular scale
+#speed_puck = 90 #ft/s
+#speed_puck = 55 #ft/s
+#speed_puck = 40 #ft/s
+
+
+source(here("code","hockey_pipeline.R"))
+json_file <- here("data","BDC_2022_passOnly.json")
+dat <- fromJSON(json_file)
+
+# Set up the event data to be in a data frame. 
+json_events <- lapply(dat[1:28], function(x) {
+  x[sapply(x, is.null)] <- NA
+  unlist(x)
+})
+current_event <- as.data.frame(do.call("cbind", json_events))
+
+# Simplify team and opponent team names
+current_event$team_name[current_event$team_name=="Olympic (Women) - Canada"]="Canada"
+current_event$team_name[current_event$team_name=="Olympic (Women) - United States"]="USA"
+current_event$team_name[current_event$team_name=="Olympic (Women) - Finland"]="Finland"
+current_event$team_name[current_event$team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
+current_event$team_name[current_event$team_name=="Olympic (Women) - Switzerland"]="Switzerland"
+
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Canada"]="Canada"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - United States"]="USA"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Finland"]="Finland"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Olympic Athletes from Russia"]="ROC"
+current_event$opp_team_name[current_event$opp_team_name=="Olympic (Women) - Switzerland"]="Switzerland"
+
+current_event$x_coord = current_event$x_coord %>% as.double()
+current_event$y_coord = current_event$y_coord %>% as.double()
+current_event$x_coord_2 = current_event$x_coord_2 %>% as.double()
+current_event$y_coord_2 = current_event$y_coord_2 %>% as.double()
+
+#Identify defensive passes to omit
+defensive_plays <- current_event$x_coord<100
+
+#correct for flipping the ice
+current_event$y_coord = 85-current_event$y_coord
+current_event$y_coord_2 = 85-current_event$y_coord_2
+
+# Get estimate for pass speed and angle
+vel_ang = calc_vmag_ang(current_event)
+current_event$vel_init = vel_ang[,1]
+current_event$ang_init = vel_ang[,2]
+toc()
+```
+
+```{r}
+# Calculate all metrics for 4 speeds 45-65-85 ft/sec and actual pass speed
+pass_speed = vector(mode = "list", length = 4)
+n_good=0
+index_spot=1
+all_speed = c(45,65,85)
+for(speed in 1:4){
+  tic()
+  print(paste("New Speed:",speed))
+  pass_score = vector(mode = "list", length = nrow(current_event))
+  # Loop over all tracks (frames of passes)
+  for(t_track in 1:nrow(current_event)){
+    # Skip defensive passes
+    if(defensive_plays[t_track]){
+      next
+    }
+    # Set up the tracking data
+    line1 <- paste('dat$tracks$\'',(t_track-1),'\'',sep='')
+    line2 <- eval(parse(text=line1))
+    if(length(line2$frame_id)!=0){
+      json_tracks <- lapply(line2, function(x) {
+        x[sapply(x, is.null)] <- NA
+        unlist(x)
+      })
+      current_track <- as.data.frame(do.call("cbind", json_tracks))
+    }
+    current_track$frame_id = current_track$frame_id %>% as.integer()
+    current_track$period = current_track$period %>% as.integer()
+    current_track$track_id = current_track$track_id %>% as.integer()
+    current_track$jersey_number = current_track$jersey_number %>% as.integer()
+    current_track$x_ft = (current_track$x_ft %>% as.double())
+    current_track$y_ft = (current_track$y_ft %>% as.double())
+    current_track$vel_x = current_track$vel_x %>% as.double()
+    current_track$vel_y = current_track$vel_y %>% as.double()
+    
+    # Prevent division by zero by assigning small speed to stationary players
+    current_track$vel_x[which(current_track$vel_x==0)]=0.05
+    current_track$vel_y[which(current_track$vel_y==0)]=0.05
+    current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
+    
+    
+    # Flipping tracking data if needed
+    if(mean(current_track[current_track$team_name==current_event$team_name[t_track],'x_ft'])<100){
+      current_track$x_ft = 200 - current_track$x_ft
+      current_track$vel_x = -current_track$vel_x
+      current_track$y_ft = 85 - current_track$y_ft
+      current_track$vel_y = -current_track$vel_y
+    }
+  
+    current_track <- fill_missing_players(current_event[t_track,],current_track)
+    
+    #Checking if we have any remaining issues with coordinate flipping
+    if(abs(current_track$y_ft[current_track$jersey_number==as.integer(current_event[t_track,'Player_1_num']) & current_track$team_name==current_event$team_name[t_track]]-current_event[t_track,'y_coord'])>20){
+      print(paste("y issue at:",t_track))
+    }
+    if(abs(current_track$x_ft[current_track$jersey_number==as.integer(current_event[t_track,'Player_1_num']) & current_track$team_name==current_event$team_name[t_track]]-current_event[t_track,'x_coord'])>20){
+      print(paste("x issue at:",t_track))
+    }
+    
+    if(speed==4){
+      # determine speed of actual puck 
+      speed_puck = current_event$vel_init[t_track]
+      if(is.na(speed_puck)){
+        speed_puck=50 
+        #current_event$vel_init %>% mean(na.rm=TRUE) gives 46.0478, as we already did 45, we will default to 50
+      }
+    }else{
+      speed_puck = all_speed[speed]
+    }
+    
+    event_info <- current_event[t_track,] %>% 
+      select(team_name,Player_1_num,Player_2_num)
+    off <- event_info$team_name
+    
+    # Place puck and event data coordinates
+    puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>%
+      select(team_name,x_ft,y_ft)
+    puck = puck[puck$team_name==off,]
+    
+    n_players <- table(current_track$team_name)
+    n_off <- sum(n_players[names(n_players)==off])
+    n_def <- sum(n_players[names(n_players)!=off])
+    if(nrow(puck)>0 & length(n_players)==2 & n_off>2 & n_def>2){
+      
+      x_p = current_event[t_track,"x_coord"]
+      y_p = current_event[t_track,"y_coord"]
+      if(abs(y_p-puck$y_ft)>20){
+        y_p = 85-y_p
+      }
+      
+      # Create all possible pass triplets:
+      theta = seq(-pi,pi,by=theta_scale)
+      passes = data.frame(angle=c(),x=c(),y=c(), t=c())
+      for(angle in theta){
+        passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle, vmag = speed_puck )))
+      }
+
+      new_pass <- clean_pass(passes)
+      new_pass <- filter_inside_boards(new_pass)
+      calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
+      
+      new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
+      
+      # Prepare all inputs for main calculations
+      xyt <- new_pass %>% select(x,y,t)
+      loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
+        select(x_ft,y_ft,vel_x,vel_y, team_label, goalie) 
+      new_pass <- new_pass %>% 
+        mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
+        mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
+
+      # Run main pass model (see hockey_pipeline.R for details)
+      all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off,want_plot=FALSE)
+      pass_potential <- bind_rows(all_point_val, .id = "column_label")
+      
+      pass_score[[t_track]]<- pass_potential
+      print(t_track)
+      n_good=n_good+1
+    }else{
+      print(paste("Pass track failed conditions:",t_track))
+    }
+    
+  }
+  pass_speed[[index_spot]]=pass_score
+  index_spot = index_spot+1
+  toc()
+}
+save(pass_speed, file=here("data","pass_model_4speeds.Rdata"))
+```
+
+```{r}
+current_event$max_best_case_within_45 = NaN
+current_event$ang_best_case_overall_45 = NaN
+current_event$max_best_case_overall_45 = NaN
+current_event$max_best_case_within_65 = NaN
+current_event$ang_best_case_overall_65 = NaN
+current_event$max_best_case_overall_65 = NaN
+current_event$max_best_case_within_85 = NaN
+current_event$ang_best_case_overall_85 = NaN
+current_event$max_best_case_overall_85 = NaN
+current_event$max_best_case_within_Vel_init = NaN
+current_event$ang_best_case_overall_Vel_init = NaN
+current_event$max_best_case_overall_Vel_init = NaN
+
+current_event$max_keep_possession_within_45 = NaN
+current_event$ang_keep_possession_overall_45 = NaN
+current_event$max_keep_possession_overall_45 = NaN
+current_event$max_keep_possession_within_65 = NaN
+current_event$ang_keep_possession_overall_65 = NaN
+current_event$max_keep_possession_overall_65 = NaN
+current_event$max_keep_possession_within_85 = NaN
+current_event$ang_keep_possession_overall_85 = NaN
+current_event$max_keep_possession_overall_85 = NaN
+current_event$max_keep_possession_within_Vel_init = NaN
+current_event$ang_keep_possession_overall_Vel_init = NaN
+current_event$max_keep_possession_overall_Vel_init = NaN
+
+current_event$max_expected_pass_value_within_45 = NaN
+current_event$ang_expected_pass_value_overall_45 = NaN
+current_event$max_expected_pass_value_overall_45 = NaN
+current_event$max_expected_pass_value_within_65 = NaN
+current_event$ang_expected_pass_value_overall_65 = NaN
+current_event$max_expected_pass_value_overall_65 = NaN
+current_event$max_expected_pass_value_within_85 = NaN
+current_event$ang_expected_pass_value_overall_85 = NaN
+current_event$max_expected_pass_value_overall_85 = NaN
+current_event$max_expected_pass_value_within_Vel_init = NaN
+current_event$ang_expected_pass_value_overall_Vel_init = NaN
+current_event$max_expected_pass_value_overall_Vel_init = NaN
+
+current_event$passer_pass_value = NaN
+```
+
+
+```{r}
+# Calculate summary statistics over various speeds and angles
+
+#0.05*10*180/pi gives us a range of about 30 degrees around the intended target
+
+for(track_pick in 1:nrow(current_event)){
+  ang_shot = current_event$ang_init[track_pick]
+  
+  #speed 45
+  track_pass = pass_speed[[1]][[track_pick]]
+  
+  if(!is.null(track_pass)){
+    current_event$passer_pass_value[track_pick] = track_pass[which(track_pass$t==0),"pass_value"]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_45[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_45[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_45[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
+    current_event$max_keep_possession_within_45[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_45[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_45[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
+    current_event$max_expected_pass_value_within_45[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_45[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_45[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
+    
+    #speed 65
+    track_pass = pass_speed[[2]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_65[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_65[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_65[track_pick] =track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
+    current_event$max_keep_possession_within_65[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_65[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_65[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
+    current_event$max_expected_pass_value_within_65[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_65[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_65[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
+    
+    #speed 85
+    track_pass = pass_speed[[3]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_85[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_85[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_85[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"]
+    current_event$max_keep_possession_within_85[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_85[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_85[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
+    current_event$max_expected_pass_value_within_85[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_85[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_85[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
+    
+    #Original speed which is labeled "speed Vel_init"
+    track_pass = pass_speed[[4]][[track_pick]]
+    target_ang = track_pass[which.min(abs(track_pass$theta-ang_shot)),]
+    all_within_ang = track_pass[!is.na(match(round(track_pass$theta,4),round(target_ang$theta+seq(-0.25,0.25,by=theta_scale),4))),]
+    current_event$max_best_case_within_Vel_init[track_pick] = max(all_within_ang$best_case_pass_value)
+    current_event$ang_best_case_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"theta"]
+    current_event$max_best_case_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$best_case_pass_value),"best_case_pass_value"] 
+    current_event$max_keep_possession_within_Vel_init[track_pick] = max(all_within_ang$keep_possesion_prob)
+    current_event$ang_keep_possession_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"theta"]
+    current_event$max_keep_possession_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$keep_possesion_prob),"keep_possesion_prob"]
+    current_event$max_expected_pass_value_within_Vel_init[track_pick] = max(all_within_ang$expected_pass_value)
+    current_event$ang_expected_pass_value_overall_Vel_init[track_pick] = track_pass[which.max(track_pass$expected_pass_value),"theta"]
+    current_event$max_expected_pass_value_overall_Vel_init[track_pick] =track_pass[which.max(track_pass$expected_pass_value),"expected_pass_value"]
+  }
+}
+
+```
+
+```{r}
+save(current_event, file=here("data","pass_summary.Rdata"))
+```
+
+```{r}
+
+# Plot all (well most) of our metrics for one specific pass
+
+track_pick = 1
+t_pick = 5
+# Set up the tracking data
+line1 <- paste('dat$tracks$\'',(track_pick-1),'\'',sep='')
+line2 <- eval(parse(text=line1))
+if(length(line2$frame_id)!=0){
+  json_tracks <- lapply(line2, function(x) {
+    x[sapply(x, is.null)] <- NA
+    unlist(x)
+  })
+  current_track <- as.data.frame(do.call("cbind", json_tracks))
+}
+current_track$frame_id = current_track$frame_id %>% as.integer()
+current_track$period = current_track$period %>% as.integer()
+current_track$track_id = current_track$track_id %>% as.integer()
+current_track$jersey_number = current_track$jersey_number %>% as.integer()
+current_track$x_ft = current_track$x_ft %>% as.double()
+current_track$y_ft = current_track$y_ft %>% as.double()
+current_track$vel_x = current_track$vel_x %>% as.double()
+current_track$vel_y = current_track$vel_y %>% as.double()
+
+current_track$vel_x[which(current_track$vel_x==0)]=0.05
+current_track$vel_y[which(current_track$vel_y==0)]=0.05
+current_track$goalie = ifelse(current_track$goalie =='TRUE',T,F)
+
+
+if(current_track$x_ft[1]<100){
+  current_track$x_ft = 200 - current_track$x_ft
+  current_track$vel_x = -current_track$vel_x
+  current_track$y_ft = 85 - current_track$y_ft
+  current_track$vel_y = -current_track$vel_y
+}
+
+current_track <- fill_missing_players(current_event[track_pick,],current_track)
+event_info <- current_event[track_pick,] %>% select(team_name,Player_1_num,Player_2_num)
+off <- event_info$team_name
+puck = current_track[current_track$jersey_number==event_info$Player_1_num,] %>% select(team_name,x_ft,y_ft)
+puck = puck[puck$team_name==off,]
+
+x_p = puck$x_ft+2
+y_p = puck$y_ft-0.5
+    
+p <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = all_ctrl),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p2 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = score_prob),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p3 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = pass_value),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p4 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = adj_pass_value),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p5 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = off_prob),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p6 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = location_pass_value),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p7 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = keep_possesion_prob),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p8 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = expected_pass_value),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p9 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = max_pass_value),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p10 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = best_case_pass_value),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+
+p11 <- ggplot(data = pass_speed[[t_pick]][[track_pick]],aes(x = x, y = y)) + 
+    geom_point(aes(color = successful_pass_prob),size=2, shape=16) +
+    scale_colour_gradient2(na.value="white",low = muted("green"), mid = "white", high = muted("purple"))+
+    scale_x_continuous(expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+  new_scale_fill() +
+  new_scale_color() +
+  geom_point(data=current_track,aes(x = x_ft, y = y_ft, fill = team_name), size = 5, shape = 21) +
+  geom_text(data=current_track,aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
+  geom_point(aes(x = x_p, y = y_p), size = 2, shape = 16, colour='black') +
+  scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
+  scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
+  labs(fill = "Team") +
+  guides(colour = "none")+ 
+  geom_segment(data=current_track,aes(x = x_ft, y = y_ft, xend = x_ft+vel_x, yend = y_ft+vel_y), 
+  arrow = arrow(length = unit(0.2, "cm")),size=1, colour='cyan')
+```
+
+```{r}
+#copy into console
+require(gridExtra)
+grid.arrange(plot_half_rink(p), plot_half_rink(p2),plot_half_rink(p3),plot_half_rink(p4),
+             plot_half_rink(p5),plot_half_rink(p6),plot_half_rink(p7),plot_half_rink(p8),
+             plot_half_rink(p9),plot_half_rink(p10),plot_half_rink(p11),ncol=4)
+```
