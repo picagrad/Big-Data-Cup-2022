@@ -428,6 +428,10 @@ dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  
 }
 
 time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr, tmax = t_max, tres = t_rez){ 
+  # Motion function model - returns player's center location and possible arrival 
+  #                         radius over time, given initial conditions 
+  
+  
   ti <- seq(0,t_r,tres) # initial time - before reaction
   tr <- seq(0,10-t_r,tres)# reamining time after reaction
   
@@ -455,6 +459,7 @@ time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r 
 }
 
 t_reach <- function(loc, t_c_r, goalie_flag = F, goalie_radius = goalie_dist){
+  # Motion model function -  Measure time for arrival of player at given location
   tx = loc[1]
   ty = loc[2]
   goalie_delay = 1
@@ -478,6 +483,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
                                  tres = t_rez,
                                  goalie = F
                                  ){
+  # Motion model function - measure arrival times set of points x,y,t
   t_c_r <- time_center_radius(x0, y0, vx, vy)
   times <- apply(grid,1,t_reach,t_c_r,goalie_flag = goalie)
   # print(times)
@@ -485,7 +491,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
 }
 
 ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
-
+  # Rink Control function - Calculate Rink Control contribution of one player, in entire grid
   x0 <- loc_vel['x_ft']
   y0 <-  loc_vel['y_ft']
   vx <- loc_vel['vel_x']
@@ -500,11 +506,13 @@ ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, b
 
 
 teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
+  # Rink Control function - Calculate full Rink Control, accounting for all available players
   ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
   return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
 }
 
 score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
+  # Scoring Probability function 
   x = xyt['x']
   y = xyt['y']
   Prob <- (abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))+1)/ifelse(x>189,8,4)*exp(-((189-x)^2/decay_x +(42.5-y)^2/decay_y))
@@ -514,6 +522,8 @@ score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
 }
 
 puck_motion_model <- function(x0,y0,vx,vy, t = time_step, mu = mm, beta = b, g = gg){
+  # Puck Motion Model function - return puck's x,y,t given starting conditions/
+  #                              Uses vx, vy to describe initial velocity
   
   vmag <-  sqrt(vx^2 + vy^2)
   
@@ -524,6 +534,9 @@ puck_motion_model <- function(x0,y0,vx,vy, t = time_step, mu = mm, beta = b, g =
 }
 
 puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = mm, beta = b, g = gg){
+  # Puck Motion Model function - return puck's x,y,t given starting conditions/
+  #                              Uses vmag, angle to describe intial velocity
+  
   vx = vmag*sin(angle)
   vy = vmag*cos(angle)
   
@@ -535,12 +548,15 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = 
 
 
 clean_pass <- function(passes, xmin=100, xmax=200, ymin=0, ymax=85){
+  # Motion Model Function - Clears out any values that end up outside the given boarders
   passes1 <- passes %>% filter(xmin<x) %>% filter(ymin<y) %>% filter(x<xmax) %>% filter(y<ymax)
   
   return(passes1)
 }
 
 calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
+  # Calculate actual pass's initial speed and angle from event data using puck motion model
+  
   out <- events %>% mutate(x_coord = as.double(x_coord),x_coord_2 = as.double(x_coord_2), 
                            y_coord = as.double(y_coord),y_coord_2 = as.double(y_coord_2),
                            frame_id_1 = as.double(frame_id_1), frame_id_2 = as.double(frame_id_2))%>% 
@@ -554,22 +570,28 @@ calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
 }
 
 inside_boards_point <- function(xy){
+  # Check's that a point x,y is inside the board for the curved part of the ice
+  # Works in conjunction with clean pass to remove all defensive passes and other
+  # illegal locations
   x = xy['x']
   y = xy['y']
   
   radius = (x>172)*((y>57)*((x-172)^2 + (y-57)^2)^0.5 + (y<28)*((x-172)^2 + (28-y)^2)^0.5)
-  return(radius<=27.5)
+  return(radius<=28)
   # 
   # return(!any(((x>lower_right_quadrant$x) & (y<lower_right_quadrant$y)) | ((x>upper_right_quadrant$x) & (y>upper_right_quadrant$y))))
   
 }
 
 filter_inside_boards <-function(df){
+  # Filter larger df using inside_boards_point - df must have 'x' and 'y' columns
   in_rink = apply(df,1,inside_boards_point)
   return(df[in_rink,])
 }
 
 fill_missing_players <- function(one_event, tracking_data){
+  # Add passer or receiver of pass from event data to tracking data if missing
+  
   pl1_num = one_event[['Player_1_num']]
   pl2_num = one_event[['Player_2_num']]
   off_team = one_event[['team_name']]

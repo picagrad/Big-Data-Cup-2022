@@ -5,3 +5,8 @@ pass_summary_sandbox.rmd
 code/.Rhistory
 .RData
 .Rhistory
+code/hockey_gif.R
+*.gif
+images/*.gif
+.Rproj.user
+Big-Data-Cup-2022-Private.Rproj
