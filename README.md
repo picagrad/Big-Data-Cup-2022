@@ -11,7 +11,7 @@ We divide the ice into triplets of time an location based on our puck motion mod
 Next, we calculate rink control at all triplets:  
 <img src="./images/rink_control_track405.jpg" alt="Rink Control" width="400"/>  
 
-From here we begin using our probabilistic passing model to create some more sepcific metrics such as:  
+From here we begin using our probabilistic passing model to create some more specific metrics such as:  
 <img src="./images/score_prob_location_track405.jpg" alt="Scoring Probability and Location Value" width="600"/>  
 <img src="./images/conditional_bestcase_track405.jpg" alt="Conditional Location Value and Best Case Pass Value" width="600"/>  
 <img src="./images/location_expected_track405.jpg" alt="Location Pass Value and Expected Pass Value" width="600"/>  
