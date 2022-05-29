@@ -114,7 +114,7 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
     ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
     if(ncol(ranked_probs)>2){
       for (c in 3:ncol(ranked_probs)){
-        ranked_probs[,c] = ranked_probs[,c]*(1-ranked_probs[,c-1])
+        ranked_probs[,c] = ranked_probs[,c]*(1-rowSums(ranked_probs[,1:(c-1)]))
       }
     }
   }
