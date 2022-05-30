@@ -160,7 +160,7 @@ for(speed in 1:4){
       theta = seq(-pi,pi,by=theta_scale)
       passes = data.frame(angle=c(),x=c(),y=c(), t=c())
       for(angle in theta){
-        passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle, vmag = speed_puck )))
+        passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle, vmag = speed_puck)))
       }
 
       new_pass <- clean_pass(passes)
