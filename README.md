@@ -1,7 +1,7 @@
 # Pass Analysis in  Olympic Women's Ice Hockey
 Published by Alon Harell([@picagrad](https://github.com/picagrad)), Robyn Ritchie ([@ritchi12](https://github.com/ritchi12)), and Phil Shreeves ([@pshreeves](https://github.com/pshreeves))   
 Repository containing data and code for our submission to the 2022 Big-Data-Cup at the 2022 Ottawa Hockey Analytics Conference (#OTTHAC22).  
-See our full submission on [https://arxiv.org/pdf/OUR_PAPER_NUMBER.pdf](https://arxiv.org/abs/2205.13678). Note minor corrections have been made to the paper and updated version will be available soon.
+See our full submission on https://arxiv.org/pdf/2205.13678.pdf. Note minor corrections have been made to the paper and updated version will be available soon.
 
 ## Pass Analysis
 All examples and plots here are taken from the following play:  
