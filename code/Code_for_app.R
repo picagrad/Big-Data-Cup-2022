@@ -1,3 +1,24 @@
+load.libraries = c("rjson", "jsonlite", "tidyverse", "gganimate", "ggpmisc", "ggnewscale", "viridis", "tictoc", "scales", "ggforce", "cowplot", 'here')
+install.lib = load.libraries[!load.libraries %in% installed.packages()]
+for (libs in install.lib) {install.packages(libs, dependencies = TRUE)}
+sapply(load.libraries, require, character = TRUE)
+
+#This will be provided info from the app
+x_coords = c(171.4262, 155.6585, 153.7146, 150.5869, 156.3463, 179.8383, 180.8131, 186.6146, 179.9982)
+y_coords = c(49.31514, 48.25991, 70.17542, 13.65429, 28.51970, 38.44596, 36.80571, 38.32781, 22.03946)
+vel_x = c(6.725073,  4.964445, -3.097599, 14.252625,  4.286796,  1.925091, -2.295729, -0.294258,  6.464229)
+vel_y = c(-7.1037417,  -7.9677960,  -6.4446342,   6.5618985, -10.9455216,  -4.7444208,  -4.1465373,  -0.3377985, -5.4265284)
+goalie = c(0,0,0,0,0,0,0,1,0)
+off = "Finland"
+team_name = c("Switzerland", "Switzerland", "Finland", "Finland", "Switzerland", "Finland", "Switzerland", "Switzerland", "Finland")
+jersey_number = c("PK1","PK2","PP1","PP2","PK3","PP3","PK4","PK5","PP4")
+x_p=150.5869
+y_p=13.65429
+current_track = data.frame(team_name=team_name,jersey_number=jersey_number,x_ft=x_coords,y_ft=y_coords,vel_x=vel_x,vel_y=vel_y,goalie=goalie)
+
+time_step = seq(0.05,10,0.05) #medium fine scale
+theta_scale = 0.05 #medium fine scale
+speed_puck = 55 #ft/s
 #All distance units are in feet and all time units are in seconds
 #Typically, in hockey your stick should reach your chin. Average height of a woman is 5.33 feet, so to the chin would be approximately 4.66 feet.
 #Skates add maybe 3 inches to that, thus around 5 ft. Length of an arm will add approximately 20 inches. Thus we approximate the maximum stick+arm reach to be 6.5 feet
@@ -6,13 +27,13 @@ stick = 6.5
 #Looking at all direct passes with an (x1,y1,frame1) and (x2,y2,frame2), we can get a five number summary of 
 #(Min=0.9677,Q1=33.7695,Q2=43.1220,Mean=42.8177,Q3=53.1812,Max=94.2355). 
 #We chose to set the speed of the puck as 
-  #90 feet/s show what happens in the case where you sent a good hard pass
-  #55 feet/s show what happens in the case where you sent a reasonably pass
-  #40 feet/s show what happens in the case where you sent an average pass
+#90 feet/s show what happens in the case where you sent a good hard pass
+#55 feet/s show what happens in the case where you sent a reasonably pass
+#40 feet/s show what happens in the case where you sent an average pass
 
 #Stathletes frame rate for their tracking data
 frame_rate = 1/30 # 30 frames per second, value used as tres (Alon: We might want to use a different time for this) 
-                  # in time_center_radius and player_arrival_times
+# in time_center_radius and player_arrival_times
 time_penalty = 1/10
 max_velocity=35.5#30 # maximum skater velocity in ft/sec
 a = 1.3 # acceleration coefficient (not directly acceleration, but more like a speed decay)
@@ -27,8 +48,6 @@ y_decay = 500 #value used as decay_y
 t_rez = 1/100
 goalie_dist = 8 # maximum reasonable distance for goalie to go away from goal
 
-
-#offence side rink lines (upper here is in terms of x values)
 upper_right_quadrant =  data.frame(
   x = c(
     172 + 28*sin(seq(pi/2,0,length=500)),
@@ -51,7 +70,67 @@ lower_right_quadrant =  data.frame(
   )
 )
 
-probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_plot=FALSE){
+plot_half_rink = function(p_object){
+  
+  require(ggforce)
+  require(cowplot)
+  require(tidyverse)
+  
+  upper_outline = data.frame(
+    x = c(
+      100,
+      172 + 28*sin(seq(0,pi/2,length=20)),
+      172 + 28*sin(seq(pi/2,0,length=20)),
+      100
+    ),
+    y = c(
+      0, 
+      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
+      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
+      85
+    )
+  )
+  
+  lower_outline = data.frame(
+    x = c(
+      100,
+      100-72 - 28*sin(seq(0,pi/2,length=20)),
+      100-72 - 28*sin(seq(pi/2,0,length=20)),
+      100
+    ),
+    y = c(
+      0, 
+      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
+      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
+      85
+    )
+  )
+  
+  p = p_object +
+    ## FACEOFF CIRCLES ##
+    geom_circle(data = data.frame(x0 = 169, y0 = 20.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
+    geom_circle(data = data.frame(x0 = 169, y0 = 64.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
+    ## FACEOFF DOTS ##
+    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 169), col = "gray50", size = 1) +
+    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 169), col = "gray50", size = 1) +
+    ## BLUE AND RED LINES ##
+    annotate("segment", col = muted("dark blue"),  x = 125, xend = 125, y = 0, yend = 85, lwd = 3) +
+    ## NET AND GOAL LINE ##
+    geom_segment(col = muted("dark red"), inherit.aes = FALSE, lwd = 1.5, aes(y = 5.75, x = 189, yend = 79.25, xend = 189)) +
+    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 45.5, xend = 192.5)) + 
+    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 39.5, xend = 189)) +  
+    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 45.5, x = 192.5, yend = 45.5, xend = 189)) +
+    ## OUTLINE ##
+    geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 2) +
+    ## ADDITIONAL SPECS ##
+    scale_x_continuous(expand = c(0, 0), limits = c(100,201)) + scale_y_continuous(expand = c(0,0), limits = c(-1,86)) +
+    coord_fixed() +
+    theme_void()
+  
+  return(p)
+}
+
+probs_to_point <- function(x_puck,y_puck, points1, all_ang, tracks1, offence){
   #A few minor adjustments for vectorizing the function
   points1=rbind(data.frame('theta'=double(),'x'=double(),'y'=double(),'t'=double()),points1)
   names(points1)=c('theta','x','y','t')
@@ -76,7 +155,8 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   dist_to_points[,tracks$goalie] = ifelse(((points$x-189)^2 +(points$y-42.5)^2) <= goalie_dist^2,
                                           dist_to_points[,tracks$goalie],
                                           pmax(dist_to_points[,tracks$goalie],((points$x-189)^2 +(points$y-42.5)^2)^0.5-goalie_dist))
-  
+  #Calculate team rink ctrl
+  points$all_ctrl <- ice_ctrl_dist_xyt(dist_to_points,tracks$team_name==offence)
   #Given how close a player gets to their target, we place a Gaussian distribution at that point to add some variability to how close the player can get
   #and associate a probability to whether or not their could intercept the puck. We use stick length as the standard deviation. This is done for all players
   #except the passer for each potential intercept point along a trajectory
@@ -89,9 +169,8 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
     norm_probs = abs(pnorm((dist_to_points+stick)/stick)-pnorm((dist_to_points-stick)/stick))*(points$t[1])/time_penalty
   }
   pickup_probs = norm_probs*(tracks$team_name==offence)*(1-exp(-points$t/tr))+norm_probs*(tracks$team_name!=offence)*(1-exp(-points$t/(tr+0.1)))
-  
   #Combine the original (angle, x,y,t) points we are evaluating with the pickup probabilities of each player determined in the previous step
-
+  
   #Split the probabilities into offence and defence
   off_lines = which(tracks$team_name==offence)
   def_lines = which(tracks$team_name!=offence)
@@ -108,18 +187,18 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   
   #Each player following the highest rank has a smaller chance at getting the puck because it is conditional on the player before they getting to that point and missing
   #We update the probability player i picks up the puck using p_i(new)=p_i(old)*product_j=1^i-1 of (1-p_j)
+  
   ranked_probs <-  pickup_probs * 0
   ranked_probs[cbind(rix,as.vector(t(all_rank)))] <- as.vector(t(pickup_probs))
   if(ncol(ranked_probs)>1){
     ranked_probs[,2] = ranked_probs[,2]*(1-ranked_probs[,1])
     if(ncol(ranked_probs)>2){
       for (c in 3:ncol(ranked_probs)){
-        if (nrow(ranked_probs)>1){
-          ranked_probs[,c] = ranked_probs[,c]*(1-rowSums(ranked_probs[,1:(c-1)]))
+        if(nrow(ranked_probs)>1){
+          ranked_probs[,c] = ranked_probs[,c]*(1-rowSums(ranked_probs[,1:(c-1)]))#*(1-ranked_probs[,c-1])
         }else{
           ranked_probs[,c] = ranked_probs[,c]*(1-sum(ranked_probs[,1:(c-1)]))
         }
-        
       }
     }
   }
@@ -188,211 +267,6 @@ probs_to_point <- function(x_puck,y_puck, points1,all_ang, tracks1,offence,want_
   }
 }
 
-
-#Statletes provided code for plotting the full rink. Dims x=200 ft wide and y=85 ft high
-plot_rink = function(p_object){
-  require(ggforce)
-  require(cowplot)
-  require(tidyverse)
-  upper_outline = data.frame(
-    x = c(
-      115,
-      172 + 28*sin(seq(0,pi/2,length=20)),
-      172 + 28*sin(seq(pi/2,0,length=20)),
-      115
-    ),
-    y = c(
-      0, 
-      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
-      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
-      85
-    )
-  )
-  
-  lower_outline = data.frame(
-    x = c(
-      115,
-      100-72 - 28*sin(seq(0,pi/2,length=20)),
-      100-72 - 28*sin(seq(pi/2,0,length=20)),
-      115
-    ),
-    y = c(
-      0, 
-      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
-      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
-      85
-    )
-  )
-  
-  p = p_object +
-    ## FACEOFF CIRCLES ##
-    geom_circle(data = data.frame(x0 = 100, y0 = 42.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    geom_circle(data = data.frame(x0 = 169, y0 = 20.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    geom_circle(data = data.frame(x0 = 169, y0 = 64.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    geom_circle(data = data.frame(x0 = 31, y0 = 64.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    geom_circle(data = data.frame(x0 = 31, y0 = 20.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    ## FACEOFF DOTS ##
-    geom_point(inherit.aes = FALSE, aes(y = 42.5, x = 100), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 169), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 169), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 120), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 120), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 31), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 31), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 80), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 80), col = "gray50", size = 1) +
-    ## BLUE AND RED LINES ##
-    annotate("segment", col = "gray50",  x = 75, xend = 75, y = 0, yend = 85, lwd = 0.5) +
-    annotate("segment", col = "gray50", x = 100, xend = 100, y = 0, yend = 85, lwd = 0.5) +
-    annotate("segment", col = "gray50",  x = 125, xend = 125, y = 0, yend = 85, lwd = 0.5) +
-    ## NET AND GOAL LINE ##
-    geom_segment(col = "gray50", inherit.aes = FALSE, lwd = 0.5, aes(y = 79.25, x = 11, yend = 5.75, xend = 11)) +
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 7.5, yend = 45.5, xend = 7.5)) + 
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 7.5, yend = 39.5, xend = 11)) +  
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 45.5, x = 7.5, yend = 45.5, xend = 11)) +
-    geom_segment(col = "gray50", inherit.aes = FALSE, lwd = 0.5, aes(y = 5.75, x = 189, yend = 79.25, xend = 189)) +
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 45.5, xend = 192.5)) + 
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 39.5, xend = 189)) +  
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 45.5, x = 192.5, yend = 45.5, xend = 189)) +
-    ## OUTLINE ##
-    geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 0.5) +
-    geom_path(data = lower_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 0.5) +
-    ## ADDITIONAL SPECS ##
-    scale_x_continuous(expand = c(0, 0), limits = c(0,200)) + scale_y_continuous(expand = c(0,0), limits = c(0,85)) +
-    coord_fixed() +
-    theme_void()
-  
-  return(p)
-}
-
-#Adjustment of stathletes code to plot only the blue line to the attacking net that the play takes place in
-plot_half_rink = function(p_object){
-  
-  require(ggforce)
-  require(cowplot)
-  require(tidyverse)
-  
-  upper_outline = data.frame(
-    x = c(
-      100,
-      172 + 28*sin(seq(0,pi/2,length=20)),
-      172 + 28*sin(seq(pi/2,0,length=20)),
-      100
-    ),
-    y = c(
-      0, 
-      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
-      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
-      85
-    )
-  )
-  
-  lower_outline = data.frame(
-    x = c(
-      100,
-      100-72 - 28*sin(seq(0,pi/2,length=20)),
-      100-72 - 28*sin(seq(pi/2,0,length=20)),
-      100
-    ),
-    y = c(
-      0, 
-      0 + 28 - 28*cos(seq(0,pi/2,length=20)),
-      85 - 28 + 28*cos(seq(pi/2,0,length=20)),
-      85
-    )
-  )
-  
-  p = p_object +
-    ## FACEOFF CIRCLES ##
-    geom_circle(data = data.frame(x0 = 169, y0 = 20.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    geom_circle(data = data.frame(x0 = 169, y0 = 64.5, r = 15), aes(x0 = x0, y0 = y0, r = r), lwd = 0.5, col = "gray50", inherit.aes = FALSE) +
-    ## FACEOFF DOTS ##
-    geom_point(inherit.aes = FALSE, aes(y = 20.5, x = 169), col = "gray50", size = 1) +
-    geom_point(inherit.aes = FALSE, aes(y = 64.5, x = 169), col = "gray50", size = 1) +
-    ## BLUE AND RED LINES ##
-    annotate("segment", col = muted("dark blue"),  x = 125, xend = 125, y = 0, yend = 85, lwd = 3) +
-    ## NET AND GOAL LINE ##
-    geom_segment(col = muted("dark red"), inherit.aes = FALSE, lwd = 1.5, aes(y = 5.75, x = 189, yend = 79.25, xend = 189)) +
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 45.5, xend = 192.5)) + 
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 39.5, x = 192.5, yend = 39.5, xend = 189)) +  
-    geom_segment(col = "indianred", inherit.aes = FALSE, lwd = 0.5, aes(y = 45.5, x = 192.5, yend = 45.5, xend = 189)) +
-    ## OUTLINE ##
-    geom_path(data = upper_outline, aes(x = x, y = y), colour = "gray80", inherit.aes = FALSE, lwd = 2) +
-    ## ADDITIONAL SPECS ##
-    scale_x_continuous(expand = c(0, 0), limits = c(100,201)) + scale_y_continuous(expand = c(0,0), limits = c(-1,86)) +
-    coord_fixed() +
-    theme_void()
-  
-  return(p)
-}
-
-# Function to save the ggplot of interest to mp4, can be changed to gif if desired
-save_play <- function(data, r, t_start, type){
-  line1 <- paste('data$relevant_events$\'',r,'\'$tracks$\'',t_start,'\'',sep='')
-  line2 <- eval(parse(text=line1))
-  if(length(line2$frame_id)!=0){
-    json_tracks <- lapply(line2, function(x) {
-      x[sapply(x, is.null)] <- NA
-      unlist(x)
-    })
-    tracking_data <- as.data.frame(do.call("cbind", json_tracks))
-    tracking_data <- tracking_data[,c('frame_id','period','track_id','team_id','team_name','jersey_number','x_ft','y_ft')]
-    rownames(tracking_data) = NULL
-    teams <- unique(tracking_data$team_name)
-    team1 <- teams[1]
-    team2 <- teams[2]
-    title = paste("PP", r, "_", team1, "_", team2, "_SS", t_start, sep = "")
-    
-    tracking_data$frame_id = tracking_data$frame_id %>% as.integer()
-    #tracking_data$frame_id = tracking_data$frame_id - min(tracking_data$frame_id)+1
-    tracking_data$period = tracking_data$period %>% as.integer()
-    tracking_data$track_id = tracking_data$track_id %>% as.integer()
-    tracking_data$team_id = tracking_data$team_id %>% as.character()
-    tracking_data$team_name = tracking_data$team_name %>% as.character()
-    tracking_data$jersey_number = tracking_data$jersey_number %>% as.integer()
-    tracking_data$x_ft = tracking_data$x_ft %>% as.double()
-    tracking_data$y_ft = tracking_data$y_ft %>% as.double()
-
-    ## ANIMATED PLOTS ##
-    
-    # Set the specs for the gif we want to create (lower res to make it run quicker)
-    options(gganimate.dev_args = list(width = 10, height = 6, units = 'in', res = 320))
-    
-    # Source in the plot_rink function
-    #source("C:/Users/Paula/Desktop/Big-Data-Cup-2022-Private/OTTHAC_Tutorial/Code/plot_rink.R")
-    #source("/Volumes/BRICK_HOUSE/Hockey/Big-Data-Cup-2022-Private-main/OTTHAC_Tutorial/Code/plot_rink.R")
-    
-    # Create a gif of this play
-    p = plot_rink(ggplot(tracking_data)) +
-      geom_point(aes(x = x_ft, y = y_ft, fill = team_name), shape = 21, size = 6) +
-      geom_text(aes(x = x_ft, y = y_ft, label = jersey_number, colour = team_name), size = 3) +
-      scale_colour_manual(values = c("USA" = "white", "Canada" = "white")) +
-      scale_fill_manual(values = c("USA" = "blue", "Canada" = "red")) +
-      # Additional specs
-      geom_text(aes(x = 25, y = 40, label = frame_id), size = 5) +
-      transition_time(frame_id) + 
-      labs(fill = "Team") +
-      guides(colour = "none")
-    
-    
-    # Get the maximum and minimum frame number (so we know how long the gif should be)
-    max_frame = tracking_data$frame_id %>% max()
-    min_frame = tracking_data$frame_id %>% min() 
-    
-    # Render the animation
-    if(type == "mp4"){
-    # Save as mp4
-      p2 = animate(p, renderer = ffmpeg_renderer(), fps = 30, duration = (max_frame - min_frame+1)/30)#((max_frame - min_frame)/30 + 1))
-      anim_save(paste(title,".mp4",sep=""), p2)
-    #
-    }else{
-    #Save as gif
-      anim_save(paste(title,".gif",sep=""), p, fps = 30, duration = (max_frame - min_frame+1)/30)
-    }
-  }
-}
-
-
 # This function gives the distance a player would be from a target point
 # given starting location and velocity and a target time t 
 dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr){
@@ -413,15 +287,15 @@ dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  
     c_x = x0 +vx * t
     c_y = y0 + vy * t
     r = 0
-    }
+  }
   #first accounting for reaction time
   else{
     x0 = x0 + t_r * vx
     y0 = y0 + t_r * vy
     t = t - t_r
-  
-  # Now building the motion model for the remaining time
-  
+    
+    # Now building the motion model for the remaining time
+    
     c_x = x0 + vx * (1-exp(-alpha * t))/alpha
     c_y = y0 + vy * (1-exp(-alpha * t))/alpha
     r = vmax * (t - (1-exp(-alpha * t))/alpha)
@@ -433,10 +307,6 @@ dist_to_xyt <- function(xyt,x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  
 }
 
 time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r =  tr, tmax = t_max, tres = t_rez){ 
-  # Motion function model - returns player's center location and possible arrival 
-  #                         radius over time, given initial conditions 
-  
-  
   ti <- seq(0,t_r,tres) # initial time - before reaction
   tr <- seq(0,10-t_r,tres)# reamining time after reaction
   
@@ -464,7 +334,6 @@ time_center_radius <- function(x0,y0,vx,vy, vmax = max_velocity, alpha = a, t_r 
 }
 
 t_reach <- function(loc, t_c_r, goalie_flag = F, goalie_radius = goalie_dist){
-  # Motion model function -  Measure time for arrival of player at given location
   tx = loc[1]
   ty = loc[2]
   goalie_delay = 1
@@ -487,8 +356,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
                                  tmax = t_max, 
                                  tres = t_rez,
                                  goalie = F
-                                 ){
-  # Motion model function - measure arrival times set of points x,y,t
+){
   t_c_r <- time_center_radius(x0, y0, vx, vy)
   times <- apply(grid,1,t_reach,t_c_r,goalie_flag = goalie)
   # print(times)
@@ -496,7 +364,7 @@ player_arrival_times <- function(x0,y0,vx,vy,
 }
 
 ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
-  # Rink Control function - Calculate Rink Control contribution of one player, in entire grid
+  
   x0 <- loc_vel['x_ft']
   y0 <-  loc_vel['y_ft']
   vx <- loc_vel['vel_x']
@@ -509,15 +377,19 @@ ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, b
   return(ctrl = loc_vel['team_label'] * x_y_tarr$arr_times ^ (-beta))
 }
 
-
-teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
-  # Rink Control function - Calculate full Rink Control, accounting for all available players
-  ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
+ice_ctrl_dist_xyt <- function(dists, off, beta = b2){
+  
+  ctrl =(dists/max_velocity)^(-beta)*t(replicate(nrow(dists),ifekse(off,1,-1)))
   return(ice_ctrl = rowSums(ctrl)/rowSums(abs(ctrl)))
 }
 
+
+teamwise_ice_ctrl_xyt <- function(loc_vel,xyt,vmax = max_velocity, alpha = a, t_r = tr, beta = b2){
+  ctrl <- apply(loc_vel, 1, ice_ctrl_xyt, xyt, vmax, alpha, t_r, beta)
+  return(ice_ctrl = colSums(ctrl)/colSums(abs(ctrl)))
+}
+
 score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
-  # Scoring Probability function 
   x = xyt['x']
   y = xyt['y']
   Prob <- (abs((189-x)/sqrt((42.5-y)^2+(189-x)^2))+1)/ifelse(x>189,8,4)*exp(-((189-x)^2/decay_x +(42.5-y)^2/decay_y))
@@ -527,8 +399,6 @@ score_prob <- function(xyt, decay_x = x_decay, decay_y = y_decay){
 }
 
 puck_motion_model <- function(x0,y0,vx,vy, t = time_step, mu = mm, beta = b, g = gg){
-  # Puck Motion Model function - return puck's x,y,t given starting conditions/
-  #                              Uses vx, vy to describe initial velocity
   
   vmag <-  sqrt(vx^2 + vy^2)
   
@@ -538,10 +408,7 @@ puck_motion_model <- function(x0,y0,vx,vy, t = time_step, mu = mm, beta = b, g =
   return(data.frame(x = x, y = y, t = t))
 }
 
-puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = mm, beta = b, g = gg){
-  # Puck Motion Model function - return puck's x,y,t given starting conditions/
-  #                              Uses vmag, angle to describe intial velocity
-  
+puck_motion_model2 <- function(x0,y0,angle,vmag, t = time_step, mu = mm, beta = b, g = gg){
   vx = vmag*sin(angle)
   vy = vmag*cos(angle)
   
@@ -553,15 +420,12 @@ puck_motion_model2 <- function(x0,y0,angle,vmag=speed_puck, t = time_step, mu = 
 
 
 clean_pass <- function(passes, xmin=100, xmax=200, ymin=0, ymax=85){
-  # Motion Model Function - Clears out any values that end up outside the given boarders
   passes1 <- passes %>% filter(xmin<x) %>% filter(ymin<y) %>% filter(x<xmax) %>% filter(y<ymax)
   
   return(passes1)
 }
 
 calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
-  # Calculate actual pass's initial speed and angle from event data using puck motion model
-  
   out <- events %>% mutate(x_coord = as.double(x_coord),x_coord_2 = as.double(x_coord_2), 
                            y_coord = as.double(y_coord),y_coord_2 = as.double(y_coord_2),
                            frame_id_1 = as.double(frame_id_1), frame_id_2 = as.double(frame_id_2))%>% 
@@ -575,28 +439,22 @@ calc_vmag_ang = function(events, mu = mm, beta = b, g = gg){
 }
 
 inside_boards_point <- function(xy){
-  # Check's that a point x,y is inside the board for the curved part of the ice
-  # Works in conjunction with clean pass to remove all defensive passes and other
-  # illegal locations
   x = xy['x']
   y = xy['y']
   
   radius = (x>172)*((y>57)*((x-172)^2 + (y-57)^2)^0.5 + (y<28)*((x-172)^2 + (28-y)^2)^0.5)
-  return(radius<=28)
+  return(radius<=27.5)
   # 
   # return(!any(((x>lower_right_quadrant$x) & (y<lower_right_quadrant$y)) | ((x>upper_right_quadrant$x) & (y>upper_right_quadrant$y))))
   
 }
 
 filter_inside_boards <-function(df){
-  # Filter larger df using inside_boards_point - df must have 'x' and 'y' columns
   in_rink = apply(df,1,inside_boards_point)
   return(df[in_rink,])
 }
 
 fill_missing_players <- function(one_event, tracking_data){
-  # Add passer or receiver of pass from event data to tracking data if missing
-  
   pl1_num = one_event[['Player_1_num']]
   pl2_num = one_event[['Player_2_num']]
   off_team = one_event[['team_name']]
@@ -631,29 +489,25 @@ fill_missing_players <- function(one_event, tracking_data){
   
 }
 
-straight_bounce <- function(xyt_ang, crit_ang = pi/12){
-  x = xyt_ang['x']
-  y = xyt_ang['y']
-  ang = xyt_ang['ang']
-  
-  if (y<0){
-    if (abs(ang)-pi/2 > crit_ang){
-    y = -y
-    ang = sign(ang) * (pi - abs(ang))
-    }else{
-      y = 0 
-      ang = pi/2 * sign(ang)
-    }
-  } 
-  if (y>85){
-    if (pi/2 - abs(ang) > crit_ang){
-      y = 85-y
-      ang = sign(ang) * (pi - abs(ang))
-    }else{
-      y = 85
-      ang = pi/2 * sign(ang)
-    }
-  }
+
+theta = seq(-pi,pi,by=theta_scale)
+passes = data.frame(angle=c(),x=c(),y=c(), t=c())
+for(angle in theta){
+  passes = rbind(passes,cbind(angle,puck_motion_model2(x_p,y_p,angle,vmag=speed_puck)))
 }
+new_pass <- clean_pass(passes)
+new_pass <- filter_inside_boards(new_pass)
 
+calc_pass <- new_pass %>% group_by(angle) %>% top_n(1, t)
 
+new_pass <- rbind(new_pass,c(new_pass$angle[1],x_p,y_p,0))
+
+xyt <- new_pass %>% select(x,y,t)
+loc_vel <- current_track %>% mutate(team_label = ifelse(team_name == off,1,-1)) %>%
+  select(x_ft,y_ft,vel_x,vel_y, team_label, goalie)
+
+new_pass <- new_pass %>% 
+  mutate(all_ctrl = teamwise_ice_ctrl_xyt(loc_vel, xyt), score_prob = apply(xyt,1,score_prob)) %>%
+  mutate(pass_value = score_prob * ((all_ctrl+1)/2)^1)
+all_point_val <- apply(calc_pass,1,probs_to_point,x_puck=x_p,y_puck=y_p,all_ang=new_pass,tracks1=current_track,offence=off)
+pass_potential <- bind_rows(all_point_val, .id = "column_label")
