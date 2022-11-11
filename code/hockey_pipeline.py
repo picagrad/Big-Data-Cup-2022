@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import norm
+from numba import jit
 
 MAX_TIME = 3
 EPS = 1e-7
@@ -28,7 +29,7 @@ class tracks():
                 vx: np.ndarray, # x velocity of players (array or list of floats)
                 vy: np.ndarray, # y velocity of players (array or list of floats)
                 goalie: int, # column number for goalie
-                puck: np.ndarray, # array or list of booleans for which player has the puck
+                puck: int, # column number for which player has the puck
                 off: np.ndarray, # array or list of integers +1 for offence, -1 for defence (or true and false)
                 vp: float = 55,
                 phi_res: float = 0.05,
@@ -38,8 +39,8 @@ class tracks():
         if not metric in METRICS:
             raise ValueError('Metric choice is not in recognized metric list, please choose another metric')
         self.metric = metric
-        self.xp = x[puck == 1]
-        self.yp = y[puck == 1]
+        self.xp = x[puck]
+        self.yp = y[puck]
         self.puck = puck
         self.phi_res = phi_res
         self.off = np.where(off==1,1,-1)
@@ -53,11 +54,18 @@ class tracks():
         # self.tracks = pd.DataFrame({'x':x,'y':y,'vx':vx,'vy':vy,'goalie':goalie,'off':off})
         self.grid = np.concatenate([self.one_pass(self, phi)() for phi in np.arange(-np.pi,np.pi+EPS, phi_res)], axis = 0) 
     
+    def player_motion(self, alpha: float = ALPHA, t_r: float = TR, vmax: float = MAX_VEL):
+        t = np.arange(self.t_res,MAX_TIME, self.t_res)
+        self.c_x = np.where(t<t_r, self.x + self.vx * t, self.x + t_r * self.vx + self.vx * (1-np.exp(-alpha * (t-t_r))/alpha))
+        self.c_y = np.where(t<t_r, self.y + self.vy * t, self.y + t_r * self.vy + self.vy * (1-np.exp(-alpha * (t-t_r))/alpha))
+        self.r = np.where(t<t_r,0,vmax * (t -t_r - (1-np.exp(-alpha * (t-t_r)))/alpha)) 
+
+    
     @staticmethod
     def inside_boards(data: pd.DataFrame,
                 target_radius: float = 27.5):
         radius = (data.x<28) * ((data.y>57)*((data.x-28)**2 + (data.y-57)**2)**0.5 + (data.y<28)*((data.x-28)**2 + (28-data.y)**2)**0.5)
-        return data.loc[(radius<=target_radius) & (data.x<100) & (data.y<85) & (data.y)>0]
+        return data.loc[(radius<=target_radius) & (data.x<100) & (data.y<85) & (data.y>0) &(data.x>0)]
 
     class one_pass():
         def __init__(self, outer_self: 'tracks', phi: float):
@@ -94,7 +102,6 @@ class tracks():
             y = self.grid.y
             self.score = (np.abs((x-11)/((42.5-y)**2+(11-x)**2)**0.5)+1)/np.where(x>189,8,4)*np.exp(-((11-x)**2/decay_x +(42.5-y)**2/decay_y))
 
-
         def dist_to_xyt(self,x0: float,
                              y0: float,
                              vx: float,
@@ -107,6 +114,9 @@ class tracks():
             tx = self.grid.x
             ty = self.grid.y
 
+            # c_x = (t<t_r) * (x0 + vx * t) + (t>=t_r) * (x0 + t_r * vx + vx * (1-np.exp(-alpha * (t-t_r))/alpha))
+            # c_y = (t<t_r) * (y0 + vy * t)  + (t>=t_r) * (y0 + t_r * vy + vy * (1-np.exp(-alpha * (t-t_r))/alpha))
+            # r =   (t>=t_r) * vmax * (t -t_r - (1-np.exp(-alpha * (t-t_r)))/alpha)
             c_x = np.where(t<t_r, x0 + vx * t, x0 + t_r * vx + vx * (1-np.exp(-alpha * (t-t_r))/alpha))
             c_y = np.where(t<t_r, y0 + vy * t, y0 + t_r * vy + vy * (1-np.exp(-alpha * (t-t_r))/alpha))
             r = np.where(t<t_r,0,vmax * (t -t_r - (1-np.exp(-alpha * (t-t_r)))/alpha)) 
@@ -114,7 +124,6 @@ class tracks():
             remaining_dist = ((tx-c_x)**2 + (ty-c_y)**2)**0.5-r
             return(np.maximum(remaining_dist,EPS))
         
-                
         def get_metric(self,outer_self: 'tracks', metric: str = 'prob'):
             dists = np.array([self.dist_to_xyt(x0,y0,vx,vy) for x0,y0,vx,vy in zip(outer_self.x, outer_self.y, outer_self.vx, outer_self.vy)]).T
             dists[self.outside_creese,outer_self.goalie]  = np.maximum(dists[self.outside_creese,outer_self.goalie], ((self.grid.x[self.outside_creese]-GLX)**2 + (self.grid.y[self.outside_creese]-GLY)**2)**0.5 - GOALIE_DIST)
@@ -123,7 +132,7 @@ class tracks():
             if metric == 'rink_ctrl':
                 self.metric = all_ctrl
                 return 0
-            dists = np.delete(dists, outer_self.goalie,axis = 1)
+            dists = np.delete(dists, outer_self.puck,axis = 1)
             base_probs = self.t_res * (norm.cdf(dists/STICK+1)-norm.cdf(dists/STICK-1))/TIME_PENALTY
             ranks = (-base_probs).argsort()
             ranked_probs = np.take_along_axis(base_probs,ranks,0)
@@ -151,3 +160,14 @@ class tracks():
 
         def __call__(self):
             return(np.stack((self.grid.x,self.grid.y,self.grid.t,self.metric),1))    
+
+
+if __name__ == '__main__':
+    x = 200 -np.array([171.4262, 155.6585, 153.7146, 150.5869, 156.3463, 179.8383, 180.8131, 186.6146, 179.9982])
+    y=np.array([49.31514, 48.25991, 70.17542, 13.65429, 28.51970, 38.44596, 36.80571, 38.32781, 22.03946])
+    vx=np.array([6.725073,  4.964445, -3.097599, 14.252625,  4.286796,  1.925091, -2.295729, -0.294258,  6.464229])
+    vy=np.array([-7.1037417,  -7.9677960,  -6.4446342,   6.5618985, -10.9455216,  -4.7444208,  -4.1465373,  -0.3377985, -5.4265284])
+    goalie = 7
+    puck=np.array([False,False,False,True,False,False,False,False,False])
+    off=np.array([-1, -1, 1, 1, -1, 1, -1, -1, 1])
+    all_tracks = tracks(x,y,vx,vy,goalie,puck,off,metric='expected')

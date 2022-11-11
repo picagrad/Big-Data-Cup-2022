@@ -8,6 +8,11 @@ code/.Rhistory
 code/hockey_gif.R
 *.gif
 images/*.gif
+*.pdf
+*.jpgs
+*.mp4
+*.RData
+*.Rhistory
 .Rproj.user
 Big-Data-Cup-2022-Private.Rproj
 code/data_manipulation/Data_Clean_sandbox.ipynb
