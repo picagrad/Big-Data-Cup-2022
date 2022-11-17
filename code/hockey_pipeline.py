@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 from numba import jit
+from numpy.typing import ArrayLike
 
 MAX_TIME = 2
 EPS = 1e-7
@@ -32,13 +33,13 @@ def inside_boards(x: np.ndarray,y: np.ndarray, t:np.ndarray,
 
 class tracks():
     def __init__(self,
-                x: np.ndarray, # x locations of players (array or list of floats) 
-                y: np.ndarray, # y locations of players (array or list of floats)
-                vx: np.ndarray, # x velocity of players (array or list of floats)
-                vy: np.ndarray, # y velocity of players (array or list of floats)
+                x: ArrayLike, # x locations of players (array or list of floats) 
+                y: ArrayLike, # y locations of players (array or list of floats)
+                vx: ArrayLike, # x velocity of players (array or list of floats)
+                vy: ArrayLike, # y velocity of players (array or list of floats)
                 goalie: int, # column number for goalie
                 puck: int, # column number for which player has the puck
-                off: np.ndarray, # array or list of integers +1 for offence, -1 for defence (or true and false)
+                off: ArrayLike, # array or list of integers +1 for offence, -1 for defence (or true and false)
                 vp: float = 55,
                 phi_res: float = 0.01,
                 t_res: float = 0.01,
@@ -52,13 +53,13 @@ class tracks():
         self.yp = y[puck]
         self.puck = puck
         self.phi_res = phi_res
-        self.off = np.where(off==1,1,-1)
+        self.off = np.where(np.array(off)==1,1,-1)
         self.t_res = t_res
         self.vp = vp
-        self.x = x
-        self.y = y
-        self.vx = vx
-        self.vy = vy
+        self.x = np.array(x)
+        self.y = np.array(y)
+        self.vx = np.array(vx)
+        self.vy = np.array(vy)
         self.goalie = goalie
         # self.tracks = pd.DataFrame({'x':x,'y':y,'vx':vx,'vy':vy,'goalie':goalie,'off':off})
         self.player_motion()
@@ -170,12 +171,15 @@ class tracks():
             return np.stack((self.x,self.y,self.t,self.all_ctrl,self.prob,self.best_case,self.expected),1)    
 
 
+
+
 if __name__ == '__main__':
-    x = 200 -np.array([171.4262, 155.6585, 153.7146, 150.5869, 156.3463, 179.8383, 180.8131, 186.6146, 179.9982])
-    y=np.array([49.31514, 48.25991, 70.17542, 13.65429, 28.51970, 38.44596, 36.80571, 38.32781, 22.03946])
-    vx=np.array([6.725073,  4.964445, -3.097599, 14.252625,  4.286796,  1.925091, -2.295729, -0.294258,  6.464229])
-    vy=np.array([-7.1037417,  -7.9677960,  -6.4446342,   6.5618985, -10.9455216,  -4.7444208,  -4.1465373,  -0.3377985, -5.4265284])
+    x = list(200 -np.array([171.4262, 155.6585, 153.7146, 150.5869, 156.3463, 179.8383, 180.8131, 186.6146, 179.9982]))
+    y= list(np.array([49.31514, 48.25991, 70.17542, 13.65429, 28.51970, 38.44596, 36.80571, 38.32781, 22.03946]))
+    vx=list(np.array([6.725073,  4.964445, -3.097599, 14.252625,  4.286796,  1.925091, -2.295729, -0.294258,  6.464229]))
+    vy=list(np.array([-7.1037417,  -7.9677960,  -6.4446342,   6.5618985, -10.9455216,  -4.7444208,  -4.1465373,  -0.3377985, -5.4265284]))
     goalie = 7
-    puck=np.array([False,False,False,True,False,False,False,False,False])
-    off=np.array([-1, -1, 1, 1, -1, 1, -1, -1, 1])
-    all_tracks = tracks(x,y,vx,vy,goalie,puck,off,metric='expected')
+    puck= 3
+    off=list(np.array([-1, -1, 1, 1, -1, 1, -1, -1, 1]))
+    all_tracks = tracks(x,y,vx,vy,goalie,puck,off)
+    
